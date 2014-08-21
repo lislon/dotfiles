@@ -104,3 +104,7 @@ set directory=~/.vimtmp/swp
 " Disable annoying match braces behavious highlighting
 highlight MatchParen cterm=NONE ctermbg=black ctermfg=white
 
+" Support color highlight in putty
+if has('unix')
+	set t_Co=256
+endif
