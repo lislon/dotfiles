@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/home/Elephant'
+let g:netrw_dirhist_2='/home'
+let g:netrw_dirhist_3='/'
+let g:netrw_dirhist_4='/home/Elephant'
+let g:netrw_dirhist_5='/home/Elephant/colors'
+let g:netrw_dirhist_6='/home/Elephant'
+let g:netrw_dirhist_7='/home/Elephant/colors'
+let g:netrw_dirhist_8='/cygdrive/c/opt/www/update/update'
+let g:netrw_dirhist_9='/home/Elephant/.vim/bundle/Vundle.vim/test'

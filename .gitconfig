@@ -1,0 +1,35 @@
+[alias]
+	st = status
+	ch = checkout
+	che = checkout
+	co = commit
+	head = !git r -1
+	h = !git head
+	hp = "!. ~/.githelpers && show_git_head"
+	r = !GIT_NO_PAGER=1 git l -30
+	ra = !git r --all
+	l = "!. ~/.githelpers && pretty_git_log"
+	la = !git l --all
+	d = difftool
+[user]
+	email = elephant@lislon.ru
+	name = Boris Avdeev
+[core]
+	autocrlf = false
+	excludesfiles = /home/Elephant/.gitignore_global
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+	ui = true
+	pager = true
+[diff]
+	external = git_diff_wrapper
+[merge]
+	tool = vimdiff
+[difftool]
+	promt = false
+	prompt = false
+[pager]
+	diff = 
