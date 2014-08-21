@@ -20,25 +20,28 @@ echo "done"
 echo "Moving any existing dotfiles from ~ to $olddir"
 for file in $files; do
 	if [[ -e ~/$file ]] ; then
+		rm -rf ~/dotfiles_old/$file
 		mv ~/$file ~/dotfiles_old/
 	fi
 	echo "Creating symlink to $file in home directory."
 	ln -s $dir/$file ~/$file
 done
 install_zsh () {
+	# If zsh isn't installed, get the platform of the current machine
+	platform=$(uname);
 	# Test to see if zshell is installed. If it is:
 	if [ -f /bin/zsh -o -f /usr/bin/zsh ]; then
 		# Clone my oh-my-zsh repository from GitHub only if it isn't already present
 		if [[ ! -d $dir/.oh-my-zsh/ ]]; then
-			git clone http://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh
+			git clone http://github.com/robbyrussell/oh-my-zsh.git $dir/.oh-my-zsh
 		fi
 		# Set the default shell to zsh if it isn't currently set to zsh
 		if [[ ! $(echo $SHELL) == $(which zsh) ]]; then
-			chsh -s $(which zsh)
+			if [[ ! $platform =~ CYGWIN ]] ; then
+				chsh -s $(which zsh)
+			fi
 		fi
 	else
-		# If zsh isn't installed, get the platform of the current machine
-		platform=$(uname);
 		# If the platform is Linux, try an apt-get to install zsh and then recurse
 		if [[ $platform == 'Linux' ]]; then
 			sudo apt-get install zsh
