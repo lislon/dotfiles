@@ -56,17 +56,25 @@ install_zsh () {
 install_vim () {
 	bundledir=$dir/.vim/bundle
 	
+	if [[ ! -d ~/.vimtmp/undo ]]; then
+		mkdir -p ~/.vimtmp/undo
+	fi
+	if [[ ! -d ~/.vimtmp/swp ]]; then
+		mkdir -p ~/.vimtmp/swp
+	fi
+
 	if [[ ! -d $bundledir/Vundle.vim ]]; then
 		git clone https://github.com/gmarik/Vundle.vim.git $bundledir/Vundle.vim
 	fi
 	if [[ ! -d $bundledir/nerdtree ]]; then
-		git clone https://github.com/scrooloose/nerdtree.git
+		git clone https://github.com/scrooloose/nerdtree.git $bundledir/nerdtree
 	fi
 	if [[ ! -d $bundledir/nerdcommenter ]]; then
-		git clone https://github.com/scrooloose/nerdcommenter.git
+		git clone https://github.com/scrooloose/nerdcommenter.git $bundledir/nerdcommenter
 	fi
 
 }
 
 install_zsh
 install_vim
+echo "Installation done."

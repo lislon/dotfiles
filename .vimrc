@@ -85,10 +85,10 @@ augroup END
 set foldcolumn=3
 set undofile
 let mapleader="\\"
-set undodir=/home/elephant/.vimundo/
+set undodir=~/.vimtmp/undo
 " Move swap files
-set backupdir=$TEMP/vimswp//
-set directory=$TEMP/vimswp//
+set backupdir=~/.vimtmp/swp
+set directory=~/.vimtmp/swp
 
 " Turn on/off highlight search by F3
 :nnoremap <F3> :let @/ = ""<CR>
