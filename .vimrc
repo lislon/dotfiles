@@ -1,8 +1,8 @@
 source ~/.vim/.vundle_init
 " PHP {{{1
-Bundle 'joonty/vim-phpqa.git'
-let g:phpqa_messdetector_ruleset = '/opt/www/.utils/build/phpmd.xml'
-let g:phpqa_codesniffer_args = "--standard=Sotmarket"
+"Bundle 'joonty/vim-phpqa.git'
+"let g:phpqa_messdetector_ruleset = '/opt/www/.utils/build/phpmd.xml'
+"let g:phpqa_codesniffer_args = "--standard=Sotmarket"
 " }}}1
 
 " Nerd Tree {{{2
