@@ -33,3 +33,5 @@
 	prompt = false
 [pager]
 	diff = 
+[branch]
+	autosetuprebase = always
