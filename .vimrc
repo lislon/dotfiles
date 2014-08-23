@@ -111,3 +111,6 @@ highlight MatchParen cterm=NONE ctermbg=black ctermfg=white
 if has('unix')
 	set t_Co=256
 endif
+
+" Insert new line without insert mode
+nmap <S-Enter> O<Esc>
