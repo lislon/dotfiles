@@ -1,3 +1,4 @@
+
 source ~/.vim/.vundle_init
 " PHP {{{1
 "Bundle 'joonty/vim-phpqa.git'
@@ -83,9 +84,11 @@ augroup END
 :inoremap <C-e> <Esc>A
 
 set foldcolumn=3
-set undofile
 let mapleader="\\"
-set undodir=~/.vimtmp/undo
+if has('persistent_undo')
+	set undofile
+	set undodir=~/.vimtmp/undo
+endif
 " Move swap files
 set backupdir=~/.vimtmp/swp
 set directory=~/.vimtmp/swp

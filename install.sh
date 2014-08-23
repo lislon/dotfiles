@@ -35,12 +35,6 @@ install_zsh () {
 		if [[ ! -d $dir/.oh-my-zsh/ ]]; then
 			git clone http://github.com/robbyrussell/oh-my-zsh.git $dir/.oh-my-zsh
 		fi
-		# Set the default shell to zsh if it isn't currently set to zsh
-		if [[ ! $(echo $SHELL) == $(which zsh) ]]; then
-			if [[ ! $platform =~ CYGWIN ]] ; then
-				chsh -s $(which zsh)
-			fi
-		fi
 	else
 		# If the platform is Linux, try an apt-get to install zsh and then recurse
 		if [[ $platform == 'Linux' ]]; then
