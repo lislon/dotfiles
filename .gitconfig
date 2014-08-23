@@ -16,7 +16,7 @@
 	name = Boris Avdeev
 [core]
 	autocrlf = false
-	excludesfiles = /home/Elephant/.gitignore_global
+	excludesfiles = ~/.gitignore_global
 [color]
 	diff = auto
 	status = auto
@@ -25,7 +25,7 @@
 	ui = true
 	pager = true
 [diff]
-	external = git_diff_wrapper
+	external = ~/dotfiles/bin/git_diff_wrapper
 [merge]
 	tool = vimdiff
 [difftool]

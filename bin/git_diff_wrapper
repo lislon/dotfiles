@@ -1,0 +1,5 @@
+#!/bin/sh
+
+#sleep 10
+#echo "1: $1 2: $2"
+vimdiff "$1" "$2"
