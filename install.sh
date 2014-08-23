@@ -45,11 +45,15 @@ install_zsh () {
 		# If the platform is Linux, try an apt-get to install zsh and then recurse
 		if [[ $platform == 'Linux' ]]; then
 			sudo apt-get install zsh
+			if [ ! "$?" -eq 0 ] ; then
+			  echo "Please install zsh, then re-run this script!"
+			  exit -1
+			fi
 			install_zsh
 			# If the platform is OS X, tell the user to install zsh :)
 		elif [[ $platform == 'Darwin' ]]; then
 			echo "Please install zsh, then re-run this script!"
-			exit
+			exit -1
 		fi
 	fi
 }
