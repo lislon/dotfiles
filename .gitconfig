@@ -35,3 +35,7 @@
 	diff = 
 [branch]
 	autosetuprebase = always
+[mergetool]
+	keepBackup = false
+[pull]
+	rebase = true
