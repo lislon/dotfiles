@@ -2,6 +2,7 @@
 	st = status
 	ch = checkout
 	che = checkout
+	cp = cheery-pick
 	co = commit
 	head = !git r -1
 	h = !git head
