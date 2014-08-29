@@ -91,7 +91,7 @@ set directory=~/.vimtmp/swp
 
 " Turn on/off highlight search by F3
 :nnoremap <F3> :let @/ = ""<CR>
-:nnoremap <F5> :tabe $MYVIMRC<CR>
+:nnoremap <F12> :tabe $MYVIMRC<CR>
 
 " Alt + 1 - NERD Tree
 :map 1 <Esc>:NERDTree<CR>
@@ -138,4 +138,27 @@ augroup newFileDetection
 	autocmd CursorMovedI * call CheckFileType()
 augroup END
 
+function! RunCmd(cmd)
+	let fn=expand("%:p")
+	let ft = &l:filetype
+	botright copen
+	setlocal modifiable
+	%d _
+	if a:cmd == "" && ft != ""
+		silent execute "read !".fn
+	else
+		silent execute "read !".a:cmd." ".fn
+	endif
+	1d _
+	normal! 0
+	if ft != ""
+		execute "setf ".ft
+	else
+		setlocal filetype=
+	endif
+	setlocal nomodifiable nomodified
+endfunction
 
+"command! RunBash call RunCmd("") 
+nnoremap <F5> :<C-u>up\|call RunCmd("")<CR>
+inoremap <F5> <Esc>:up\|call RunCmd("")<CR>
