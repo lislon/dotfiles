@@ -77,8 +77,8 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-alias myzsh="vim ~/.zshrc"
-alias vimrc="vim ~/.vimrc"
+alias myzsh="vim ~/dotfiles/.zshrc"
+alias vimrc="vim ~/dotfiles/.vimrc"
 alias reload=". ~/.zshrc"
 
 if [[ -f ~/.zshrc_local ]] ; then 
