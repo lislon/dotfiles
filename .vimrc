@@ -120,4 +120,4 @@ nmap <S-Enter> O<Esc>
 " CamelCaseMovements
 nmap [b :call search('\<\<Bar>\u', 'bW')<CR>
 nmap [w :call search('\<\<Bar>\u', 'W')<CR>
-
+set autochdir

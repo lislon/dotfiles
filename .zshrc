@@ -97,7 +97,21 @@ bindkey '\C-i' complete-word
 zstyle ':completion:::::' completer _expand _complete _approximate _ignored
 zstyle ':completion:*:approximate:*' max-errors \
 	'reply=( $(( ($#PREFIX+$#SUFFIX)/3 )) )'
+# autocomplete one way readme -> README, but not README -> readme
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# Ignore same arguments twice
+zstyle 'completion::*:(rm|vi|vim):*' ignore-line true
+zstyle 'completion::*' ignore-parents parent pwd
 
-
-export PATH=~/bin/:$PATH
+#export PATH=~/bin/:$PATH
 	
+declare -U path
+path=( ~/bin $path )
+
+# showares "BEFORE{$arr[@]}AFTER" behaves like 
+# % showargs BEFORE{one, two\ three,four}AFTER
+# >> BEFOREoneAFTER<<
+# >> BEFOREtwo threeAFTER<<
+# >> BEFOREfourAFTER<<
+setopt rc_expand_param
+alias gl='git --no-pager log --oneline --graph -5'
