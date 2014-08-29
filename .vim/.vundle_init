@@ -5,6 +5,18 @@ filetype off                  " required
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Bundle 'Rykka/riv.vim'
+Plugin 'tpope/vim-fugitive'
+" PHP {{{1
+"Bundle 'joonty/vim-phpqa.git'
+"let g:phpqa_messdetector_ruleset = '/opt/www/.utils/build/phpmd.xml'
+"let g:phpqa_codesniffer_args = "--standard=Sotmarket"
+" }}}1
+
+" Nerd Tree {{{2
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'scrooloose/nerdtree'
+let g:NERDTreeDirArrows=0
+" }}}2
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required

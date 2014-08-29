@@ -1,16 +1,5 @@
 
 source ~/.vim/.vundle_init
-" PHP {{{1
-"Bundle 'joonty/vim-phpqa.git'
-"let g:phpqa_messdetector_ruleset = '/opt/www/.utils/build/phpmd.xml'
-"let g:phpqa_codesniffer_args = "--standard=Sotmarket"
-" }}}1
-
-" Nerd Tree {{{2
-Bundle 'scrooloose/nerdcommenter'
-Bundle 'scrooloose/nerdtree'
-let g:NERDTreeDirArrows=0
-" }}}2
 
 :set nu
 :set shiftwidth=4
@@ -121,3 +110,21 @@ nmap <S-Enter> O<Esc>
 nmap [b :call search('\<\<Bar>\u', 'bW')<CR>
 nmap [w :call search('\<\<Bar>\u', 'W')<CR>
 set autochdir
+
+function! CheckFileType()
+	if exists('b:countCheck') == 0
+		let b:countCheck = 0
+	endif
+	let b:countCheck += 1 
+
+	if &filetype == "" && b:countCheck > 20
+		filetype detect
+	elseif b:countCheck > 200 || &filetype != ""
+		autocmd! newFileDetection
+	endif
+endfunction
+
+augroup newFileDetection
+	autocmd CursorMovedI * call CheckFileType()
+augroup END
+
