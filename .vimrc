@@ -1,7 +1,7 @@
 
 source ~/.vim/.vundle_init
 
-:set nu
+
 :set shiftwidth=4
 :set tabstop=4
 :set autoindent
@@ -29,6 +29,13 @@ noremap <down> <nop>
 
 nmap <Space>= yyp<c-v>$r=
 nmap <Space>- yyp<c-v>$r-
+
+" Window switching
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
 " Tell vim to remember certain things when we exit
 " "  '10  :  marks will be remembered for up to 10 previously edited files
 " "  "100 :  will save up to 100 lines for each register
@@ -127,4 +134,5 @@ endfunction
 augroup newFileDetection
 	autocmd CursorMovedI * call CheckFileType()
 augroup END
+
 
