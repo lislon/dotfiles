@@ -1,4 +1,3 @@
-
 source ~/.vim/.vundle_init
 
 
@@ -13,12 +12,16 @@ source ~/.vim/.vundle_init
 :set keymap=russian-jcukenwin
 :set iminsert=0
 :set imsearch=0
+:set nu
 :highlight lCursor guifg=None guibg=Cyan
 
 if &diff
 	color skittles_dark
 	map Q :cquit<CR>
+else
+	nmap <silent>Q :q<CR>
 endif
+
 
 :syntax on
 filetype plugin indent on
@@ -121,13 +124,14 @@ nmap [b :call search('\<\<Bar>\u', 'bW')<CR>
 nmap [w :call search('\<\<Bar>\u', 'W')<CR>
 set autochdir
 
+" Automatically detect filetype for new files
 function! CheckFileType()
 	if exists('b:countCheck') == 0
 		let b:countCheck = 0
 	endif
 	let b:countCheck += 1 
 
-	if &filetype == "" && b:countCheck > 20
+	if &filetype == "" && b:countCheck > 30
 		filetype detect
 	elseif b:countCheck > 200 || &filetype != ""
 		autocmd! newFileDetection
