@@ -111,7 +111,7 @@ endif
 " Insert new line without insert mode
 nmap <S-Enter> O<Esc>
 " Auto update vimrc
-:autocmd BufWritePost ~/.vimrc source ~/.vimrc
+:autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc source ~/.vimrc
 
 " CamelCaseMovements
 nmap [b :call search('\<\<Bar>\u', 'bW')<CR>
