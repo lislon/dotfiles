@@ -78,6 +78,7 @@ source $ZSH/oh-my-zsh.sh
 #
 # Example aliases
 alias myzsh="vim ~/dotfiles/.zshrc"
+alias z=myzsh
 alias vimrc="vim ~/dotfiles/.vimrc"
 alias reload=". ~/.zshrc"
 
@@ -100,13 +101,19 @@ zstyle ':completion:*:approximate:*' max-errors \
 # autocomplete one way readme -> README, but not README -> readme
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # Ignore same arguments twice
-zstyle 'completion::*:(rm|vi|vim):*' ignore-line true
-zstyle 'completion::*' ignore-parents parent pwd
+zstyle ':completion:*:(rm|vi|vim|mv|cp):*' ignore-line true
+zstyle ':completion::*' ignore-parents parent pwd
 
 #export PATH=~/bin/:$PATH
 	
 declare -U path
 path=( ~/bin $path )
+
+fpath=(~/dotfiles/.zshfunc $fpath)
+autoload -U -- ~/dotfiles/.zshfunc/[^_]*(:t)
+
+# Ctrl-X, U - and you can enter any name of widget to execute
+bindkey '\C-xu' universal-argument
 
 # showares "BEFORE{$arr[@]}AFTER" behaves like 
 # % showargs BEFORE{one, two\ three,four}AFTER

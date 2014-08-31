@@ -166,3 +166,4 @@ endfunction
 "command! RunBash call RunCmd("") 
 nnoremap <F5> :<C-u>up\|call RunCmd("")<CR>
 inoremap <F5> <Esc>:up\|call RunCmd("")<CR>
+
