@@ -110,7 +110,7 @@ declare -U path
 path=( ~/bin $path )
 
 fpath=(~/dotfiles/.zshfunc $fpath)
-autoload -U -- ~/dotfiles/.zshfunc/[^_]*(:t)
+# autoload -U -- ~/dotfiles/.zshfunc/[^_]*(:t)
 
 # Ctrl-X, U - and you can enter any name of widget to execute
 bindkey '\C-xu' universal-argument

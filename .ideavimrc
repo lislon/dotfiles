@@ -1,0 +1,64 @@
+:nmap ð h
+:nmap î j
+:nmap ë k
+:nmap ä l
+:nmap ô a
+:nmap Ô A
+:nmap ö w
+:nmap Ö W
+:nmap è b
+:nmap È B
+:nmap ø i
+:nmap Ø I
+:nmap é q
+:nmap É Q
+:nmap ñ c
+:nmap Ñ C
+:nmap õ [
+:nmap ú ]
+:nmap ù o
+:nmap Ù O
+
+:imap <c-õ> <c-[>
+
+:nmap <S-Enter> O<Esc>j
+:nmap <CR> o<Esc>k
+
+:nmap <c-w> ci'
+
+:noremap <left> <nop>
+:noremap <right> <nop>
+:noremap <up> <nop>
+:noremap <down> <nop>
+:set scrolloff=5
+:set gdefault
+:set ignorecase
+
+"copy
+:vmap <C-Insert> "+y
+"paste (Insert like = p, Shift+Insrt like P)
+:nmap <Insert> "+p
+:imap <Insert> <c-o>"+p
+:nmap <S-Insert> "+P
+:imap <S-Insert> <c-o>"+P
+
+" Very left & Very Right
+:noremap H ^
+:noremap L $
+
+:map <Tab> %
+
+" Delete till end"
+:noremap D d$
+
+" Split line
+:noremap S i<cr><Esc>
+
+:inoremap <C-a> <Esc>I
+:inoremap <C-e> <Esc>A
+
+; Ctrl+x,f - delete stacked function a(b(c))
+;:noremap Xf diwmx<Tab>x`xx
+
+:imap <C-l> <C-O>l
+:imap <C-h> <C-O>h
