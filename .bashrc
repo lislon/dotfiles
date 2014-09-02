@@ -196,3 +196,7 @@
 # }
 # 
 # alias cd=cd_func
+
+shopt -s extglob 
+
+complete -f -X '!*.php' php
