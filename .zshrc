@@ -104,6 +104,9 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*:(rm|vi|vim|mv|cp):*' ignore-line true
 zstyle ':completion::*' ignore-parents parent pwd
 
+# -g = glob pattern, (-.) glob modifier to allow only files or symlinks
+compdef '_files -g "*.jpg(-.)"' gimp
+
 #export PATH=~/bin/:$PATH
 	
 declare -U path
@@ -122,3 +125,5 @@ bindkey '\C-xu' universal-argument
 # >> BEFOREfourAFTER<<
 setopt rc_expand_param
 alias gl='git --no-pager log --oneline --graph -5'
+alias gpush='git push'
+

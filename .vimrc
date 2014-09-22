@@ -167,3 +167,9 @@ endfunction
 nnoremap <F5> :<C-u>up\|call RunCmd("")<CR>
 inoremap <F5> <Esc>:up\|call RunCmd("")<CR>
 
+"File navigations
+set wildmenu
+set wildignore=*.dll,*.o,*.obj,*.bak,*.exe,*.pyc,
+			\*.jpg,*.gif,*.png
+set wildmode=list:longest " turn on wild mode huge list
+
