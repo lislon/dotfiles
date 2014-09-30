@@ -3,6 +3,7 @@ source ~/.vim/.vundle_init
 
 :set shiftwidth=4
 :set tabstop=4
+:set expandtab
 :set autoindent
 :set incsearch 
 :set wildmenu
