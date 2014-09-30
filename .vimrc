@@ -149,7 +149,9 @@ function! RunCmd(cmd)
 	botright copen
 	setlocal modifiable
 	%d _
-	if a:cmd == "" && ft != ""
+	if ft == "ruby"
+		silent execute "read !ruby ".fn
+	elseif ft != ""
 		silent execute "read !".fn
 	else
 		silent execute "read !".a:cmd." ".fn
