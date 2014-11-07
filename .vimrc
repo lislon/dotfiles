@@ -117,7 +117,9 @@ nmap <S-Enter> O<Esc>
 " Auto update vimrc
 augroup auto_reload
 	au!
-	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc source ~/.vimrc
+	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init source ~/.vimrc
+    " Custom extensions sytnax highlighting
+    autocmd BufNewFIle,BufRead *.vundle_init set filetype=vim
 augroup END
 
 " CamelCaseMovements
@@ -192,3 +194,5 @@ nnoremap <space>gb :Git branch<Space>
 nnoremap <space>go :Git checkout<Space>
 nnoremap <space>gps :Dispatch! git push<CR>
 nnoremap <space>gpl :Dispatch! git pull<CR>
+
+
