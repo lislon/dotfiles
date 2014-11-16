@@ -103,6 +103,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # Ignore same arguments twice
 zstyle ':completion:*:(rm|vi|vim|mv|cp):*' ignore-line true
 zstyle ':completion::*' ignore-parents parent pwd
+zstyle ':completion:*:(vi|vim):*' ignored-patterns '*.(pdf|ps|dvi|aux)'
 
 # -g = glob pattern, (-.) glob modifier to allow only files or symlinks
 compdef '_files -g "*.jpg(-.)"' gimp
@@ -110,7 +111,7 @@ compdef '_files -g "*.jpg(-.)"' gimp
 #export PATH=~/bin/:$PATH
 	
 declare -U path
-path=( ~/bin $path )
+path=( ~/bin ~/.local/bin $path )
 
 fpath=(~/dotfiles/.zshfunc $fpath)
 # autoload -U -- ~/dotfiles/.zshfunc/[^_]*(:t)
