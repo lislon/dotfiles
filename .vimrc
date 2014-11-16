@@ -195,4 +195,40 @@ nnoremap <space>go :Git checkout<Space>
 nnoremap <space>gps :Dispatch! git push<CR>
 nnoremap <space>gpl :Dispatch! git pull<CR>
 
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+" unicode symbols
 
+"let g:laststatus=2
+"let g:Powerline_dividers_override = ['>>', '>', '<<', '<']
+"let g:Powerline_mode_n = 'NORMA'
+
+"let g:phpqa_messdetector_ruleset = '/opt/www/.utils/build/phpmd.xml'
+"let g:phpqa_codesniffer_args = "--standard=Sotmarket"
+let g:NERDTreeDirArrows=0
+
+set rtp+=~/.local/lib/python2.7/site-packages/powerline/bindings/vim/
+python from powerline.vim import setup as powerline_setup
+python powerline_setup()
+python del powerline_setup
+
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
+
+let g:Tex_DefaultTargetFormat='pdf'
+let g:Tex_MultipleCompileFormats = "dvi"
+let g:Tex_DefaultTargetFormat = "pdf"
+let g:Tex_FormatDependency_ps = "dvi,ps"
+let g:Tex_FormatDependency_pdf = "dvi,ps,pdf"
+
+
+
+let g:Tex_CompileRule_dvi = 'latex --interaction=nonstopmode $*'
+let g:Tex_CompileRule_ps = 'dvips   -o $*.ps $*.dvi'
+let g:Tex_CompileRule_pdf = 'ps2pdf $*.ps'
+
+"let g:Tex_ViewRule_pdf = "~/SumatraPDF/SumatraPDF.exe"
+let g:Tex_ViewRule_pdf = "xpdf"
+
+let g:Tex_BibtexFlavor = 'bibtex'
