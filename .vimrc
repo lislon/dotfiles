@@ -13,7 +13,10 @@ source ~/.vim/.vundle_init
 :set keymap=russian-jcukenwin
 :set iminsert=0
 :set imsearch=0
+:set ignorecase
 :set nu
+" Allow backspace after append
+:set backspace=indent,eol,start
 :highlight lCursor guifg=None guibg=Cyan
 
 if &diff
@@ -106,6 +109,7 @@ set directory=~/.vimtmp/swp
 :imap <Tab> <C-P>
 " Disable annoying match braces behavious highlighting
 highlight MatchParen cterm=NONE ctermbg=black ctermfg=white
+highlight! link MatchParen StatusLine
 
 " Support color highlight in putty
 if has('unix')
@@ -232,3 +236,7 @@ let g:Tex_CompileRule_pdf = 'ps2pdf $*.ps'
 let g:Tex_ViewRule_pdf = "xpdf"
 
 let g:Tex_BibtexFlavor = 'bibtex'
+let g:Tex_GotoError=0
+
+au BufWritePost *.tex silent call Tex_RunLaTeX()
+au BufWritePost *.tex silent !pkill -USR1 xdvi.bin
