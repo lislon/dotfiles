@@ -99,17 +99,15 @@ set directory=~/.vimtmp/swp
 " Turn on/off highlight search by F3
 :nnoremap <F3> :let @/ = ""<CR>
 :nnoremap <F12> :tabe $MYVIMRC<CR>
+:nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 
 " Alt + 1 - NERD Tree
 :map 1 <Esc>:NERDTree<CR>
 
 " Keep 3 lines below and above the cursor
 :set scrolloff=3
-" Ctrl+N switch options
-:imap <Tab> <C-P>
-" Disable annoying match braces behavious highlighting
-highlight MatchParen cterm=NONE ctermbg=black ctermfg=white
-highlight! link MatchParen StatusLine
+" Ctrl+N switch options !! Confclits with TextMate
+":imap <Tab> <C-P>
 
 " Support color highlight in putty
 if has('unix')
