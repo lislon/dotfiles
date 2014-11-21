@@ -149,12 +149,15 @@ augroup END
 
 function! RunCmd(cmd)
 	let fn=expand("%:p")
+    let fns=expand("%")
 	let ft = &l:filetype
 	botright copen
 	setlocal modifiable
 	%d _
 	if ft == "ruby"
 		silent execute "read !ruby ".fn
+    elseif ft == "javascript"
+		silent execute "read !node ".fns
 	elseif ft != ""
 		silent execute "read !".fn
 	else
@@ -238,3 +241,7 @@ let g:Tex_GotoError=0
 
 au BufWritePost *.tex silent call Tex_RunLaTeX()
 au BufWritePost *.tex silent !pkill -USR1 xdvi.bin
+
+" Disable annoying match braces behavious highlighting
+highlight! MatchParen cterm=NONE ctermbg=white ctermfg=white
+highlight! link MatchParen StatusLine
