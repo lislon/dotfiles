@@ -8,7 +8,7 @@ source ~/.vim/.vundle_init
 :set incsearch 
 :set wildmenu
 :set wildmode=full
-:colorscheme skittles_dark
+:colorscheme solarized
 :set gdefault
 :set keymap=russian-jcukenwin
 :set iminsert=0
@@ -17,7 +17,7 @@ source ~/.vim/.vundle_init
 :set nu
 " Allow backspace after append
 :set backspace=indent,eol,start
-:highlight lCursor guifg=None guibg=Cyan
+:highlight lCursor guifg=NONE guibg=Cyan
 
 if &diff
 	color skittles_dark
@@ -102,7 +102,7 @@ set directory=~/.vimtmp/swp
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 
 " Alt + 1 - NERD Tree
-:map 1 <Esc>:NERDTree<CR>
+:map <A-1> <Esc>:NERDTree<CR>
 
 " Keep 3 lines below and above the cursor
 :set scrolloff=3
@@ -114,12 +114,18 @@ if has('unix')
 	set t_Co=256
 endif
 
+if has('unix')
+	language messages C
+else
+	language messages en
+endif
+
 " Insert new line without insert mode
 nmap <S-Enter> O<Esc>
 " Auto update vimrc
 augroup auto_reload
 	au!
-	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init source ~/.vimrc
+	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init,~/.vim/vundle_init source ~/.vimrc
     " Custom extensions sytnax highlighting
     autocmd BufNewFIle,BufRead *.vundle_init set filetype=vim
 augroup END
@@ -211,10 +217,10 @@ autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 "let g:phpqa_codesniffer_args = "--standard=Sotmarket"
 let g:NERDTreeDirArrows=0
 
-set rtp+=~/.local/lib/python2.7/site-packages/powerline/bindings/vim/
-python from powerline.vim import setup as powerline_setup
-python powerline_setup()
-python del powerline_setup
+"set rtp+=~/.local/lib/python2.7/site-packages/powerline/bindings/vim/
+"python from powerline.vim import setup as powerline_setup
+"python powerline_setup()
+"python del powerline_setup
 
 " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
 " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.

@@ -43,9 +43,9 @@ hi PmenuSbar      ctermfg=81 ctermbg=232 guifg=#5fd7ff guibg=#080808
 hi PmenuThumb     ctermfg=81 guifg=#5fd7ff
 hi TabLine        ctermfg=255 ctermbg=242 guifg=#eeeeee guibg=#080808
 hi TabLineSel     ctermfg=255 guifg=#eeeeee
-hi TabLineFill    cterm=none term=none ctermbg=235 guibg=#262626
-hi CursorColumn   cterm=none term=none ctermbg=235 guibg=#262626
-hi CursorLine     cterm=none term=none ctermbg=235 guibg=#262626
+hi TabLineFill    cterm=NONE term=NONE ctermbg=235 guibg=#262626
+hi CursorColumn   cterm=NONE term=NONE ctermbg=235 guibg=#262626
+hi CursorLine     cterm=NONE term=NONE ctermbg=235 guibg=#262626
 hi clear ColorColumn
 hi link ColorColumn CursorLine
 hi MatchParen     term=reverse ctermfg=0 ctermbg=208 gui=bold guifg=#000000 guibg=#ff8700
@@ -84,6 +84,6 @@ hi Delimiter      ctermfg=245 guifg=#8a8a8a
 hi SpecialComment ctermfg=66 gui=bold guifg=#5f8787
 hi Debug          ctermfg=138 gui=bold guifg=#af8787
 hi Normal         ctermfg=230 ctermbg=233 guifg=#ffffd7 guibg=#121212
-hi Identifier     cterm=none term=none ctermfg=228 guifg=#ffff87
+hi Identifier     cterm=NONE term=NONE ctermfg=228 guifg=#ffff87
 hi clear Cursor
 hi Cursor         ctermbg=26 ctermfg=7 guifg=#e5e5e5 guibg=#005fd7

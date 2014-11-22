@@ -17,6 +17,7 @@ Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets'
 Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'altercation/vim-colors-solarized'
 "Plugin 'SirVer/ultisnips'
 "Plugin 'tpope/vim-dispatch'
 
