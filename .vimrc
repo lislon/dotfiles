@@ -1,5 +1,12 @@
 source ~/.vim/.vundle_init
 
+" In windows default vim runtime path is in C:\Program Files\vim\. Let's make it ~/.vim
+"if has('win32')
+    "let rtpArray = split(&rtp, ',')
+    "let rtpArray = ['~\.vim'] + rtpArray[1:]
+    "let &rtp=join(rtpArray, ',')
+"endif
+
 
 :set shiftwidth=4
 :set tabstop=4
@@ -8,15 +15,18 @@ source ~/.vim/.vundle_init
 :set incsearch 
 :set wildmenu
 :set wildmode=full
-:colorscheme solarized
 :set gdefault
-:set keymap=russian-jcukenwin
 :set iminsert=0
 :set imsearch=0
 :set ignorecase
 :set nu
 " Allow backspace after append
 :set backspace=indent,eol,start
+
+if has("win32unix")
+    :set keymap=russian-jcukenwin
+endif
+
 :highlight lCursor guifg=NONE guibg=Cyan
 
 if &diff
@@ -251,3 +261,5 @@ au BufWritePost *.tex silent !pkill -USR1 xdvi.bin
 " Disable annoying match braces behavious highlighting
 highlight! MatchParen cterm=NONE ctermbg=white ctermfg=white
 highlight! link MatchParen StatusLine
+
+:colorscheme solarized
