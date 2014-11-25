@@ -110,9 +110,11 @@ set directory=~/.vimtmp/swp
 :nnoremap <F3> :let @/ = ""<CR>
 :nnoremap <F12> :tabe $MYVIMRC<CR>
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
+:nnoremap <F2> :w<CR>
+:inoremap <F2> <Esc>:w<CR>
 
 " Alt + 1 - NERD Tree
-:map <A-1> <Esc>:NERDTree<CR>
+:nnoremap <A-1> :NERDTreeFocusToggle<CR>
 
 " Keep 3 lines below and above the cursor
 :set scrolloff=3
@@ -135,7 +137,7 @@ nmap <S-Enter> O<Esc>
 " Auto update vimrc
 augroup auto_reload
 	au!
-	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init,~/.vim/vundle_init source ~/.vimrc
+	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init,~/.vim/.vundle_init source ~/.vimrc
     " Custom extensions sytnax highlighting
     autocmd BufNewFIle,BufRead *.vundle_init set filetype=vim
 augroup END
@@ -144,6 +146,10 @@ augroup END
 nmap [b :call search('\<\<Bar>\u', 'bW')<CR>
 nmap [w :call search('\<\<Bar>\u', 'W')<CR>
 set autochdir
+
+" Prevent gvim to resize by itself
+" default is egmrLtT
+:set guioptions=gmrtT
 
 " Automatically detect filetype for new files
 function! CheckFileType()
@@ -263,3 +269,25 @@ highlight! MatchParen cterm=NONE ctermbg=white ctermfg=white
 highlight! link MatchParen StatusLine
 
 :colorscheme solarized
+:nmap <C-p> :CtrlPMRU<CR>
+
+" Use one of the following to define the camel characters.
+" Stop on capital letters.
+let g:camelchar = "A-Z"
+" Also stop on numbers.
+let g:camelchar = "A-Z0-9"
+" Include '.' for class member, ',' for separator, ';' end-statement,
+" and <[< bracket starts and "'` quotes.
+let g:camelchar = "A-Z0-9.,;:{([`'\""
+nnoremap <silent><C-Left> :<C-u>call search('\C\<\<Bar>\%(^\<Bar>[^'.g:camelchar.']\@<=\)['.g:camelchar.']\<Bar>['.g:camelchar.']\ze\%([^'.g:camelchar.']\&\>\@!\)\<Bar>\%^','bW')<CR>
+nnoremap <silent><C-Right> :<C-u>call search('\C\<\<Bar>\%(^\<Bar>[^'.g:camelchar.']\@<=\)['.g:camelchar.']\<Bar>['.g:camelchar.']\ze\%([^'.g:camelchar.']\&\>\@!\)\<Bar>\%$','W')<CR>
+inoremap <silent><C-Left> <C-o>:call search('\C\<\<Bar>\%(^\<Bar>[^'.g:camelchar.']\@<=\)['.g:camelchar.']\<Bar>['.g:camelchar.']\ze\%([^'.g:camelchar.']\&\>\@!\)\<Bar>\%^','bW')<CR>
+inoremap <silent><C-Right> <C-o>:call search('\C\<\<Bar>\%(^\<Bar>[^'.g:camelchar.']\@<=\)['.g:camelchar.']\<Bar>['.g:camelchar.']\ze\%([^'.g:camelchar.']\&\>\@!\)\<Bar>\%$','W')<CR>
+vnoremap <silent><C-Left> :<C-U>call search('\C\<\<Bar>\%(^\<Bar>[^'.g:camelchar.']\@<=\)['.g:camelchar.']\<Bar>['.g:camelchar.']\ze\%([^'.g:camelchar.']\&\>\@!\)\<Bar>\%^','bW')<CR>v`>o
+vnoremap <silent><C-Right> <Esc>`>:<C-U>call search('\C\<\<Bar>\%(^\<Bar>[^'.g:camelchar.']\@<=\)['.g:camelchar.']\<Bar>['.g:camelchar.']\ze\%([^'.g:camelchar.']\&\>\@!\)\<Bar>\%$','W')<CR>v`<o
+
+" Move 2 characters right and enter insert mode again. For autoclosing bracets
+inoremap <C-S> <Esc>lli
+" Finish line with ;
+inoremap <C-L> <Esc><S-A>;<Esc>
+nnoremap <C-L> <S-A>;<Esc>
