@@ -1,12 +1,5 @@
 source ~/.vim/.vundle_init
 
-" In windows default vim runtime path is in C:\Program Files\vim\. Let's make it ~/.vim
-"if has('win32')
-    "let rtpArray = split(&rtp, ',')
-    "let rtpArray = ['~\.vim'] + rtpArray[1:]
-    "let &rtp=join(rtpArray, ',')
-"endif
-
 " Basic stuff --------------------------- {{{
 
 :set shiftwidth=4
@@ -40,6 +33,9 @@ iabbrev lenth length
 nnoremap M K
 "inoremap <Esc> <nop>
 inoremap jk <Esc>
+
+"Uppercase current word
+inoremap <C-u> <Esc>mdgUiw`da
 " }}} End of basic stuff 
 
 " System stuyff {{{
@@ -75,6 +71,10 @@ endif
 " Prevent gvim to resize by itself
 " default is egmrLtT
 :set guioptions=gmrtT
+:set guioptions-=m  "remove menu bar
+:set guioptions-=T  "remove toolbar
+:set guioptions-=r  "remove right-hand scroll bar
+:set guioptions-=L  "remove left-hand scroll bar
 " }}} End of system stuff
 
 " Quit commands {{{
@@ -88,6 +88,7 @@ else
 endif
 
 " }}}
+
 " Force to learning new commands {{{
 
 noremap <left> <nop>
@@ -103,9 +104,6 @@ map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
 " }}}
-
-"Uppercase current word
-inoremap <C-u> <Esc>mdgUiw`da
 
 " Reset cursor position when loading old file {{{
 function! ResCur()
@@ -174,12 +172,12 @@ nnoremap <C-p> :CtrlPMRU<CR>
 " Misc stuff {{{1
 " Auto update vimrc
 augroup auto_reload
-	au!
+	autocmd!
 	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init,.vundle_init source $MYVIMRC
     " Custom extensions sytnax highlighting
     autocmd BufNewFIle,BufRead *.vundle_init set filetype=vim
     autocmd FileType vim setlocal foldmethod=marker
-    autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})
+    autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
 augroup END
 
 " File navigations
@@ -189,9 +187,28 @@ set wildignore=*.dll,*.o,*.obj,*.bak,*.exe,*.pyc,
 set wildmode=list:longest " turn on wild mode huge list
 
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" Disable annoying match braces behavious highlighting
+highlight! MatchParen cterm=NONE ctermbg=white ctermfg=white
+highlight! link MatchParen StatusLine
+
+:colorscheme solarized
+
+" Deletes
+function! DeleteLine()
+    :echom "we here 1:".v:count
+    if v:count < 1 && getline(line('.')) == ""
+        normal! "_dd
+    else
+        execute "normal! ".v:count."dd"
+    endif
+endfunction
+
+nnoremap dd :<C-u>call DeleteLine()<Esc>
+
+:let g:session_autoload = 'yes'
+:let g:session_autosave = 'yes'
 " }}}1
-
-
 
 " Automatically detect filetype for new files {{{
 function! CheckFileType()
@@ -262,20 +279,6 @@ nnoremap <leader>gps :Dispatch! git push<CR>
 nnoremap <leader>gpl :Dispatch! git pull<CR>
 " }}}
 
-" unicode symbols
-
-"let g:laststatus=2
-"let g:Powerline_dividers_override = ['>>', '>', '<<', '<']
-"let g:Powerline_mode_n = 'NORMA'
-
-"let g:phpqa_messdetector_ruleset = '/opt/www/.utils/build/phpmd.xml'
-"let g:phpqa_codesniffer_args = "--standard=Sotmarket"
-
-"set rtp+=~/.local/lib/python2.7/site-packages/powerline/bindings/vim/
-"python from powerline.vim import setup as powerline_setup
-"python powerline_setup()
-"python del powerline_setup
-
 " LaTeX settings {{{
 let g:tex_flavor='latex'
 
@@ -296,13 +299,6 @@ let g:Tex_BibtexFlavor = 'bibtex'
 let g:Tex_GotoError=0
 " }}}
 
-
-" Disable annoying match braces behavious highlighting
-highlight! MatchParen cterm=NONE ctermbg=white ctermfg=white
-highlight! link MatchParen StatusLine
-
-:colorscheme solarized
-
 "  Navigate in camelCase words {{{
 " Use one of the following to define the camel characters.
 " Stop on capital letters.
@@ -320,16 +316,6 @@ vnoremap <silent><C-Left> :<C-U>call search('\C\<\<Bar>\%(^\<Bar>[^'.g:camelchar
 vnoremap <silent><C-Right> <Esc>`>:<C-U>call search('\C\<\<Bar>\%(^\<Bar>[^'.g:camelchar.']\@<=\)['.g:camelchar.']\<Bar>['.g:camelchar.']\ze\%([^'.g:camelchar.']\&\>\@!\)\<Bar>\%$','W')<CR>v`<o
 
 " }}}
-
-" Deletes
-function! DeleteLine()
-    execute "normal! ".v:count."dd"
-endfunction
-
-nnoremap <silent>dd :<C-u>call DeleteLine()<Esc>
-
-:let g:session_autoload = 'yes'
-:let g:session_autosave = 'yes'
 
 " Autocmnds for FileTypes {{{
 augroup mygroup
