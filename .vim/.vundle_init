@@ -21,8 +21,14 @@ Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'Raimondi/delimitMate'
 Plugin 'kien/ctrlp.vim'
+Plugin 'digitaltoad/vim-jade'
+
+Plugin 'xolox/vim-misc'
+Plugin 'xolox/vim-session'
+Plugin 'mileszs/ack.vim'
+"Plugin 'pangloss/vim-javascript' " Indent in html
 "Plugin 'SirVer/ultisnips'
-"Plugin 'tpope/vim-dispatch'
+Plugin 'tpope/vim-dispatch'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
