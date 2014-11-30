@@ -2,25 +2,26 @@ source ~/.vim/.vundle_init
 
 " Basic stuff --------------------------- {{{
 
-:set shiftwidth=4
-:set tabstop=4
-:set expandtab
-:set autoindent
-:set incsearch 
-:set wildmenu
-:set wildmode=full
-:set gdefault
-:set iminsert=0
-:set imsearch=0
-:set ignorecase
-:set nu
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set autoindent
+set incsearch 
+set hlsearch
+set wildmode=full
+set gdefault
+set iminsert=0
+set imsearch=0
+set ignorecase
+set nu
+set laststatus=2 " Vim airline even when 1 file opened
 " Allow backspace after append
-:set backspace=indent,eol,start
+set backspace=indent,eol,start
 
 :syntax on
 filetype plugin indent on
 " Keep 3 lines below and above the cursor
-:set scrolloff=3
+set scrolloff=3
 
 set foldcolumn=3
 set autochdir
@@ -28,6 +29,7 @@ let mapleader=","
 let maplocalleader="\\"
 iabbrev lenght length
 iabbrev lenth length
+set isfname-=, " Allow to work in rtp
 
 " Man page
 nnoremap M K
@@ -36,11 +38,12 @@ inoremap jk <Esc>
 
 "Uppercase current word
 inoremap <C-u> <Esc>mdgUiw`da
+
 " }}} End of basic stuff 
 
 " System stuyff {{{
 if has("win32unix")
-    :set keymap=russian-jcukenwin
+    set keymap=russian-jcukenwin
 endif
 " Tell vim to remember certain things when we exit
 " "  '10  :  marks will be remembered for up to 10 previously edited files
@@ -70,11 +73,11 @@ else
 endif
 " Prevent gvim to resize by itself
 " default is egmrLtT
-:set guioptions=gmrtT
-:set guioptions-=m  "remove menu bar
-:set guioptions-=T  "remove toolbar
-:set guioptions-=r  "remove right-hand scroll bar
-:set guioptions-=L  "remove left-hand scroll bar
+set guioptions=gmrtT
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set guioptions-=L  "remove left-hand scroll bar
 " }}} End of system stuff
 
 " Quit commands {{{
@@ -158,6 +161,7 @@ augroup END
 " Alt + 1 - NERD Tree
 :nnoremap <A-1> :NERDTreeFocusToggle<CR>
 :nnoremap <A-2> :NERDTreeFind<CR>
+:nnoremap <A-3> :GundoToggle<CR>
 let g:NERDTreeDirArrows=0
 
 " Ctrl+N switch options !! Confclits with TextMate
@@ -167,6 +171,35 @@ let g:NERDTreeDirArrows=0
 " Insert new line without insert mode
 nnoremap <S-Enter> O<Esc>
 nnoremap <C-p> :CtrlPMRU<CR>
+
+" Allow regex without escape
+nnoremap / /\v
+nnoremap ? ?\v
+
+nnoremap <silent> <leader><space> :let @/ = ''<cr>
+
+" Keep search matches in the middle of the window.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" j = Move by screenline, gj move by real line
+nnoremap j gj
+nnoremap k gk
+nnoremap gj j
+nnoremap gk k
+
+"Space to toggle folds
+nnoremap <space> zazz
+vnoremap <space> zazz
+
+" wrap argument with (): somefunction|argument => somefunction(argumment)
+inoremap <c-j> (<Esc>Ea)
+
+" <Leader> + increase window width by 1/3
+nnoremap <silent><leader>+ :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
+nnoremap <silent><leader>= :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
+nnoremap <silent><leader>- :execute "vertical resize " . (winwidth(0) * 2/3)<CR>
+
 " }}}
 
 " Misc stuff {{{1
@@ -206,8 +239,28 @@ endfunction
 
 nnoremap dd :<C-u>call DeleteLine()<Esc>
 
-:let g:session_autoload = 'yes'
-:let g:session_autosave = 'yes'
+" Highlight cursor only in current window, but not in insert mode
+augroup CursorLine
+    autocmd!
+    autocmd VimEnter,WinEnter,BufWinEnter,InsertLeave * setlocal cursorline
+    autocmd WinLeave,InsertEnter * setlocal nocursorline
+augroup end CursorLine
+
+" Highlight traling spaces
+highlight TrailingSpace guibg=Green
+" \v = very magic, \a = any alpha-character, @<= = look behind
+nnoremap <leader>w :match TrailingSpace /\v\a@<=\s+$/<CR>
+" Clear match
+nnoremap <leader>W :match clear<CR>
+" List navigation {{{
+
+nnoremap <left>  :cprev<cr>zvzz
+nnoremap <right> :cnext<cr>zvzz
+nnoremap <up>    :lprev<cr>zvzz
+nnoremap <down>  :lnext<cr>zvzz
+" }}}
+"nnoremap <leader>g mC:silent execute "grep -r ".shellescape(expand("<cWORD>"))." ."<cr>:copen 20<cr>
+
 " }}}1
 
 " Automatically detect filetype for new files {{{
@@ -422,3 +475,9 @@ command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tab
 
 " end redir_messages.vim" }}}
 
+" FileType: QuickFix {{{
+augroup QuickFix
+    " Exit from grep
+    autocmd FileType qf :nnoremap K :q!<CR>`C:delmarks C<CR>
+augroup end
+" }}}

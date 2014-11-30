@@ -26,9 +26,14 @@ Plugin 'digitaltoad/vim-jade'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-session'
 Plugin 'mileszs/ack.vim'
-"Plugin 'pangloss/vim-javascript' " Indent in html
+Plugin 'pangloss/vim-javascript' " Indent in html
+"Plugin 'moll/vim-node'
+"Plugin 'web-indent'
+
 "Plugin 'SirVer/ultisnips'
 Plugin 'tpope/vim-dispatch'
+Plugin 'tpope/vim-surround'
+Plugin 'sjl/gundo.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -46,4 +51,7 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 set rtp+=~/.vim/bundle/vim-colors-solarized
-
+set rtp+=~/.vim/bundle/web-indent
+"set g:js_indent=~/.vim/bundle/web-indent/indent/javascript.vim
+"var isfname = &isifname
+"isfname = 
