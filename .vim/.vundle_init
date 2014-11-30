@@ -24,7 +24,6 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'digitaltoad/vim-jade'
 
 Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-session'
 Plugin 'mileszs/ack.vim'
 Plugin 'pangloss/vim-javascript' " Indent in html
 "Plugin 'moll/vim-node'
