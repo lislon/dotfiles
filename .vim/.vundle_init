@@ -1,6 +1,13 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
+" Reset rtp for disabling plugin when resource vimrc
+if (!exists("g:original_rtp"))
+    let g:original_rtp = &rtp
+else
+    let &rtp=g:original_rtp
+endif
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -17,22 +24,32 @@ Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets'
-Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+"Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim'}
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'Raimondi/delimitMate'
 Plugin 'kien/ctrlp.vim'
 Plugin 'digitaltoad/vim-jade'
+Plugin 'scrooloose/syntastic'
+Plugin 'bling/vim-airline'
 
 Plugin 'xolox/vim-misc'
 Plugin 'mileszs/ack.vim'
-Plugin 'pangloss/vim-javascript' " Indent in html
+Plugin 'pangloss/vim-javascript'
 "Plugin 'moll/vim-node'
-"Plugin 'web-indent'
 
-"Plugin 'SirVer/ultisnips'
 Plugin 'tpope/vim-dispatch'
 Plugin 'tpope/vim-surround'
 Plugin 'sjl/gundo.vim'
+
+" Debugging vim
+Plugin 'vim-scripts/genutils'
+Plugin 'vim-scripts/BreakPts'
+Plugin 'rosenfeld/conque-term'
+Plugin 'mustache/vim-mustache-handlebars'
+
+"Plugin 'Valloric/YouCompleteMe'
+"Plugin 'vim-scripts/indenthtml.vim'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -50,7 +67,5 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 set rtp+=~/.vim/bundle/vim-colors-solarized
-set rtp+=~/.vim/bundle/web-indent
+"set rtp+=~/.vim/bundle/ycm32
 "set g:js_indent=~/.vim/bundle/web-indent/indent/javascript.vim
-"var isfname = &isifname
-"isfname = 

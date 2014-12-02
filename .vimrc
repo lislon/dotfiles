@@ -15,6 +15,8 @@ set imsearch=0
 set ignorecase
 set nu
 set laststatus=2 " Vim airline even when 1 file opened
+set encoding=utf-8
+set infercase
 " Allow backspace after append
 set backspace=indent,eol,start
 
@@ -29,7 +31,7 @@ let mapleader=","
 let maplocalleader="\\"
 iabbrev lenght length
 iabbrev lenth length
-set isfname-=, " Allow to work in rtp
+set isfname-=, " Allow to gf work in rtp
 
 " Man page
 nnoremap M K
@@ -39,11 +41,23 @@ inoremap jk <Esc>
 "Uppercase current word
 inoremap <C-u> <Esc>mdgUiw`da
 
+" Script names
+nnoremap <leader>wsn :WinMessage scriptnames<CR>
+
+" rtp
+nnoremap <leader>wrt :WinMessage set rtp?<CR>
+
 " }}} End of basic stuff 
 
-" System stuyff {{{
+" System stuff {{{
 if has("win32unix")
     set keymap=russian-jcukenwin
+endif
+
+if has ('win32')
+    set guifont=Powerline_Consolas:h11:cRUSSIAN
+else
+    set guifont=Powerline\ Consolas\ 10
 endif
 " Tell vim to remember certain things when we exit
 " "  '10  :  marks will be remembered for up to 10 previously edited files
@@ -170,7 +184,6 @@ let g:NERDTreeDirArrows=0
 
 " Insert new line without insert mode
 nnoremap <S-Enter> O<Esc>
-nnoremap <C-p> :CtrlPMRU<CR>
 
 " Allow regex without escape
 nnoremap / /\v
@@ -200,6 +213,18 @@ nnoremap <silent><leader>+ :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
 nnoremap <silent><leader>= :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
 nnoremap <silent><leader>- :execute "vertical resize " . (winwidth(0) * 2/3)<CR>
 
+nnoremap <c-k> :messages<CR>
+
+" Select all
+nnoremap vaa ggVGg_
+
+" relative number lines
+nnoremap <leader>N :set relativenumber!<CR>
+
+" Toggle line numbers
+nnoremap <leader>n :setlocal number!<cr>
+
+nmap <leader>cc <plug>NERDCommenterToggle
 " }}}
 
 " Misc stuff {{{1
@@ -209,8 +234,6 @@ augroup auto_reload
 	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init,.vundle_init source $MYVIMRC
     " Custom extensions sytnax highlighting
     autocmd BufNewFIle,BufRead *.vundle_init set filetype=vim
-    autocmd FileType vim setlocal foldmethod=marker
-    autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
 augroup END
 
 " File navigations
@@ -227,9 +250,8 @@ highlight! link MatchParen StatusLine
 
 :colorscheme solarized
 
-" Deletes
+" Delete line but not copy blank {{{
 function! DeleteLine()
-    :echom "we here 1:".v:count
     if v:count < 1 && getline(line('.')) == ""
         normal! "_dd
     else
@@ -237,7 +259,9 @@ function! DeleteLine()
     endif
 endfunction
 
-nnoremap dd :<C-u>call DeleteLine()<Esc>
+nnoremap <silent>dd :<C-u>call DeleteLine()<Esc>
+" }}}
+
 
 " Highlight cursor only in current window, but not in insert mode
 augroup CursorLine
@@ -261,7 +285,73 @@ nnoremap <down>  :lnext<cr>zvzz
 " }}}
 "nnoremap <leader>g mC:silent execute "grep -r ".shellescape(expand("<cWORD>"))." ."<cr>:copen 20<cr>
 
-" }}}1
+" Vimscript debugger
+autocmd FileType vim nnoremap <silent> <F7> :BreakPts<CR>
+
+command! ErrorsToggle call ErrorsToggle()
+function! ErrorsToggle() " {{{
+  if exists("w:is_error_window")
+    unlet w:is_error_window
+    exec "q"
+  else
+    exec "Errors"
+    lopen
+    let w:is_error_window = 1
+  endif
+endfunction " }}}
+
+command! -bang -nargs=? QFixToggle call QFixToggle(<bang>0)
+function! QFixToggle(forced) " {{{
+  if exists("g:qfix_win") && a:forced == 0
+    cclose
+    unlet g:qfix_win
+  else
+    copen 10
+    let g:qfix_win = bufnr("$")
+  endif
+endfunction " }}}
+
+nmap <silent> <f3> :ErrorsToggle<cr>
+nmap <silent> <f4> :QFixToggle<cr>
+
+" Status line {{{
+
+"hi User1 guifg=#eea040 guibg=#222222
+"hi User2 guifg=#dd3333 guibg=#222222
+"hi User3 guifg=#ff66ff guibg=#222222
+"hi User4 guifg=#a0ee40 guibg=#222222
+"hi User5 guifg=#eeee40 guibg=#222222
+
+"set statusline=
+"set statusline +=%1*\ %n\ %*            "buffer number
+"set statusline +=%5*%{&ff}%*            "file format
+"set statusline +=%3*%y%*                "file type
+"set statusline +=%4*\ %<%F%*            "full path
+"set statusline +=%2*%m%*                "modified flag
+"set statusline +=%1*%=%5l%*             "current line
+"set statusline +=%2*/%L%*               "total lines
+"set statusline +=%1*%4v\ %*             "virtual column number
+"set statusline +=%2*0x%04B\ %*          "character under cursor
+
+" }}}
+
+" For local replace
+nnoremap gr gd[{V%::s/<C-R>///gc<left><left><left>
+
+" For global replace
+nnoremap gR gD:%s/<C-R>///gc<left><left><left>
+
+" Confirm on exit {{{
+nnoremap ZZ :call QuitPrompt()<cr>
+
+fun! QuitPrompt()
+   if has("gui_running") && tabpagenr("$") == 1 && winnr("$") == 1
+      let choice = confirm("Close?", "&yes\n&no", 1)
+      if choice == 1 | wq | endif
+   else | wq | endif
+endfu " }}}
+" }}}
+
 
 " Automatically detect filetype for new files {{{
 function! CheckFileType()
@@ -375,15 +465,13 @@ augroup mygroup
     autocmd!
     autocmd BufWritePost *.tex silent call Tex_RunLaTeX()
     autocmd BufWritePost *.tex silent !pkill -USR1 xdvi.bin
-    autocmd FileType javascript let b:delimitMate_expand_cr = 1
     autocmd FileType jade,css setlocal sw=2
 
     " Forget about this
-    autocmd FileType javascript :iabbrev return NOPENOPENOPE
+    autocmd FileType javascript :iabbrev re return
     autocmd FileType javascript :iabbrev function NOPENOPENOPE
 augroup END
 " }}} 
-
 " Opeator pending maps {{{
 onoremap p i(
 " }}}
@@ -478,6 +566,63 @@ command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tab
 " FileType: QuickFix {{{
 augroup QuickFix
     " Exit from grep
-    autocmd FileType qf :nnoremap K :q!<CR>`C:delmarks C<CR>
+    autocmd FileType qf :nnoremap K :q!<CR>
 augroup end
 " }}}
+
+" FileType: NerdTree {{{
+augroup NerdTree
+    " Space to open/close folders
+    autocmd FileType nerdTree nmap <buffer><special><silent> <Space> <CR>
+augroup end
+" }}}
+
+" FileType: Vim {{{
+augroup Vim
+    autocmd FileType vim setlocal foldmethod=marker
+    autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
+augroup end
+    " }}}
+
+" FileType: Html {{{
+augroup Html
+    autocmd FileType html setlocal nowrap
+augroup end
+    " }}}
+
+" Prevent to modify compiled files {{{
+augroup JavascriptBoywer
+   au!
+   " this one is which you're most likely to use?
+   autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> K :q!
+augroup end
+" }}}
+
+" Plugin settings {{{
+let g:brkptsDefStartMode = "functions"
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc" 
+let g:delimitMate_expand_cr = 1
+let g:syntastic_javascript_checkers = ['jsl']
+let g:NERDTreeCopyCmd='cp '
+let g:syntastic_mode_map = {
+            \ "mode": "active",
+            \ "active_filetypes": [],
+            \ "passive_filetypes": ['java', 'html', 'rst']
+            \ }
+let g:syntastic_auto_jump = 0
+let g:syntastic_enable_signs = 1
+
+let g:ctrlp_cmd = 'CtrlPMRU'
+let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_open_new_file = 'r'
+let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$'
+let g:ctrlp_mruf_case_sensitive = 0
+let g:ctrlp_by_filename = 1
+let g:ctrlp_mruf_default_order = 1
+let g:airline_powerline_fonts = 1
+
+" Often i am edit files on compiled dir in nodejs...
+"let g:NERDTreeIgnore=['public$[[dir]]']
+" }}}
+

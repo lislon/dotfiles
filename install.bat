@@ -34,6 +34,7 @@ IF NOT EXIST %bundledir%\Vundle.vim (
 
 GOTO:EOF
 
-
+REM Powerline fonts
+REM git clone https://github.com/runsisi/consolas-font-for-powerline 
 
 call:install_vim
