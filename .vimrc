@@ -1,5 +1,4 @@
 source ~/.vim/.vundle_init
-
 " Basic stuff --------------------------- {{{
 
 set shiftwidth=4
@@ -54,6 +53,13 @@ if has("win32unix")
     set keymap=russian-jcukenwin
 endif
 
+let g:solarized_termcolors=256
+
+if has('gui_running')
+    set background=light
+else
+    set background=dark
+endif
 if has ('win32')
     set guifont=Powerline_Consolas:h11:cRUSSIAN
 else

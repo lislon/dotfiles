@@ -75,4 +75,6 @@ install_vim () {
 
 install_zsh
 install_vim
+echo "Plugin installation..."
+vim +PluginInstall +qall
 echo "Installation done."
