@@ -341,6 +341,11 @@ nnoremap gr gd[{V%::s/<C-R>///gc<left><left><left>
 " For global replace
 nnoremap gR gD:%s/<C-R>///gc<left><left><left>
 
+" Any selection
+vnoremap gr :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gv"ky:%s/<C-R>k//g<left><left>
+
 " Confirm on exit {{{
 nnoremap ZZ :call QuitPrompt()<cr>
 
