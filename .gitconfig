@@ -12,6 +12,7 @@
 	l = "!. ~/.githelpers && pretty_git_log"
 	la = !git l --all
 	d = difftool
+    vhr = !git fetch && git reset --hard FETCH_HEAD
 [user]
 	email = elephant@lislon.ru
 	name = Boris Avdeev
