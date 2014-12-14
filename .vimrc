@@ -5,7 +5,7 @@ set shiftwidth=4
 set tabstop=4
 set expandtab
 set autoindent
-set incsearch 
+set incsearch
 set hlsearch
 set wildmode=full
 set gdefault
@@ -46,7 +46,7 @@ nnoremap <leader>wsn :WinMessage scriptnames<CR>
 " rtp
 nnoremap <leader>wrt :WinMessage set rtp?<CR>
 
-" }}} End of basic stuff 
+" }}} End of basic stuff
 
 " System stuff {{{
 if has("win32unix")
@@ -230,7 +230,14 @@ nnoremap <leader>N :set relativenumber!<CR>
 " Toggle line numbers
 nnoremap <leader>n :setlocal number!<cr>
 
-nmap <leader>cc <plug>NERDCommenterToggle
+nnoremap <leader>cc <plug>NERDCommenterToggle
+
+" Remove trailing
+nnoremap <silent> <leader>tt :%s/\v\s+$//<CR>:let @/=''<CR>
+
+" Copy path to buffer and show it in console
+nnoremap <c-s-g> :let @*=expand("%:p")<CR>:echo expand("%:p")<CR>
+
 " }}}
 
 " Misc stuff {{{1
@@ -308,6 +315,7 @@ function! ErrorsToggle() " {{{
 endfunction " }}}
 
 command! -bang -nargs=? QFixToggle call QFixToggle(<bang>0)
+
 function! QFixToggle(forced) " {{{
   if exists("g:qfix_win") && a:forced == 0
     cclose
@@ -318,8 +326,17 @@ function! QFixToggle(forced) " {{{
   endif
 endfunction " }}}
 
+fun! FoldColumnToggle()
+    if &foldcolumn
+        setlocal foldcolumn=0
+    else
+        setlocal foldcolumn=3
+    endif
+endf
+
 nmap <silent> <f3> :ErrorsToggle<cr>
 nmap <silent> <f4> :QFixToggle<cr>
+nnoremap <silent> <leader>f :call FoldColumnToggle()<cr>
 
 " Status line {{{
 
@@ -364,13 +381,12 @@ fun! QuitPrompt()
 endfu " }}}
 " }}}
 
-
 " Automatically detect filetype for new files {{{
 function! CheckFileType()
 	if exists('b:countCheck') == 0
 		let b:countCheck = 0
 	endif
-	let b:countCheck += 1 
+	let b:countCheck += 1
 
 	if &filetype == "" && b:countCheck > 30
 		filetype detect
@@ -411,7 +427,7 @@ function! RunCmd(cmd)
 	setlocal nomodifiable nomodified
 endfunction
 
-"command! RunBash call RunCmd("") 
+"command! RunBash call RunCmd("")
 nnoremap <F5> :<C-u>up\|call RunCmd("")<CR>
 inoremap <F5> <Esc>:up\|call RunCmd("")<CR>
 " }}}
@@ -483,7 +499,8 @@ augroup mygroup
     autocmd FileType javascript :iabbrev re return
     autocmd FileType javascript :iabbrev function NOPENOPENOPE
 augroup END
-" }}} 
+" }}}
+
 " Opeator pending maps {{{
 onoremap p i(
 " }}}
@@ -613,7 +630,7 @@ augroup end
 " Plugin settings {{{
 let g:brkptsDefStartMode = "functions"
 let g:html_indent_script1 = "inc"
-let g:html_indent_style1 = "inc" 
+let g:html_indent_style1 = "inc"
 let g:delimitMate_expand_cr = 1
 let g:syntastic_javascript_checkers = ['jsl']
 let g:NERDTreeCopyCmd='cp '

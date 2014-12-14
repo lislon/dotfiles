@@ -46,6 +46,7 @@ Plugin 'vim-scripts/genutils'
 Plugin 'vim-scripts/BreakPts'
 Plugin 'rosenfeld/conque-term'
 Plugin 'mustache/vim-mustache-handlebars'
+Plugin 'KabbAmine/vCoolor.vim'
 
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'vim-scripts/indenthtml.vim'
