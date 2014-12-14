@@ -254,6 +254,7 @@ autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 highlight! MatchParen cterm=NONE ctermbg=white ctermfg=white
 highlight! link MatchParen StatusLine
 
+set background=dark
 :colorscheme solarized
 
 " Delete line but not copy blank {{{
