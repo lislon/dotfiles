@@ -176,6 +176,8 @@ augroup END
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 " Irritations
 :nnoremap <F10> :vs ~/.vim/todo.txt<CR>
+" Show html snippets
+:nnoremap <leader>fj :tabe ~\.vim\snippets\javascript.snippets<CR>
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
 :nnoremap <F2> :w<CR>
 :inoremap <F2> <Esc>:w<CR>

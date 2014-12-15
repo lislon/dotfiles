@@ -14,7 +14,7 @@ IF NOT EXIST "%HOMEPATH%\.vim" (
   mklink /J %HOMEPATH%\.vim %HOMEPATH%\dotfiles\.vim
 )
 
-
+mklink %HOMEPATH%\.gitconfig %HOMEPATH%\dotfiles\.gitconfig
 
 :install_vim
 
