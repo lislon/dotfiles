@@ -174,6 +174,8 @@ augroup END
 :nnoremap <F3> :let @/ = ""<CR>
 :nnoremap <F12> :tabe $MYVIMRC<CR>
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
+" Irritations
+:nnoremap <F10> :vs ~/.vim/todo.txt<CR>
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
 :nnoremap <F2> :w<CR>
 :inoremap <F2> <Esc>:w<CR>
@@ -230,8 +232,8 @@ nnoremap <leader>N :set relativenumber!<CR>
 " Toggle line numbers
 nnoremap <leader>n :setlocal number!<cr>
 
-nmap <leader>cc <plug>NERDCommenterToggle
-nmap <leader>cs <plug>NERDCommenterSexy
+map <leader>cc <plug>NERDCommenterToggle
+map <leader>cs <plug>NERDCommenterSexy
 
 " Remove trailing spaces
 nnoremap <silent> <leader>ts :let _oldts = @/<CR>:%s/\v\s+$//<CR>:let @/=_oldts<CR>
@@ -242,8 +244,6 @@ nnoremap <c-s-g> :let @*=expand("%:p")<CR>:echo expand("%:p")<CR>
 " Auto reindent when paste
 nnoremap p ]p
 
-" No reindent when paste
-nnoremap <c-p> p
 
 " }}}
 
@@ -366,16 +366,16 @@ nnoremap <silent> <leader>f :call FoldColumnToggle()<cr>
 
 " }}}
 
-" For local replace
-nnoremap gr gd[{V%::s/<C-R>///gc<left><left><left>
+" Replace word under cursor
+nnoremap gr yiw:.,$s/<C-r>"//c<Left><Left> 
 
 " For global replace
-nnoremap gR gD:%s/<C-R>///gc<left><left><left>
+nnoremap gR gD:%s/<C-R>///c<left><left><left>
 
 " Any selection
 vnoremap gr :<C-U>
   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gv"ky:%s/<C-R>k//g<left><left>
+  \gv"ky:%s/<C-R>k//<left><left>
 
 " Confirm on exit {{{
 nnoremap ZZ :call QuitPrompt()<cr>
