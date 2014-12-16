@@ -230,10 +230,11 @@ nnoremap <leader>N :set relativenumber!<CR>
 " Toggle line numbers
 nnoremap <leader>n :setlocal number!<cr>
 
-nnoremap <leader>cc <plug>NERDCommenterToggle
+nmap <leader>cc <plug>NERDCommenterToggle
+nmap <leader>cs <plug>NERDCommenterSexy
 
-" Remove trailing
-nnoremap <silent> <leader>tt :%s/\v\s+$//<CR>:let @/=''<CR>
+" Remove trailing spaces
+nnoremap <silent> <leader>ts :let _oldts = @/<CR>:%s/\v\s+$//<CR>:let @/=_oldts<CR>
 
 " Copy path to buffer and show it in console
 nnoremap <c-s-g> :let @*=expand("%:p")<CR>:echo expand("%:p")<CR>
@@ -650,6 +651,7 @@ let g:ctrlp_mruf_case_sensitive = 0
 let g:ctrlp_by_filename = 1
 let g:ctrlp_mruf_default_order = 1
 let g:airline_powerline_fonts = 1
+let g:NERDCreateDefaultMappings = 0
 
 " Often i am edit files on compiled dir in nodejs...
 "let g:NERDTreeIgnore=['public$[[dir]]']
