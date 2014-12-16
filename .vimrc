@@ -239,6 +239,12 @@ nnoremap <silent> <leader>ts :let _oldts = @/<CR>:%s/\v\s+$//<CR>:let @/=_oldts<
 " Copy path to buffer and show it in console
 nnoremap <c-s-g> :let @*=expand("%:p")<CR>:echo expand("%:p")<CR>
 
+" Auto reindent when paste
+nnoremap p ]p
+
+" No reindent when paste
+nnoremap <c-p> p
+
 " }}}
 
 " Misc stuff {{{1
