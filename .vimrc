@@ -246,6 +246,7 @@ nnoremap <c-s-g> :let @*=expand("%:p")<CR>:echo expand("%:p")<CR>
 " Auto reindent when paste
 nnoremap p ]p
 
+nmap <C-Enter> o<Esc>
 
 " }}}
 
