@@ -11,7 +11,7 @@ set wildmode=full
 set gdefault
 set iminsert=0
 set imsearch=0
-set ignorecase
+set smartcase
 set nu
 set laststatus=2 " Vim airline even when 1 file opened
 set encoding=utf-8
@@ -101,12 +101,18 @@ set guioptions-=L  "remove left-hand scroll bar
 " }}} End of system stuff
 
 " Quit commands {{{
+fun! QuitPrompt()
+   if has("gui_running") && tabpagenr("$") == 1 && winnr("$") <= 2
+      let choice = confirm("Close?", "&yes\n&no", 1)
+      if choice == 1 | q | endif
+   else | q | endif
+endfun
 
 if &diff
 	color skittles_dark
 	noremap Q :cquit<CR>
 else
-	nnoremap <silent>K :q<CR>
+	nnoremap <silent>K :call QuitPrompt()<CR>
     nnoremap Q <nop>
 endif
 
@@ -171,8 +177,9 @@ augroup END
 :inoremap <C-e> <Esc>A
 
 " Turn on/off highlight search by F3
+:nnoremap <F1> :help 
 :nnoremap <F3> :let @/ = ""<CR>
-:nnoremap <F12> :tabe $MYVIMRC<CR>
+:nnoremap <F12> :tabe ~/dotfiles/.vimrc<CR>
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 " Irritations
 :nnoremap <F10> :vs ~/.vim/todo.txt<CR>
@@ -379,17 +386,6 @@ nnoremap gR gD:%s/<C-R>///c<left><left><left>
 vnoremap gr :<C-U>
   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
   \gv"ky:%s/<C-R>k//<left><left>
-
-" Confirm on exit {{{
-nnoremap ZZ :call QuitPrompt()<cr>
-
-fun! QuitPrompt()
-   if has("gui_running") && tabpagenr("$") == 1 && winnr("$") == 1
-      let choice = confirm("Close?", "&yes\n&no", 1)
-      if choice == 1 | wq | endif
-   else | wq | endif
-endfu " }}}
-" }}}
 
 " Automatically detect filetype for new files {{{
 function! CheckFileType()
