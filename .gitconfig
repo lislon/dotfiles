@@ -27,7 +27,7 @@
 	ui = true
 	pager = true
 [diff]
-	external = ~/dotfiles/bin/git_diff_wrapper
+	;external = ~/dotfiles/bin/git_diff_wrapper
 [merge]
 	tool = vimdiff
 [difftool]

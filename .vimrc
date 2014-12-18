@@ -182,7 +182,8 @@ augroup END
 :nnoremap <F12> :tabe ~/dotfiles/.vimrc<CR>
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 " Irritations
-:nnoremap <F10> :vs ~/.vim/todo.txt<CR>
+:nnoremap <F10> :vs ~/dotfiles/irritations.txt<CR>
+:nnoremap <F9> :vs ~/dotfiles/README.md<CR>
 " Show html snippets
 :nnoremap <leader>fj :tabe ~\.vim\snippets\javascript.snippets<CR>
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
@@ -657,7 +658,7 @@ let g:ctrlp_by_filename = 1
 let g:ctrlp_mruf_default_order = 1
 let g:airline_powerline_fonts = 1
 let g:NERDCreateDefaultMappings = 0
-
+let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
 " Often i am edit files on compiled dir in nodejs...
 "let g:NERDTreeIgnore=['public$[[dir]]']
 " }}}

@@ -10,4 +10,18 @@ git clone https://github.com/lislon/dotfiles.git
 Windows + Cygwin +ideavim
 -------------------------
 
+Prerequites: 
+
+ - Python 2.7 https://www.python.org/downloads/
+ - mingw
+
+
 `mklink /H <path_to_git_version_of_ideavimrc> <path c:/Users/Elephant/.ideavimrc>`
+
+== Additional plugin installation
+
+ - Follow instructions https://github.com/JazzCore/ctrlp-cmatcher/
+
+== Cheatsheet
+
+ - ``]m [m``  - Move to next JS NOPENOPENOPE/block {}

@@ -28,6 +28,7 @@ Plugin 'honza/vim-snippets'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'Raimondi/delimitMate'
 Plugin 'kien/ctrlp.vim'
+Plugin 'JazzCore/ctrlp-cmatcher'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'scrooloose/syntastic'
 Plugin 'bling/vim-airline'
@@ -70,3 +71,9 @@ filetype plugin indent on    " required
 set rtp+=~/.vim/bundle/vim-colors-solarized
 "set rtp+=~/.vim/bundle/ycm32
 "set g:js_indent=~/.vim/bundle/web-indent/indent/javascript.vim
+
+"augroup VundleInit
+    "au!
+    "" this one is which you're most likely to use?
+    "autocmd BufWritePost ~/.vim/.vundle_init :PluginInstall
+"augroup end
