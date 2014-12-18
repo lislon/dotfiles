@@ -73,8 +73,8 @@ endif
 " "  n... :  where to save the viminfo files
 set viminfo='10,\"100,:20,%,n~/.viminfo
 if has('persistent_undo')
-	set undofile
-	set undodir=~/.vimtmp/undo
+    set undofile
+    set undodir=~/.vimtmp/undo
 endif
 " Move swap files
 set backupdir=~/.vimtmp/swp
@@ -83,13 +83,13 @@ set directory=~/.vimtmp/swp
 
 " Support color highlight in putty
 if has('unix')
-	set t_Co=256
+    set t_Co=256
 endif
 
 if has('unix')
-	language messages C
+    language messages C
 else
-	language messages en
+    language messages en
 endif
 " Prevent gvim to resize by itself
 " default is egmrLtT
@@ -109,10 +109,10 @@ fun! QuitPrompt()
 endfun
 
 if &diff
-	color skittles_dark
-	noremap Q :cquit<CR>
+    color skittles_dark
+    noremap Q :cquit<CR>
 else
-	nnoremap <silent>K :call QuitPrompt()<CR>
+    nnoremap <silent>K :call QuitPrompt()<CR>
     nnoremap Q <nop>
 endif
 
@@ -137,14 +137,14 @@ map <C-l> <C-w>l
 " Reset cursor position when loading old file {{{
 function! ResCur()
   if line("'\"") <= line("$")
-	  normal! g`"
-	  return 1
+      normal! g`"
+      return 1
   endif
 endfunction
 
 augroup resCur
-	autocmd!
-	autocmd BufWinEnter * call ResCur()
+    autocmd!
+    autocmd BufWinEnter * call ResCur()
 augroup END
 
 " }}}
@@ -260,8 +260,8 @@ nmap <C-Enter> o<Esc>
 " Misc stuff {{{1
 " Auto update vimrc
 augroup auto_reload
-	autocmd!
-	autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init,.vundle_init source $MYVIMRC
+    autocmd!
+    autocmd BufWritePost ~/.vimrc,~/dotfiles/.vimrc,~/dotfiles/.vim/.vundle_init,.vundle_init source $MYVIMRC
     " Custom extensions sytnax highlighting
     autocmd BufNewFIle,BufRead *.vundle_init set filetype=vim
 augroup END
@@ -269,7 +269,7 @@ augroup END
 " File navigations
 set wildmenu
 set wildignore=*.dll,*.o,*.obj,*.bak,*.exe,*.pyc,
-			\*.jpg,*.gif,*.png
+            \*.jpg,*.gif,*.png
 set wildmode=list:longest " turn on wild mode huge list
 
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -389,48 +389,48 @@ vnoremap gr :<C-U>
 
 " Automatically detect filetype for new files {{{
 function! CheckFileType()
-	if exists('b:countCheck') == 0
-		let b:countCheck = 0
-	endif
-	let b:countCheck += 1
+    if exists('b:countCheck') == 0
+        let b:countCheck = 0
+    endif
+    let b:countCheck += 1
 
-	if &filetype == "" && b:countCheck > 30
-		filetype detect
-	elseif b:countCheck > 200 || &filetype != ""
-		autocmd! newFileDetection
-	endif
+    if &filetype == "" && b:countCheck > 30
+        filetype detect
+    elseif b:countCheck > 200 || &filetype != ""
+        autocmd! newFileDetection
+    endif
 endfunction
 
 augroup newFileDetection
-	autocmd CursorMovedI * call CheckFileType()
+    autocmd CursorMovedI * call CheckFileType()
 augroup END
 " }}}
 
 " F5 for running current file {{{
 function! RunCmd(cmd)
-	let fn=expand("%:p")
+    let fn=expand("%:p")
     let fns=expand("%")
-	let ft = &l:filetype
-	botright copen
-	setlocal modifiable
-	%d _
-	if ft == "ruby"
-		silent execute "read !ruby ".fn
+    let ft = &l:filetype
+    botright copen
+    setlocal modifiable
+    %d _
+    if ft == "ruby"
+        silent execute "read !ruby ".fn
     elseif ft == "javascript"
-		silent execute "read !node ".fns
-	elseif ft != ""
-		silent execute "read !".fn
-	else
-		silent execute "read !".a:cmd." ".fn
-	endif
-	1d _
-	normal! 0
-	if ft != ""
-		execute "setf ".ft
-	else
-		setlocal filetype=
-	endif
-	setlocal nomodifiable nomodified
+        silent execute "read !node ".fns
+    elseif ft != ""
+        silent execute "read !".fn
+    else
+        silent execute "read !".a:cmd." ".fn
+    endif
+    1d _
+    normal! 0
+    if ft != ""
+        execute "setf ".ft
+    else
+        setlocal filetype=
+    endif
+    setlocal nomodifiable nomodified
 endfunction
 
 "command! RunBash call RunCmd("")
