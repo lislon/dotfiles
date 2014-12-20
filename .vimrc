@@ -6,7 +6,7 @@ set tabstop=4
 set expandtab
 set autoindent
 set incsearch
-set hlsearch
+"set hlsearch
 set wildmode=full
 set gdefault
 set iminsert=0
@@ -18,14 +18,16 @@ set encoding=utf-8
 set infercase
 " Allow backspace after append
 set backspace=indent,eol,start
+" Prevent open same files twice
+set switchbuf=useopen
 
 :syntax on
 filetype plugin indent on
 " Keep 3 lines below and above the cursor
 set scrolloff=3
 
-set foldcolumn=3
-set autochdir
+set foldcolumn=0
+"set autochdir
 let mapleader=","
 let maplocalleader="\\"
 iabbrev lenght length
@@ -137,7 +139,7 @@ map <C-l> <C-w>l
 " Reset cursor position when loading old file {{{
 function! ResCur()
   if line("'\"") <= line("$")
-      normal! g`"
+      silent! normal! g`"
       return 1
   endif
 endfunction
@@ -165,7 +167,8 @@ augroup END
 :noremap H ^
 :noremap L $
 
-:noremap <Tab> %
+" Ctrl+I not works with that :(
+":noremap <Tab> %
 
 " Delete till end"
 :noremap D d$
@@ -242,8 +245,8 @@ nnoremap <leader>N :set relativenumber!<CR>
 " Toggle line numbers
 nnoremap <leader>n :setlocal number!<cr>
 
-map <leader>cc <plug>NERDCommenterToggle
-map <leader>cs <plug>NERDCommenterSexy
+map <leader>c <plug>NERDCommenterToggle
+"map <leader>cs <plug>NERDCommenterSexy
 
 " Remove trailing spaces
 nnoremap <silent> <leader>ts :let _oldts = @/<CR>:%s/\v\s+$//<CR>:let @/=_oldts<CR>
@@ -256,6 +259,16 @@ nnoremap p ]p
 
 nmap <C-Enter> o<Esc>
 
+" Search for term in cwd
+nnoremap <leader>a :tab split<CR>:Ack ""<Left>
+
+" Search word under cursor in cwd
+nnoremap <leader>A :tab split<CR>:Ack <C-r><C-w><CR>
+
+" Recent files
+nnoremap <leader>m :MRU<CR>
+" Copy line from above word-by-word
+inoremap <c-^> @<Esc>kyWjPA<BS>
 " }}}
 
 " Misc stuff {{{1
@@ -455,6 +468,8 @@ nnoremap <leader>gb :Git branch<Space>
 nnoremap <leader>go :Git checkout<Space>
 nnoremap <leader>gps :Dispatch! git push<CR>
 nnoremap <leader>gpl :Dispatch! git pull<CR>
+nnoremap <leader>gpl :Dispatch! git pull<CR>
+nnoremap <leader>grh :!git reset --hard FETCH_HEAD
 " }}}
 
 " LaTeX settings {{{
@@ -610,11 +625,13 @@ augroup end
 augroup NerdTree
     " Space to open/close folders
     autocmd FileType nerdTree nmap <buffer><special><silent> <Space> <CR>
+    autocmd FileType nerdTree :hi NonText guifg=bg 
 augroup end
 " }}}
 
 " FileType: Vim {{{
 augroup Vim
+    autocmd FileType vim setlocal foldcolumn=3
     autocmd FileType vim setlocal foldmethod=marker
     autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
 augroup end
@@ -661,5 +678,11 @@ let g:NERDCreateDefaultMappings = 0
 let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
 " Often i am edit files on compiled dir in nodejs...
 "let g:NERDTreeIgnore=['public$[[dir]]']
+let g:CommandTMaxHeight = 10
+let g:CommandTMinHeight = 10
+let g:CommandTFileScanner = 'git'
+let g:CommandTMatchWindowReverse = 1
+"let g:CommandTHighlightColor = 'Search'
+let g:ackprg = 'ag --nogroup --nocolor --column'
 " }}}
 

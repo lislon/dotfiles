@@ -21,7 +21,12 @@ Prerequites:
 == Additional plugin installation
 
  - Follow instructions https://github.com/JazzCore/ctrlp-cmatcher/
+ - For ack https://github.com/chocolatey/chocolatey/wiki/Installation 
+   Then ``choco install ag``
 
 == Cheatsheet
 
  - ``]m [m``  - Move to next JS NOPENOPENOPE/block {}
+ - <leader>lf Lusty File explorer
+ - <leader> lb Lusty Buffer
+ - <leader> lg Lusty bufferGrep
