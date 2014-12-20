@@ -53,6 +53,7 @@ Plugin 'rosenfeld/conque-term'
 Plugin 'mustache/vim-mustache-handlebars'
 Plugin 'KabbAmine/vCoolor.vim'
 Plugin 'Colortest'
+Plugin 'yegappan/mru'
 
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'vim-scripts/indenthtml.vim'

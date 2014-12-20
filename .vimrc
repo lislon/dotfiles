@@ -16,6 +16,12 @@ set nu
 set laststatus=2 " Vim airline even when 1 file opened
 set encoding=utf-8
 set infercase
+set autoread
+set autowrite
+set splitright
+set splitbelow
+
+
 " Allow backspace after append
 set backspace=indent,eol,start
 " Prevent open same files twice
@@ -58,10 +64,13 @@ endif
 let g:solarized_termcolors=256
 
 if has('gui_running')
-    set background=light
+    set background=dark
+    :colorscheme solarized
 else
     set background=dark
+    :colorscheme skittles_dark
 endif
+
 if has ('win32')
     set guifont=Powerline_Consolas:h11:cRUSSIAN
 else
@@ -197,7 +206,6 @@ augroup END
 :nnoremap <A-1> :NERDTreeFocusToggle<CR>
 :nnoremap <A-2> :NERDTreeFind<CR>
 :nnoremap <A-3> :GundoToggle<CR>
-let g:NERDTreeDirArrows=0
 
 " Ctrl+N switch options !! Confclits with TextMate
 ":imap <Tab> <C-P>
@@ -269,6 +277,8 @@ nnoremap <leader>A :tab split<CR>:Ack <C-r><C-w><CR>
 nnoremap <leader>m :MRU<CR>
 " Copy line from above word-by-word
 inoremap <c-^> @<Esc>kyWjPA<BS>
+
+nnoremap <leader>m :MRU<CR>
 " }}}
 
 " Misc stuff {{{1
@@ -292,8 +302,6 @@ autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 highlight! MatchParen cterm=NONE ctermbg=white ctermfg=white
 highlight! link MatchParen StatusLine
 
-set background=dark
-:colorscheme solarized
 
 " Delete line but not copy blank {{{
 function! DeleteLine()
@@ -616,6 +624,7 @@ command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tab
 
 " FileType: QuickFix {{{
 augroup QuickFix
+    au!
     " Exit from grep
     autocmd FileType qf :nnoremap K :q!<CR>
 augroup end
@@ -623,14 +632,16 @@ augroup end
 
 " FileType: NerdTree {{{
 augroup NerdTree
+    au!
     " Space to open/close folders
-    autocmd FileType nerdTree nmap <buffer><special><silent> <Space> <CR>
-    autocmd FileType nerdTree :hi NonText guifg=bg 
+    autocmd FileType nerdtree nmap <buffer><special><silent> <Space> <CR>
+    autocmd FileType nerdtree :hi NonText guifg=bg 
 augroup end
 " }}}
 
 " FileType: Vim {{{
 augroup Vim
+    au!
     autocmd FileType vim setlocal foldcolumn=3
     autocmd FileType vim setlocal foldmethod=marker
     autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
@@ -639,6 +650,7 @@ augroup end
 
 " FileType: Html {{{
 augroup Html
+    au!
     autocmd FileType html setlocal nowrap
 augroup end
     " }}}
@@ -658,6 +670,7 @@ let g:html_indent_style1 = "inc"
 let g:delimitMate_expand_cr = 1
 let g:syntastic_javascript_checkers = ['jsl']
 let g:NERDTreeCopyCmd='cp '
+let g:NERDTreeDirArrows=0
 let g:syntastic_mode_map = {
             \ "mode": "active",
             \ "active_filetypes": [],
@@ -666,13 +679,13 @@ let g:syntastic_mode_map = {
 let g:syntastic_auto_jump = 0
 let g:syntastic_enable_signs = 1
 
-let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_open_new_file = 'r'
-let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$'
-let g:ctrlp_mruf_case_sensitive = 0
-let g:ctrlp_by_filename = 1
-let g:ctrlp_mruf_default_order = 1
+"let g:ctrlp_cmd = 'CtrlPMRU'
+"let g:ctrlp_clear_cache_on_exit = 0
+"let g:ctrlp_open_new_file = 'r'
+"let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$'
+"let g:ctrlp_mruf_case_sensitive = 0
+"let g:ctrlp_by_filename = 1
+"let g:ctrlp_mruf_default_order = 1
 let g:airline_powerline_fonts = 1
 let g:NERDCreateDefaultMappings = 0
 let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
