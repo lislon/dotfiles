@@ -5,7 +5,7 @@ export ZSH=$HOME/dotfiles/.oh-my-zsh
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 # ZSH_THEME="robbyrussell"
-ZSH_THEME="agnoster"
+ZSH_THEME="bira"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -118,6 +118,7 @@ fpath=(~/dotfiles/.zshfunc $fpath)
 
 # Ctrl-X, U - and you can enter any name of widget to execute
 bindkey '\C-xu' universal-argument
+bindkey '^R' history-incremental-search-backward
 
 # showares "BEFORE{$arr[@]}AFTER" behaves like 
 # % showargs BEFORE{one, two\ three,four}AFTER
