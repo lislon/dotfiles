@@ -1,5 +1,6 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/dotfiles/.oh-my-zsh
+export LC_ALL='en_US.UTF-8'
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -45,7 +46,7 @@ ZSH_THEME="bira"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git composer fasd gitfast ssh-agent coffe dirhistory npm vi-mode)
+plugins=(git composer fasd gitfast ssh-agent coffe)
 #plugins=(git composer fasd gitfast)
 
 source $ZSH/oh-my-zsh.sh
@@ -118,7 +119,7 @@ fpath=(~/dotfiles/.zshfunc $fpath)
 
 # Ctrl-X, U - and you can enter any name of widget to execute
 bindkey '\C-xu' universal-argument
-bindkey '^R' history-incremental-search-backward
+#bindkey '^R' history-incremental-search-backward
 
 # showares "BEFORE{$arr[@]}AFTER" behaves like 
 # % showargs BEFORE{one, two\ three,four}AFTER
