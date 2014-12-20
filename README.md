@@ -18,15 +18,20 @@ Prerequites:
 
 `mklink /H <path_to_git_version_of_ideavimrc> <path c:/Users/Elephant/.ideavimrc>`
 
-== Additional plugin installation
+Additional plugin installation
+------------------------------
 
  - Follow instructions https://github.com/JazzCore/ctrlp-cmatcher/
  - For ack https://github.com/chocolatey/chocolatey/wiki/Installation 
    Then ``choco install ag``
 
-== Cheatsheet
+Cheatsheet for new stuff
+-----------------------
 
  - ``]m [m``  - Move to next JS NOPENOPENOPE/block {}
  - <leader>lf Lusty File explorer
- - <leader> lb Lusty Buffer
- - <leader> lg Lusty bufferGrep
+ - <leader>lb Lusty Buffer
+ - <leader>lg Lusty bufferGrep
+ - <leader>lm MRU
+ - <leader>lt Commant-T
+ - <leader>a  Ack
