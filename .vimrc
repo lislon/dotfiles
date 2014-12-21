@@ -663,6 +663,31 @@ augroup JavascriptBoywer
 augroup end
 " }}}
 
+" Zip Right
+"
+" Moves the character under the cursor to the end of the line.  Handy when you
+" have something like:
+"
+"     foo
+"
+" And you want to wrap it in a method call, so you type:
+"
+"     println()foo
+"
+" Once you hit escape your cursor is on the closing paren, so you can 'zip' it
+" over to the right with this mapping.
+"
+" This should preserve your last yank/delete as well.
+nnoremap zl :let @z=@"<cr>x$p:let @"=@z<cr>
+
+" Keep the cursor in place while joining lines
+nnoremap J mzJ`z" Indent/dedent/autoindent what you just pasted.
+
+nnoremap <lt>> V`]<
+nnoremap ><lt> V`]>
+nnoremap =- V`]=
+
+
 " Plugin settings {{{
 let g:brkptsDefStartMode = "functions"
 let g:html_indent_script1 = "inc"
