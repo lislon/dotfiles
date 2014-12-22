@@ -264,6 +264,7 @@ nnoremap <c-s-g> :let @*=expand("%:p")<CR>:echo expand("%:p")<CR>
 
 " Auto reindent when paste
 nnoremap p ]p
+nnoremap P ]P
 
 nmap <C-Enter> o<Esc>
 
@@ -527,7 +528,6 @@ augroup mygroup
 
     " Forget about this
     autocmd FileType javascript :iabbrev re return
-    autocmd FileType javascript :iabbrev function NOPENOPENOPE
 augroup END
 " }}}
 
@@ -655,12 +655,20 @@ augroup Html
 augroup end
     " }}}
 
+
+    augroup JavaScript
+        autocmd FileType javascript noremap <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
+        autocmd FileType javascript inoremap <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
+        " this one is which you're most likely to use?
+        autocmd BufRead,BufNewFile *.ext,*.ext3|<buffer[=N]> 
+    augroup end
 " Prevent to modify compiled files {{{
 augroup JavascriptBoywer
    au!
    " this one is which you're most likely to use?
    autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> K :q!
 augroup end
+" }}}
 " }}}
 
 " Zip Right
