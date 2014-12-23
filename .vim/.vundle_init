@@ -27,7 +27,7 @@ Plugin 'honza/vim-snippets'
 "Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim'}
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'Raimondi/delimitMate'
-"Plugin 'kien/ctrlp.vim'
+Plugin 'kien/ctrlp.vim'
 Plugin 'wincent/command-t'
 "Plugin 'JazzCore/ctrlp-cmatcher'
 Plugin 'digitaltoad/vim-jade'
@@ -55,6 +55,8 @@ Plugin 'KabbAmine/vCoolor.vim'
 Plugin 'Colortest'
 Plugin 'yegappan/mru'
 Plugin 'lfilho/cosco.vim'
+Plugin 'vim-coffee-script'
+
 
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'vim-scripts/indenthtml.vim'

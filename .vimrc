@@ -11,7 +11,7 @@ set wildmode=full
 set gdefault
 set iminsert=0
 set imsearch=0
-set smartcase
+set ignorecase
 set nu
 set laststatus=2 " Vim airline even when 1 file opened
 set encoding=utf-8
@@ -20,6 +20,7 @@ set autoread
 set autowrite
 set splitright
 set splitbelow
+set ff=unix
 
 
 " Allow backspace after append
@@ -62,6 +63,13 @@ vnoremap y "*y
 vnoremap Y "*Y
 vnoremap p "*p
 vnoremap P "*P
+
+" Suck-in line below to newborn if body
+" if () {
+"   |
+" }
+" line goes to if body
+inoremap <A-u> <Esc>ddjddkP>>
 
 " }}} End of basic stuff
 
@@ -178,7 +186,7 @@ augroup END
 :nnoremap <S-Insert> "+P
 :inoremap <S-Insert> <c-o>"+P
 
-" Wrap to vim fold
+" Wrap to vim fold 
 :vnoremap <Leader>f <Esc>'>o" }}}<Esc>'<O"  {{{<Left><Left><Left><Left>
 
 " Very left & Very Right
@@ -203,25 +211,25 @@ augroup END
 :nnoremap <F12> :tabe ~/dotfiles/.vimrc<CR>
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 " Irritations
-:nnoremap <F10> :vs ~/dotfiles/irritations.txt<CR>
-:nnoremap <F9> :hs ~/dotfiles/README.md<CR>
-" Show html snippets
-:nnoremap <leader>fj :tabe ~\.vim\snippets\javascript.snippets<CR>
+:nnoremap <F10> :vs ~/dotfiles/README.md<CR>G
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
 :nnoremap <F2> :w<CR>
 :inoremap <F2> <Esc>:w<CR>
 
 " Alt + 1 - NERD Tree
 :nnoremap <A-1> :NERDTreeFocusToggle<CR>
+:nnoremap <A-E> :NERDTreeFocusToggle<CR>
+:nnoremap <A-~> :NERDTreeFocusToggle<CR>
 :nnoremap <A-2> :NERDTreeFind<CR>
 :nnoremap <A-3> :GundoToggle<CR>
 
 " Ctrl+N switch options !! Confclits with TextMate
 ":imap <Tab> <C-P>
 
-
 " Insert new line without insert mode
-nnoremap <S-Enter> O<Esc>
+nnoremap <S-Enter> mZO<Esc>`Z
+" Remove line above
+nnoremap <C-S-Enter> mZkdd`Z
 
 " Allow regex without escape
 nnoremap / /\v
@@ -263,6 +271,8 @@ nnoremap <leader>N :set relativenumber!<CR>
 nnoremap <leader>n :setlocal number!<cr>
 
 map <leader>c <plug>NERDCommenterToggle
+" Bind this shit to something else to prevent conflict with NerdCommneter
+map <localLeader>mmmm <Plug>RooterChangeToRootDirectory
 "map <leader>cs <plug>NERDCommenterSexy
 
 " Remove trailing spaces
@@ -289,6 +299,10 @@ nnoremap <leader>m :MRU<CR>
 inoremap <c-^> @<Esc>kyWjPA<BS>
 
 nnoremap <leader>m :MRU<CR>
+
+" Ctrl+Shift+G - show CWD
+nnoremap <C-S-G> :echo getcwd()<CR>
+
 " }}}
 
 " Misc stuff {{{1
@@ -409,7 +423,7 @@ nnoremap <silent> <leader>f :call FoldColumnToggle()<cr>
 " }}}
 
 " Replace word under cursor
-nnoremap gr yiw:.,$s/<C-r>"//c<Left><Left> 
+nnoremap gr yiw:.,$s/<C-r>"//c<Left><Left><Backspace>/
 
 " For global replace
 nnoremap gR gD:%s/<C-R>///c<left><left><left>
@@ -438,10 +452,19 @@ augroup newFileDetection
 augroup END
 " }}}
 
+let g:last_f5_run_cmd = ''
+
 " F5 for running current file {{{
 function! RunCmd(cmd)
     let fn=expand("%:p")
     let fns=expand("%")
+
+    if a:cmd == "last"
+        let fns = g:last_f5_run_cmd
+    else
+        let g:last_f5_run_cmd = fns
+    end
+
     let ft = &l:filetype
     botright copen
     setlocal modifiable
@@ -450,6 +473,8 @@ function! RunCmd(cmd)
         silent execute "read !ruby ".fn
     elseif ft == "javascript"
         silent execute "read !node ".fns
+    elseif ft == "coffee"
+        silent execute "read !coffee ".fns
     elseif ft != ""
         silent execute "read !".fn
     else
@@ -467,6 +492,7 @@ endfunction
 
 "command! RunBash call RunCmd("")
 nnoremap <F5> :<C-u>up\|call RunCmd("")<CR>
+nnoremap <C-F5> :<C-u>up\|call RunCmd("last")<CR>
 inoremap <F5> <Esc>:up\|call RunCmd("")<CR>
 " }}}
 
@@ -645,6 +671,8 @@ augroup NerdTree
     " Space to open/close folders
     autocmd FileType nerdtree nmap <buffer><special><silent> <Space> <CR>
     autocmd FileType nerdtree :hi NonText guifg=bg 
+    autocmd FileType nerdtree :nnoremap H 20<C-w><
+    autocmd FileType nerdtree :nnoremap L 20<C-w>>
 augroup end
 " }}}
 
@@ -664,11 +692,18 @@ augroup Html
 augroup end
     " }}}
 
-
+" Javascript {{{
 augroup JavaScript
     autocmd FileType javascript noremap <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
+    autocmd FileType javascript nnoremap <leader>fs :tabe ~\.vim\snippets\javascript.snippets<CR>
+augroup end
+" }}}
+
+augroup CoffeScript
+    " this one is which you're most likely to use?
+    autocmd FileType coffee nnoremap <leader>fs :tabe ~\.vim\snippets\coffee.snippets<CR>
 augroup end
 
 " Prevent to modify compiled files {{{
@@ -721,16 +756,16 @@ let g:syntastic_mode_map = {
 let g:syntastic_auto_jump = 0
 let g:syntastic_enable_signs = 1
 
-"let g:ctrlp_cmd = 'CtrlPMRU'
-"let g:ctrlp_clear_cache_on_exit = 0
-"let g:ctrlp_open_new_file = 'r'
-"let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$'
-"let g:ctrlp_mruf_case_sensitive = 0
-"let g:ctrlp_by_filename = 1
-"let g:ctrlp_mruf_default_order = 1
+let g:ctrlp_cmd = 'CtrlPMRU'
+let g:ctrlp_clear_cache_on_exit = 1
+let g:ctrlp_open_new_file = 'r'
+let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$'
+let g:ctrlp_mruf_case_sensitive = 0
+let g:ctrlp_by_filename = 1
+let g:ctrlp_mruf_default_order = 1
 let g:airline_powerline_fonts = 1
 let g:NERDCreateDefaultMappings = 0
-let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
+"let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
 " Often i am edit files on compiled dir in nodejs...
 "let g:NERDTreeIgnore=['public$[[dir]]']
 let g:CommandTMaxHeight = 10
