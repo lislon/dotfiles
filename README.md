@@ -21,9 +21,15 @@ Prerequites:
 Additional plugin installation
 ------------------------------
 
- - Follow instructions https://github.com/JazzCore/ctrlp-cmatcher/
  - For ack https://github.com/chocolatey/chocolatey/wiki/Installation 
    Then ``choco install ag``
+
+Command-t installation
+----------------------
+
+  cd ~/.vim/bundle/command-t/ruby/command-t
+  ruby extconf.rb
+  make
 
 Cheatsheet for new stuff
 -----------------------
@@ -35,3 +41,8 @@ Cheatsheet for new stuff
  - <leader>lm MRU
  - <leader>lt Commant-T
  - <leader>a  Ack
+
+ Todo
+ ----
+
+  * Return focus to active window after closing QuickFix window

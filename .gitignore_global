@@ -11,3 +11,4 @@ ehthumbs.db
 Thumbs.db
 *.stackdump
 npm-debug.log
+node_modules

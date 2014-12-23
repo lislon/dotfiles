@@ -54,6 +54,15 @@ nnoremap <leader>wsn :WinMessage scriptnames<CR>
 " rtp
 nnoremap <leader>wrt :WinMessage set rtp?<CR>
 
+noremap  y "*y
+noremap  Y "*Y
+noremap  p "*p
+noremap  P "*P
+vnoremap y "*y
+vnoremap Y "*Y
+vnoremap p "*p
+vnoremap P "*P
+
 " }}} End of basic stuff
 
 " System stuff {{{
@@ -195,7 +204,7 @@ augroup END
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 " Irritations
 :nnoremap <F10> :vs ~/dotfiles/irritations.txt<CR>
-:nnoremap <F9> :vs ~/dotfiles/README.md<CR>
+:nnoremap <F9> :hs ~/dotfiles/README.md<CR>
 " Show html snippets
 :nnoremap <leader>fj :tabe ~\.vim\snippets\javascript.snippets<CR>
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
@@ -626,7 +635,7 @@ command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tab
 augroup QuickFix
     au!
     " Exit from grep
-    autocmd FileType qf :nnoremap K :q!<CR>
+    autocmd FileType qf :nnoremap K :q!<CR><C-w><C-p>
 augroup end
 " }}}
 
@@ -656,12 +665,12 @@ augroup end
     " }}}
 
 
-    augroup JavaScript
-        autocmd FileType javascript noremap <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
-        autocmd FileType javascript inoremap <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
-        " this one is which you're most likely to use?
-        autocmd BufRead,BufNewFile *.ext,*.ext3|<buffer[=N]> 
-    augroup end
+augroup JavaScript
+    autocmd FileType javascript noremap <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
+    autocmd FileType javascript inoremap <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
+    autocmd FileType javascript inoremap <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
+augroup end
+
 " Prevent to modify compiled files {{{
 augroup JavascriptBoywer
    au!
