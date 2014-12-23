@@ -661,7 +661,7 @@ command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tab
 augroup QuickFix
     au!
     " Exit from grep
-    autocmd FileType qf :nnoremap K :q!<CR><C-w><C-p>
+    autocmd FileType qf :nnoremap <buffer> K :q!<CR><C-w><C-p>
 augroup end
 " }}}
 
@@ -694,17 +694,36 @@ augroup end
 
 " Javascript {{{
 augroup JavaScript
-    autocmd FileType javascript noremap <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
-    autocmd FileType javascript inoremap <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
-    autocmd FileType javascript inoremap <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
-    autocmd FileType javascript nnoremap <leader>fs :tabe ~\.vim\snippets\javascript.snippets<CR>
+    autocmd FileType javascript noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
+    autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
+    autocmd FileType javascript inoremap <buffer> <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
+    autocmd FileType javascript nnoremap <buffer> <leader>fs :tabe ~\.vim\snippets\javascript.snippets<CR>
 augroup end
 " }}}
 
-augroup CoffeScript
+fun! s:ShowArgs(line1, line2, args)
+    echo "lines ".a:line1." - ".a:line2
+    echo "args:".a:args
+endf
+
+command! -range=% -bar -nargs=1 Test2 call s:ShowArgs(<line1>, <line2>, <q-args>)
+
+" CoffeeScript {{{
+
+fun! CoffeeRange() range
+    echo a:firstline
+    echo a:lastline
+endf
+vnoremap <buffer> <localleader>c :call CoffeeRange()<CR>
+
+
+augroup CoffeeScript
     " this one is which you're most likely to use?
-    autocmd FileType coffee nnoremap <leader>fs :tabe ~\.vim\snippets\coffee.snippets<CR>
+    autocmd FileType coffee nnoremap <buffer> <leader>fs :tabe ~\.vim\snippets\coffee.snippets<CR>
+    autocmd FileType coffee nnoremap <buffer> <localleader>c :CoffeeWatch vert<CR>
+    autocmd FileType coffee vnoremap <buffer> <localleader>c :CoffeeRange<CR>
 augroup end
+    " }}}
 
 " Prevent to modify compiled files {{{
 augroup JavascriptBoywer
