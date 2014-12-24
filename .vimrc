@@ -55,14 +55,15 @@ nnoremap <leader>wsn :WinMessage scriptnames<CR>
 " rtp
 nnoremap <leader>wrt :WinMessage set rtp?<CR>
 
-noremap  y "*y
-noremap  Y "*Y
-noremap  p "*p
-noremap  P "*P
-vnoremap y "*y
-vnoremap Y "*Y
-vnoremap p "*p
-vnoremap P "*P
+if !has('win32')
+    noremap  Y "*Y
+    noremap  p "*p
+    noremap  P "*P
+    vnoremap y "*y
+    vnoremap Y "*Y
+    vnoremap p "*p
+    vnoremap P "*P
+endif
 
 " Suck-in line below to newborn if body
 " if () {
@@ -70,6 +71,7 @@ vnoremap P "*P
 " }
 " line goes to if body
 inoremap <A-u> <Esc>ddjddkP>>
+nnoremap <A-u> jjddkP>>
 
 " }}} End of basic stuff
 
