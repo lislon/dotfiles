@@ -50,4 +50,3 @@ Cheatsheet for new stuff
  Todo
  ----
 
-  * Return focus to active window after closing QuickFix window
