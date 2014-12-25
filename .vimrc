@@ -700,6 +700,15 @@ augroup JavaScript
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
     autocmd FileType javascript nnoremap <buffer> <leader>fs :tabe ~\.vim\snippets\javascript.snippets<CR>
+    " Run debbugger on current file (to install npm -g i node-vim-inspector)
+    autocmd FileType javascript nnoremap <buffer> <leader>d :silent nbclose<CR>:Start node-vim-inspector %
+        \ --vim.keys.break="F9"
+        \ --vim.keys.continue="F8"
+        \ --vim.keys.down="" 
+        \ --vim.keys.in="F11"
+        \ --vim.keys.next="F10"
+        \ --vim.keys.out=""
+        \ --vim.keys.up="S-F11" <CR>:nbstart<CR>
 augroup end
 " }}}
 
@@ -721,7 +730,7 @@ vnoremap <buffer> <localleader>c :call CoffeeRange()<CR>
 
 augroup CoffeeScript
     " this one is which you're most likely to use?
-    autocmd FileType coffee nnoremap <buffer> <leader>fs :tabe ~\.vim\snippets\coffee.snippets<CR>
+    autocmd FileType coffee nnoremap <buffer> <localleader>s :tabe ~\.vim\snippets\coffee.snippets<CR>
     autocmd FileType coffee nnoremap <buffer> <localleader>c :CoffeeWatch vert<CR>
     autocmd FileType coffee vnoremap <buffer> <localleader>c :CoffeeRange<CR>
 augroup end
@@ -733,7 +742,6 @@ augroup JavascriptBoywer
    " this one is which you're most likely to use?
    autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> K :q!
 augroup end
-" }}}
 " }}}
 
 " Zip Right
@@ -759,6 +767,9 @@ nnoremap J mzJ`z" Indent/dedent/autoindent what you just pasted.
 nnoremap <lt>> V`]<
 nnoremap ><lt> V`]>
 nnoremap =- V`]=
+" }}}
+
+    
 
 
 " Plugin settings {{{
@@ -780,7 +791,7 @@ let g:syntastic_enable_signs = 1
 let g:ctrlp_cmd = 'CtrlPMRU'
 let g:ctrlp_clear_cache_on_exit = 1
 let g:ctrlp_open_new_file = 'r'
-let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$'
+let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
 let g:ctrlp_mruf_case_sensitive = 0
 let g:ctrlp_by_filename = 1
 let g:ctrlp_mruf_default_order = 1

@@ -31,6 +31,11 @@ Command-t installation
   ruby extconf.rb
   make
 
+Nodejs related installation
+---------------------------
+
+  npm -g i node-vim-inspector
+
 Cheatsheet for new stuff
 -----------------------
 
