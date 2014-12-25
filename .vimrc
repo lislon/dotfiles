@@ -807,5 +807,12 @@ let g:CommandTFileScanner = 'git'
 let g:CommandTMatchWindowReverse = 1
 "let g:CommandTHighlightColor = 'Search'
 let g:ackprg = 'ag --nogroup --nocolor --column'
+let g:NERDTreeMapOpenInTab='<c-t>'
+let g:NERDTreeMapOpenSplit='<c-i>'
+let g:NERDTreeMapOpenVSplit='<c-s>'
+"call NERDTreeAddKeyMap({
+            "\ 'key': 'y',
+            "\ 'callback':  'NERDTreeCustomMapOpenInTab',
+            "\ 'scope': 'all' })
 " }}}
 
