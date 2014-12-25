@@ -663,7 +663,8 @@ command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tab
 augroup QuickFix
     au!
     " Exit from grep
-    autocmd FileType qf :nnoremap <buffer> K :q!<CR><C-w><C-p>
+    autocmd FileType qf :nnoremap <silent> <buffer> K :q!<CR><C-w><C-p>:unlet g:qfix_win<CR>
+    autocmd FileType qf :nnoremap <silent> <buffer> <F4> :q!<CR><C-w><C-p>:unlet g:qfix_win<CR>
 augroup end
 " }}}
 
