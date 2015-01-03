@@ -21,6 +21,7 @@ set autowrite
 set splitright
 set splitbelow
 set ff=unix
+set hidden
 
 
 " Allow backspace after append
@@ -207,9 +208,7 @@ augroup END
 :inoremap <C-a> <Esc>I
 :inoremap <C-e> <Esc>A
 
-" Turn on/off highlight search by F3
 :nnoremap <F1> :help 
-:nnoremap <F3> :let @/ = ""<CR>
 :nnoremap <F12> :tabe ~/dotfiles/.vimrc<CR>
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 " Irritations
@@ -371,7 +370,7 @@ command! ErrorsToggle call ErrorsToggle()
 function! ErrorsToggle() " {{{
   if exists("w:is_error_window")
     unlet w:is_error_window
-    exec "q"
+    exec "close"
   else
     exec "Errors"
     lopen
@@ -815,4 +814,5 @@ let g:NERDTreeMapOpenVSplit='<c-s>'
             "\ 'callback':  'NERDTreeCustomMapOpenInTab',
             "\ 'scope': 'all' })
 " }}}
+
 
