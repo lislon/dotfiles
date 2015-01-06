@@ -662,8 +662,10 @@ command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tab
 augroup QuickFix
     au!
     " Exit from grep
-    autocmd FileType qf :nnoremap <silent> <buffer> K :q!<CR><C-w><C-p>:unlet g:qfix_win<CR>
-    autocmd FileType qf :nnoremap <silent> <buffer> <F4> :q!<CR><C-w><C-p>:unlet g:qfix_win<CR>
+    autocmd FileType qf :nnoremap <silent> <buffer> K :q!<CR><C-w><C-p>
+        \ :unlet! g:qfix_win<CR>
+    autocmd FileType qf :nnoremap <silent> <buffer> <F4> :q!<CR><C-w><C-p>
+        \ :unlet! g:qfix_win<CR>
 augroup end
 " }}}
 
@@ -699,7 +701,7 @@ augroup JavaScript
     autocmd FileType javascript noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
-    autocmd FileType javascript nnoremap <buffer> <leader>fs :tabe ~\.vim\snippets\javascript.snippets<CR>
+    autocmd FileType javascript nnoremap <buffer> <localleader>s :tabe ~\.vim\snippets\javascript.snippets<CR>
     " Run debbugger on current file (to install npm -g i node-vim-inspector)
     autocmd FileType javascript nnoremap <buffer> <leader>d :silent nbclose<CR>:Start node-vim-inspector %
         \ --vim.keys.break="F9"
