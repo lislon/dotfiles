@@ -130,3 +130,5 @@ setopt rc_expand_param
 alias gl='git --no-pager log --oneline --graph -5'
 alias gpush='git push'
 
+
+calk() { for exp in $argv; do print "$exp = $(( exp ))"; done; }
