@@ -9,6 +9,7 @@ set incsearch
 "set hlsearch
 set wildmode=full
 set gdefault
+" Dont use mapping when going to insert mode
 set iminsert=0
 set imsearch=0
 set ignorecase
@@ -811,10 +812,11 @@ let g:ackprg = 'ag --nogroup --nocolor --column'
 let g:NERDTreeMapOpenInTab='<c-t>'
 let g:NERDTreeMapOpenSplit='<c-i>'
 let g:NERDTreeMapOpenVSplit='<c-s>'
-"call NERDTreeAddKeyMap({
-            "\ 'key': 'y',
-            "\ 'callback':  'NERDTreeCustomMapOpenInTab',
-            "\ 'scope': 'all' })
-" }}}
+if has('win32')
 
+    let g:XkbSwitchLib = expand('~/dotfiles/bin/libxkbswitch32').'.dll'
+endif
+let g:XkbSwitchEnabled = 1
+
+" }}}
 

@@ -18,6 +18,7 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
 Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'NERD_Tree-and-ack'
 "Plugin 'gerw/vim-latex-suite'
 Plugin 'tmhedberg/matchit'
 Plugin 'MarcWeber/vim-addon-mw-utils'
@@ -56,6 +57,8 @@ Plugin 'Colortest'
 Plugin 'yegappan/mru'
 Plugin 'lfilho/cosco.vim'
 Plugin 'vim-coffee-script'
+
+Plugin 'lyokha/vim-xkbswitch'
 
 
 "Plugin 'Valloric/YouCompleteMe'
