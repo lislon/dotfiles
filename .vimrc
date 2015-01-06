@@ -9,9 +9,6 @@ set incsearch
 "set hlsearch
 set wildmode=full
 set gdefault
-" Dont use mapping when going to insert mode
-set iminsert=0
-set imsearch=0
 set ignorecase
 set nu
 set laststatus=2 " Vim airline even when 1 file opened
@@ -79,8 +76,13 @@ nnoremap <A-u> jjddkP>>
 
 " System stuff {{{
 if has("win32unix")
+    " This stuff is reset iminsert mode
     set keymap=russian-jcukenwin
 endif
+
+" Dont use mapping when going to insert mode
+set iminsert=0
+set imsearch=0
 
 let g:solarized_termcolors=256
 
@@ -805,6 +807,7 @@ let g:NERDCreateDefaultMappings = 0
 "let g:NERDTreeIgnore=['public$[[dir]]']
 let g:CommandTMaxHeight = 10
 let g:CommandTMinHeight = 10
+" find not work for me under windows :(
 let g:CommandTFileScanner = 'git'
 let g:CommandTMatchWindowReverse = 1
 "let g:CommandTHighlightColor = 'Search'
