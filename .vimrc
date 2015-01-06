@@ -424,10 +424,10 @@ nnoremap <silent> <leader>f :call FoldColumnToggle()<cr>
 " }}}
 
 " Replace word under cursor
-nnoremap gr yiw:.,$s/<C-r>"//c<Left><Left><Backspace>/
+nnoremap gr yiw:.,$s/<C-r>"//Ic<left><Left><Left><Backspace>/
 
 " For global replace
-nnoremap gR gD:%s/<C-R>///c<left><left><left>
+nnoremap gR gD:%s/<C-R>///Ic<left><left><left><left>
 
 " Any selection
 vnoremap gr :<C-U>
