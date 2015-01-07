@@ -456,48 +456,48 @@ augroup newFileDetection
 augroup END
 " }}}
 
-let g:last_f5_run_cmd = ''
+"let g:last_f5_run_cmd = ''
 
 " F5 for running current file {{{
-function! RunCmd(cmd)
-    let fn=expand("%:p")
-    let fns=expand("%")
+function! RunCmd(cmd, bufCommand)
+    let chunks = split(a:cmd, " ")
+    let chunks[-1] = expand(chunks[-1])
+    let cmd = join(chunks, ' ')
 
-    if a:cmd == "last"
-        let fns = g:last_f5_run_cmd
-    else
-        let g:last_f5_run_cmd = fns
-    end
+    "if a:is_last == "last"
+        "let cmd = g:last_f5_run_cmd
+    "else
+        "let g:last_f5_run_cmd = cmd
+    "end
 
     let ft = &l:filetype
     botright copen
     setlocal modifiable
     %d _
-    if ft == "ruby"
-        silent execute "read !ruby ".fn
-    elseif ft == "javascript"
-        silent execute "read !node ".fns
-    elseif ft == "coffee"
-        silent execute "read !coffee ".fns
-    elseif ft != ""
-        silent execute "read !".fn
-    else
-        silent execute "read !".a:cmd." ".fn
-    endif
+    silent execute "read !".cmd
     1d _
     normal! 0
-    if ft != ""
-        execute "setf ".ft
-    else
-        setlocal filetype=
+    if a:bufCommand != ""
+        execute a:bufCommand
     endif
+    "if ft != ""
+        "execute "setf ".ft
+    "else
+        "setlocal filetype=
+    "endif
     setlocal nomodifiable nomodified
 endfunction
 
+fun! BindRunCommand(key, command, bufCallback)
+    let cmd = "nnoremap <buffer> <".a:key."> :<C-u>up\\|call ".
+        \ "RunCmd(\"".a:command."\", ".shellescape(a:bufCallback).")<CR>"
+    silent execute cmd
+endf
+
+
 "command! RunBash call RunCmd("")
-nnoremap <F5> :<C-u>up\|call RunCmd("")<CR>
-nnoremap <C-F5> :<C-u>up\|call RunCmd("last")<CR>
-inoremap <F5> <Esc>:up\|call RunCmd("")<CR>
+"nnoremap <F5> :<C-u>up\|call RunCmd("", "")<CR>
+"nnoremap <C-F5> :<C-u>up\|call RunCmd("", "last")<CR>
 " }}}
 
 " Figutive git bindings {{{
@@ -733,11 +733,23 @@ endf
 vnoremap <buffer> <localleader>c :call CoffeeRange()<CR>
 
 
+fun! InitFtCoffee()
+    nnoremap <buffer> <localleader>s :tabe ~\.vim\snippets\coffee.snippets
+    nnoremap <buffer> <localleader>c :CoffeeWatch vert
+    vnoremap <buffer> <localleader>c :CoffeeRange
+    if match(expand("%:p"), "[\\/]test[\\/]") >= 0
+        call BindRunCommand("F5", 
+                    \ "mocha --compilers coffee:coffee-script/register %:p", 
+                    \ "/error")
+    else
+        call BindRunCommand("F5", "coffee %:p", "")
+    endif
+endf
+
 augroup CoffeeScript
+    au!
     " this one is which you're most likely to use?
-    autocmd FileType coffee nnoremap <buffer> <localleader>s :tabe ~\.vim\snippets\coffee.snippets<CR>
-    autocmd FileType coffee nnoremap <buffer> <localleader>c :CoffeeWatch vert<CR>
-    autocmd FileType coffee vnoremap <buffer> <localleader>c :CoffeeRange<CR>
+    autocmd FileType coffee call InitFtCoffee()
 augroup end
     " }}}
 
