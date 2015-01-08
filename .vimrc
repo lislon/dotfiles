@@ -477,8 +477,10 @@ function! RunCmd(cmd, bufCommand)
     silent execute "read !".cmd
     1d _
     normal! 0
+    " Replace ^M
+    execute "%s/\r//"
     if a:bufCommand != ""
-        execute a:bufCommand
+        silent! execute a:bufCommand
     endif
     "if ft != ""
         "execute "setf ".ft
@@ -489,8 +491,9 @@ function! RunCmd(cmd, bufCommand)
 endfunction
 
 fun! BindRunCommand(key, command, bufCallback)
-    let cmd = "nnoremap <buffer> <".a:key."> :<C-u>up\\|call ".
-        \ "RunCmd(\"".a:command."\", ".shellescape(a:bufCallback).")<CR>"
+    let bufCmd = substitute(a:bufCallback, '|', '\\|', 'g')
+    let cmd = "nnoremap <buffer> <silent> <".a:key."> :<C-u>up\\|call ".
+        \ "RunCmd(\"".a:command."\", '".bufCmd."')<CR>"
     silent execute cmd
 endf
 
@@ -740,7 +743,7 @@ fun! InitFtCoffee()
     if match(expand("%:p"), "[\\/]test[\\/]") >= 0
         call BindRunCommand("F5", 
                     \ "mocha --compilers coffee:coffee-script/register %:p", 
-                    \ "/error")
+                    \ '/error')
     else
         call BindRunCommand("F5", "coffee %:p", "")
     endif
