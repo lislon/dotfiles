@@ -478,7 +478,7 @@ function! RunCmd(cmd, bufCommand)
     1d _
     normal! 0
     " Replace ^M
-    execute "%s/\r//"
+    silent! execute "%s/\r//"
     if a:bufCommand != ""
         silent! execute a:bufCommand
     endif
