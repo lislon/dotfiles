@@ -72,6 +72,8 @@ endif
 inoremap <A-u> <Esc>ddjddkP>>
 nnoremap <A-u> jjddkP>>
 
+nnoremap <S-F2> :w !sudo tee %
+
 " }}} End of basic stuff
 
 " System stuff {{{
@@ -86,9 +88,10 @@ set imsearch=0
 
 let g:solarized_termcolors=256
 
-if has('gui_running')
+if has('gui_running') || has('unix')
     set background=dark
     :colorscheme solarized
+    set background=dark
 else
     set background=dark
     :colorscheme skittles_dark
@@ -221,11 +224,17 @@ augroup END
 :inoremap <F2> <Esc>:w<CR>
 
 " Alt + 1 - NERD Tree
-:nnoremap <A-1> :NERDTreeFocusToggle<CR>
-:nnoremap <A-E> :NERDTreeFocusToggle<CR>
-:nnoremap <A-~> :NERDTreeFocusToggle<CR>
-:nnoremap <A-2> :NERDTreeFind<CR>
-:nnoremap <A-3> :GundoToggle<CR>
+if has('win32')
+    :nnoremap <A-1> :NERDTreeFocusToggle<CR>
+    :nnoremap <A-E> :NERDTreeFocusToggle<CR>
+    :nnoremap <A-~> :NERDTreeFocusToggle<CR>
+    :nnoremap <A-2> :NERDTreeFind<CR>
+    :nnoremap <A-3> :GundoToggle<CR>
+else
+    :nnoremap <leader>t :NERDTreeFocusToggle<CR>
+    :nnoremap <leader>T :NERDTreeFind<CR>
+    :nnoremap <A-3> :GundoToggle<CR>
+endif
 
 " Ctrl+N switch options !! Confclits with TextMate
 ":imap <Tab> <C-P>

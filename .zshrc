@@ -105,6 +105,9 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*:(rm|vi|vim|mv|cp):*' ignore-line true
 zstyle ':completion::*' ignore-parents parent pwd
 zstyle ':completion:*:(vi|vim):*' ignored-patterns '*.(pdf|ps|dvi|aux)'
+zstyle ':completion:*:(node):*' file-patterns '*.js'
+zstyle ':completion:*:(coffee):*' file-patterns '*.coffee'
+zstyle ':completion:*:(node):*' ignored-patterns 'Gruntfile.js'
 
 # -g = glob pattern, (-.) glob modifier to allow only files or symlinks
 compdef '_files -g "*.jpg(-.)"' gimp
