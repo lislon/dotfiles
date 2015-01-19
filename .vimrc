@@ -287,6 +287,8 @@ nnoremap <leader>N :set relativenumber!<CR>
 nnoremap <leader>n :setlocal number!<cr>
 
 map <leader>c <plug>NERDCommenterToggle
+" I am always hit <leader>s to comment
+map <leader>s <plug>NERDCommenterToggle
 " Bind this shit to something else to prevent conflict with NerdCommneter
 map <localLeader>mmmm <Plug>RooterChangeToRootDirectory
 "map <leader>cs <plug>NERDCommenterSexy
@@ -339,8 +341,10 @@ set wildmode=list:longest " turn on wild mode huge list
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " Disable annoying match braces behavious highlighting
-highlight! MatchParen cterm=NONE ctermbg=white ctermfg=white
-highlight! link MatchParen StatusLine
+highlight! MatchParen cterm=NONE ctermbg=gray ctermfg=white
+" I commented this out, because highlighting of both () is very same and it's
+" hard to distinguish between them. (Tested in Unix, Ubuntu, CLI)
+"highlight! link MatchParen StatusLine
 
 
 " Delete line but not copy blank {{{
@@ -707,12 +711,19 @@ augroup Vim
 augroup end
     " }}}
 
-" FileType: Html {{{
-augroup Html
+" FileType: Awesome rc.lua {{{
+augroup AwesomeRcLua
     au!
-    autocmd FileType html setlocal nowrap
+    autocmd FileType lua setlocal foldcolumn=3 | setlocal foldmethod=marker
 augroup end
     " }}}
+
+" FileType: Html {{{
+augroup Html
+au!
+autocmd FileType html setlocal nowrap
+augroup end
+" }}}
 
 " Javascript {{{
 augroup JavaScript

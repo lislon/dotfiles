@@ -140,6 +140,7 @@ alias -g G="| grep"
 alias -g L="| less"
 #alias -g i="install"
 alias i="sudo apt-get install "
+alias rclua="vim ~/.config/awesome/rc.lua"
 
 #}}}
 

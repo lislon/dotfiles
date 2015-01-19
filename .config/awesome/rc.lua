@@ -37,7 +37,8 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+home = os.getenv("HOME")
+beautiful.init(home .. "/.config/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"
@@ -71,10 +72,13 @@ layouts =
 
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
-tags = {}
+tags = {
+    names = { "head", "www", "im", "files", "media", "gimp", "skype", "tail" },
+    layouts = { layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1] }
+}
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = awful.tag({ "head", "www", "im", "files", "media", "gimp", "skype", "tail" }, s, layouts[1])
+    tags[s] = awful.tag(tags.names, s, tags.layouts)
 end
 -- }}}
 
@@ -197,6 +201,15 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
+    -- My custom bindings
+    awful.key({ modkey }, "F12", function () awful.util.spawn("dm-tool lock") end),
+    awful.key({ modkey, "Shift" }, "i", function () 
+        naughty.notify({ preset = naughty.config.presets.info,
+                         title = "Reconnecting Wifi",
+                         text = "Reconnection Wifi..." })
+        awful.util.spawn_with_shell("nmcli c down id 'TRUST.LTD' && nmcli c up id 'TRUST.LTD'") 
+    end),
+
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
@@ -240,7 +253,6 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
-    awful.key({ modkey }, "F12", function () awful.util.spawn("dm-tool lock") end),
 
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
