@@ -222,6 +222,7 @@ augroup END
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
 :nnoremap <F2> :w<CR>
 :inoremap <F2> <Esc>:w<CR>
+:nnoremap <F6> :set paste!<CR>
 
 " Alt + 1 - NERD Tree
 if has('win32')
@@ -232,7 +233,9 @@ if has('win32')
     :nnoremap <A-3> :GundoToggle<CR>
 else
     :nnoremap <leader>t :NERDTreeFocusToggle<CR>
+    :nnoremap <c-t> :NERDTreeFocusToggle<CR>
     :nnoremap <leader>T :NERDTreeFind<CR>
+    :nnoremap <c-s-t> :NERDTreeFind<CR>
     :nnoremap <A-3> :GundoToggle<CR>
 endif
 

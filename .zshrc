@@ -132,6 +132,23 @@ bindkey '\C-xu' universal-argument
 setopt rc_expand_param
 alias gl='git --no-pager log --oneline --graph -5'
 alias gpush='git push'
+alias s="sudo "
 
+#{{{ Globals...
+
+alias -g G="| grep"
+alias -g L="| less"
+#alias -g i="install"
+alias i="sudo apt-get install "
+
+#}}}
+
+WIFI_NAME='TRUST.LTD'
+alias reconnect="nmcli c down id $WIFI_NAME && nmcli c up id $WIFI_NAME"
+
+insert_sudo () { zle beginning-of-line; zle -U "sudo " }
+zle -N insert-sudo insert_sudo
+bindkey "^[s" insert-sudo
+alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle"'
 
 calk() { for exp in $argv; do print "$exp = $(( exp ))"; done; }
