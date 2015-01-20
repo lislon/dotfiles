@@ -200,3 +200,6 @@
 shopt -s extglob 
 
 complete -f -X '!*.php' php
+
+export NVM_DIR="/home/junior/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm

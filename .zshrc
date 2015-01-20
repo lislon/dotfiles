@@ -46,7 +46,8 @@ ZSH_THEME="bira"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git composer fasd gitfast ssh-agent coffe)
+plugins=(git composer fasd gitfast ssh-agent coffe autojump)
+# Use j <dirspec>
 #plugins=(git composer fasd gitfast)
 
 source $ZSH/oh-my-zsh.sh
@@ -153,3 +154,6 @@ bindkey "^[s" insert-sudo
 alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle"'
 
 calk() { for exp in $argv; do print "$exp = $(( exp ))"; done; }
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm

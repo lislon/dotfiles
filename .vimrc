@@ -20,6 +20,7 @@ set splitright
 set splitbelow
 set ff=unix
 set hidden
+set spell spelllang=en_us
 
 
 " Allow backspace after append
@@ -233,9 +234,8 @@ if has('win32')
     :nnoremap <A-3> :GundoToggle<CR>
 else
     :nnoremap <leader>t :NERDTreeFocusToggle<CR>
-    :nnoremap <c-t> :NERDTreeFocusToggle<CR>
+    :nnoremap <s-q> :NERDTreeFocusToggle<CR>
     :nnoremap <leader>T :NERDTreeFind<CR>
-    :nnoremap <c-s-t> :NERDTreeFind<CR>
     :nnoremap <A-3> :GundoToggle<CR>
 endif
 
@@ -849,15 +849,22 @@ let g:CommandTMinHeight = 10
 let g:CommandTFileScanner = 'git'
 let g:CommandTMatchWindowReverse = 1
 "let g:CommandTHighlightColor = 'Search'
-let g:ackprg = 'ag --nogroup --nocolor --column'
 let g:NERDTreeMapOpenInTab='<c-t>'
 let g:NERDTreeMapOpenSplit='<c-i>'
 let g:NERDTreeMapOpenVSplit='<c-s>'
 if has('win32')
-
     let g:XkbSwitchLib = expand('~/dotfiles/bin/libxkbswitch32').'.dll'
+    let g:ackprg = 'ag --nogroup --nocolor --column'
 endif
 let g:XkbSwitchEnabled = 1
 
 " }}}
 
+" {{{ Test
+
+fun! Sorder(list)
+    let new_list = deepcopy(a:list)
+    call sort(new_list)
+    return new_list
+endf
+" }}}
