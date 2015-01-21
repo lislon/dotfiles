@@ -346,9 +346,10 @@ awful.rules.rules = {
                      focus = true,
                      keys = clientkeys,
                      buttons = clientbuttons } },
-    --Pidgin {{{
+    { rule = { class = "Gnome-terminal" },
+        properties = { size_hints_honor = false } }, -- Fix bottom edge gap
     { rule = { class = "Pidgin" },
-      properties = { tag = tags[1][3] } },
+      properties = { tag = tags[1][4] } },
     { rule = { class = "MPlayer" },
       properties = { floating = true } },
     { rule = { class = "pinentry" },
