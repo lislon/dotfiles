@@ -494,7 +494,7 @@ function! RunCmd(cmd, bufCommand)
     1d _
     normal! 0
     " Replace ^M
-    silent! execute "%s/\r//"
+    silent! execute "%s/\r//e"
     if a:bufCommand != ""
         silent! execute a:bufCommand
     endif
@@ -846,8 +846,13 @@ let g:NERDCreateDefaultMappings = 0
 let g:CommandTMaxHeight = 10
 let g:CommandTMinHeight = 10
 " find not work for me under windows :(
-let g:CommandTFileScanner = 'git'
 let g:CommandTMatchWindowReverse = 1
+
+if has('win32')
+    let g:CommandTFileScanner = 'git'
+else
+    "let g:CommandTFileScanner = 'find'
+end
 "let g:CommandTHighlightColor = 'Search'
 let g:NERDTreeMapOpenInTab='<c-t>'
 let g:NERDTreeMapOpenSplit='<c-i>'
