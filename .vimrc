@@ -10,6 +10,8 @@ set incsearch
 set wildmode=full
 set gdefault
 set ignorecase
+" For /seARCH
+set smartcase
 set nu
 set laststatus=2 " Vim airline even when 1 file opened
 set encoding=utf-8
@@ -55,14 +57,15 @@ nnoremap <leader>wsn :WinMessage scriptnames<CR>
 " rtp
 nnoremap <leader>wrt :WinMessage set rtp?<CR>
 
-if !has('win32')
-    noremap  Y "*Y
-    noremap  p "*p
-    noremap  P "*P
-    vnoremap y "*y
-    vnoremap Y "*Y
-    vnoremap p "*p
-    vnoremap P "*P
+" Linux buffers
+if has('unix')
+    noremap  Y "+Y
+    noremap  p "+p
+    noremap  P "+P
+    vnoremap y "+y
+    vnoremap Y "+Y
+    vnoremap p "+p
+    vnoremap P "+P
 endif
 
 " Suck-in line below to newborn if body
@@ -243,7 +246,7 @@ endif
 ":imap <Tab> <C-P>
 
 " Insert new line without insert mode
-nnoremap <S-Enter> mZO<Esc>`Z
+nnoremap <Enter> mZO<Esc>`Z
 " Remove line above
 nnoremap <C-S-Enter> mZkdd`Z
 
@@ -290,7 +293,7 @@ map <leader>c <plug>NERDCommenterToggle
 " I am always hit <leader>s to comment
 map <leader>s <plug>NERDCommenterToggle
 " Bind this shit to something else to prevent conflict with NerdCommneter
-map <localLeader>mmmm <Plug>RooterChangeToRootDirectory
+map <localLeader>rd <Plug>RooterChangeToRootDirectory
 "map <leader>cs <plug>NERDCommenterSexy
 
 " Remove trailing spaces
@@ -321,6 +324,8 @@ nnoremap <leader>m :MRU<CR>
 " Ctrl+Shift+G - show CWD
 nnoremap <C-S-G> :echo getcwd()<CR>
 
+" Panic Button
+nnoremap <f9> mzggg?G`z
 " }}}
 
 " Misc stuff {{{1
@@ -730,7 +735,8 @@ augroup JavaScript
     autocmd FileType javascript noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
-    autocmd FileType javascript nnoremap <buffer> <localleader>s :tabe ~\.vim\snippets\javascript.snippets<CR>
+    autocmd FileType javascript nnoremap <buffer> <localleader>s :tabe ~/.vim/snippets/javascript.snippets<CR>
+    autocmd FileType javascript call BindRunCommand("F5", "node %:p", "")
     " Run debbugger on current file (to install npm -g i node-vim-inspector)
     autocmd FileType javascript nnoremap <buffer> <leader>d :silent nbclose<CR>:Start node-vim-inspector %
         \ --vim.keys.break="F9"
@@ -812,9 +818,6 @@ nnoremap ><lt> V`]>
 nnoremap =- V`]=
 " }}}
 
-    
-
-
 " Plugin settings {{{
 let g:brkptsDefStartMode = "functions"
 let g:html_indent_script1 = "inc"
@@ -831,13 +834,63 @@ let g:syntastic_mode_map = {
 let g:syntastic_auto_jump = 0
 let g:syntastic_enable_signs = 1
 
-let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_clear_cache_on_exit = 1
-let g:ctrlp_open_new_file = 'r'
-let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
-let g:ctrlp_mruf_case_sensitive = 0
-let g:ctrlp_by_filename = 1
-let g:ctrlp_mruf_default_order = 1
+"let g:ctrlp_cmd = 'CtrlPMRU'
+"let g:ctrlp_clear_cache_on_exit = 1
+"let g:ctrlp_open_new_file = 'r'
+"let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
+"let g:ctrlp_mruf_case_sensitive = 0
+"let g:ctrlp_by_filename = 1
+"let g:ctrlp_working_path_mode = 'ra'
+"let g:ctrlp_mruf_default_order = 1
+
+" Ctrl-P {{{
+
+let g:ctrlp_dont_split = 'NERD_tree_2'
+let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
+let g:ctrlp_max_files = 0
+
+"let g:ctrlp_jump_to_buffer = 0
+"let g:ctrlp_working_path_mode = 0
+"let g:ctrlp_match_window_reversed = 1
+"let g:ctrlp_split_window = 0
+"let g:ctrlp_max_height = 20
+"let g:ctrlp_extensions = ['tag']
+
+"let g:ctrlp_map = '<leader>,'
+"nnoremap <leader>. :CtrlPTag<cr>
+"nnoremap <leader>E :CtrlP ../
+
+"let g:ctrlp_prompt_mappings = {
+"\ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<s-tab>'],
+"\ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<tab>'],
+"\ 'PrtHistory(-1)':       ['<c-n>'],
+"\ 'PrtHistory(1)':        ['<c-p>'],
+"\ 'ToggleFocus()':        ['<c-tab>'],
+"\ }
+
+"let ctrlp_filter_greps = "".
+    "\ "egrep -iv '\\.(" .
+    "\ "jar|class|swp|swo|log|so|o|pyc|jpe?g|png|gif|mo|po" .
+    "\ ")$' | " .
+    "\ "egrep -v '^(\\./)?(" .
+    "\ "deploy/|lib/|classes/|libs/|deploy/vendor/|.git/|.hg/|.svn/|.*migrations/|docs/build/" .
+    "\ ")'"
+
+"let my_ctrlp_user_command = "" .
+    "\ "find %s '(' -type f -or -type l ')' -maxdepth 15 -not -path '*/\\.*/*' | " .
+    "\ ctrlp_filter_greps
+
+"let my_ctrlp_git_command = "" .
+    "\ "cd %s && git ls-files --exclude-standard -co | " .
+    "\ ctrlp_filter_greps
+
+"let my_ctrlp_ffind_command = "ffind --semi-restricted --dir %s --type e -B -f"
+
+"let g:ctrlp_user_command = ['.git/', my_ctrlp_ffind_command, my_ctrlp_ffind_command]
+"let g:ctrlp_user_command = 'find %s -type f'
+
+" }}}
+
 let g:airline_powerline_fonts = 1
 let g:NERDCreateDefaultMappings = 0
 "let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
@@ -862,6 +915,7 @@ if has('win32')
     let g:ackprg = 'ag --nogroup --nocolor --column'
 endif
 let g:XkbSwitchEnabled = 1
+let g:rooter_change_directory_for_non_project_files = 1
 
 " }}}
 

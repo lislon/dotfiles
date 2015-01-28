@@ -25,16 +25,14 @@ Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets'
-"Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim'}
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'Raimondi/delimitMate'
 Plugin 'kien/ctrlp.vim'
 "Plugin 'wincent/command-t'
-"Plugin 'JazzCore/ctrlp-cmatcher'
+Plugin 'JazzCore/ctrlp-cmatcher'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'scrooloose/syntastic'
 Plugin 'bling/vim-airline'
-" not sure i am ready to work with :hidden
 Plugin 'LustyExplorer'
 Plugin 'airblade/vim-rooter'
 

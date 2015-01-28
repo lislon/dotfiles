@@ -2,7 +2,34 @@
 snippet cl
 	console.log "${1}"
 
+snippet cd
+	console.dir ${1}
+
+snippet f
+	(${1}) ->
+		$0
+
 # (req, res) -> 
 snippet rr
 	(req, res) ->
 		${1}
+
+# define default
+snippet d1
+	define ['app', 'backbone', 'marionette', 'model', 'underscore'], (App, Backbone, Marionette, Model, _) ->
+		App${1} = App.module "App.${1}"
+
+		${2}
+
+# define default
+snippet d2
+	define ['app', 'backbone', 'marionette', 'model', 'underscore'], (App, Backbone, Marionette, Model, _) ->
+		App$1 = App.module "App.${1:ModuleName}"
+
+		class App$1.View extends Marionette.ItemView.extend
+			template: ''
+
+		class App$1.Controller extends Marionette.Controller.extend
+			initialize: (options) ->
+				App.mainRegion.show new App$1.View
+					model: null
