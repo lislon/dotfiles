@@ -78,6 +78,9 @@ nnoremap <A-u> jjddkP>>
 
 nnoremap <S-F2> :w !sudo tee %
 
+" Unfuck my screen
+nnoremap U :syntax sync fromstart<cr>:redraw!<cr>
+
 " }}} End of basic stuff
 
 " System stuff {{{
@@ -702,8 +705,8 @@ augroup NerdTree
     " Space to open/close folders
     autocmd FileType nerdtree nmap <buffer><special><silent> <Space> <CR>
     autocmd FileType nerdtree :hi NonText guifg=bg 
-    autocmd FileType nerdtree :nnoremap H 20<C-w><
-    autocmd FileType nerdtree :nnoremap L 20<C-w>>
+    autocmd FileType nerdtree :nnoremap <buffer>H 20<C-w><
+    autocmd FileType nerdtree :nnoremap <buffer>L 20<C-w>>
 augroup end
 " }}}
 
@@ -819,11 +822,18 @@ nnoremap =- V`]=
 " }}}
 
 " Plugin settings {{{
+
+
+" {{{ Surround vim
+let g:surround_40 = "(\r)"
+let g:surround_40 = "(\r)"
+" }}}
+
 let g:brkptsDefStartMode = "functions"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 let g:delimitMate_expand_cr = 1
-let g:syntastic_javascript_checkers = ['jsl']
+let g:syntastic_javascript_checkers = ['jshint']
 let g:NERDTreeCopyCmd='cp '
 let g:NERDTreeDirArrows=0
 let g:syntastic_mode_map = {
@@ -909,7 +919,7 @@ end
 "let g:CommandTHighlightColor = 'Search'
 let g:NERDTreeMapOpenInTab='<c-t>'
 let g:NERDTreeMapOpenSplit='<c-i>'
-let g:NERDTreeMapOpenVSplit='<c-s>'
+let g:NERDTreeMapOpenVSplit='<c-v>'
 if has('win32')
     let g:XkbSwitchLib = expand('~/dotfiles/bin/libxkbswitch32').'.dll'
     let g:ackprg = 'ag --nogroup --nocolor --column'

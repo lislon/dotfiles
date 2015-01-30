@@ -45,3 +45,5 @@
 	default = simple
 [diff]
 	tool = vimdiff
+[github]
+	user = lislon

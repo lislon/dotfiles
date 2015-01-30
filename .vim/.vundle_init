@@ -57,6 +57,8 @@ Plugin 'lfilho/cosco.vim'
 Plugin 'vim-coffee-script'
 
 Plugin 'lyokha/vim-xkbswitch'
+Plugin 'mattn/webapi-vim'
+Plugin 'mattn/gist-vim'
 
 
 "Plugin 'Valloric/YouCompleteMe'
