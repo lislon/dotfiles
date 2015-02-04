@@ -60,6 +60,10 @@ Plugin 'lyokha/vim-xkbswitch'
 Plugin 'mattn/webapi-vim'
 Plugin 'mattn/gist-vim'
 
+"Js 
+Plugin 'heavenshell/vim-jsdoc'
+Plugin 'jaxbot/browserlink.vim'
+
 
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'vim-scripts/indenthtml.vim'

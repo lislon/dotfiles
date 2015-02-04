@@ -332,6 +332,20 @@ nnoremap <f9> mzggg?G`z
 " }}}
 
 " Misc stuff {{{1
+
+fun! English(exercise)
+    split ~/Documents/english.txt
+    resize 3
+    set scrollbind
+    normal /exercice
+    
+    "split ~/Documents/english.txt
+    "resize 3
+    "set scrollbind
+
+endf
+
+
 " Auto update vimrc
 augroup auto_reload
     autocmd!
@@ -688,6 +702,82 @@ command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tab
 
 " end redir_messages.vim" }}}
 
+
+fun! s:ShowArgs(line1, line2, args)
+    echo "lines ".a:line1." - ".a:line2
+    echo "args:".a:args
+endf
+
+command! -range=% -bar -nargs=1 Test2 call s:ShowArgs(<line1>, <line2>, <q-args>)
+
+" CoffeeScript {{{
+
+fun! CoffeeRange() range
+    echo a:firstline
+    echo a:lastline
+endf
+vnoremap <buffer> <localleader>c :call CoffeeRange()<CR>
+
+
+fun! InitFtCoffee()
+    nnoremap <buffer> <localleader>s :tabe ~\.vim\snippets\coffee.snippets
+    nnoremap <buffer> <localleader>c :CoffeeWatch vert
+    vnoremap <buffer> <localleader>c :CoffeeRange
+    " Remove parenthesis
+    nnoremap <buffer> <localleader>r :s/(/ /<CR>:s/);//<CR>
+
+    if match(expand("%:p"), "[\\/]test[\\/]") >= 0
+        call BindRunCommand("F5", 
+                    \ "mocha --compilers coffee:coffee-script/register %:p", 
+                    \ '/error')
+    else
+        call BindRunCommand("F5", "coffee %:p", "")
+    endif
+endf
+
+augroup CoffeeScript
+    au!
+    " this one is which you're most likely to use?
+    autocmd FileType coffee call InitFtCoffee()
+augroup end
+    " }}}
+
+" Prevent to modify compiled files {{{
+augroup JavascriptBoywer
+   au!
+   " this one is which you're most likely to use?
+   autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> K :q!<CR>
+   autocmd BufRead */dist/** setlocal ro | nnoremap <buffer> K :q!<CR>
+augroup end
+" }}}
+
+" Zip Right
+"
+" Moves the character under the cursor to the end of the line.  Handy when you
+" have something like:
+"
+"     foo
+"
+" And you want to wrap it in a method call, so you type:
+"
+"     println()foo
+"
+" Once you hit escape your cursor is on the closing paren, so you can 'zip' it
+" over to the right with this mapping.
+"
+" This should preserve your last yank/delete as well.
+nnoremap zl :let @z=@"<cr>x$p:let @"=@z<cr>
+
+" Keep the cursor in place while joining lines
+nnoremap J mzJ`z" Indent/dedent/autoindent what you just pasted.
+
+nnoremap <lt>> V`]<
+nnoremap ><lt> V`]>
+nnoremap =- V`]=
+" }}}
+
+" FileTypes {{{
+
 " FileType: QuickFix {{{
 augroup QuickFix
     au!
@@ -733,7 +823,7 @@ autocmd FileType html setlocal nowrap
 augroup end
 " }}}
 
-" Javascript {{{
+" FileType: Javascript {{{
 augroup JavaScript
     autocmd FileType javascript noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
@@ -752,81 +842,17 @@ augroup JavaScript
 augroup end
 " }}}
 
-fun! s:ShowArgs(line1, line2, args)
-    echo "lines ".a:line1." - ".a:line2
-    echo "args:".a:args
-endf
-
-command! -range=% -bar -nargs=1 Test2 call s:ShowArgs(<line1>, <line2>, <q-args>)
-
-" CoffeeScript {{{
-
-fun! CoffeeRange() range
-    echo a:firstline
-    echo a:lastline
-endf
-vnoremap <buffer> <localleader>c :call CoffeeRange()<CR>
-
-
-fun! InitFtCoffee()
-    nnoremap <buffer> <localleader>s :tabe ~\.vim\snippets\coffee.snippets
-    nnoremap <buffer> <localleader>c :CoffeeWatch vert
-    vnoremap <buffer> <localleader>c :CoffeeRange
-    if match(expand("%:p"), "[\\/]test[\\/]") >= 0
-        call BindRunCommand("F5", 
-                    \ "mocha --compilers coffee:coffee-script/register %:p", 
-                    \ '/error')
-    else
-        call BindRunCommand("F5", "coffee %:p", "")
-    endif
-endf
-
-augroup CoffeeScript
-    au!
-    " this one is which you're most likely to use?
-    autocmd FileType coffee call InitFtCoffee()
-augroup end
-    " }}}
-
-" Prevent to modify compiled files {{{
-augroup JavascriptBoywer
-   au!
-   " this one is which you're most likely to use?
-   autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> K :q!
-augroup end
-" }}}
-
-" Zip Right
-"
-" Moves the character under the cursor to the end of the line.  Handy when you
-" have something like:
-"
-"     foo
-"
-" And you want to wrap it in a method call, so you type:
-"
-"     println()foo
-"
-" Once you hit escape your cursor is on the closing paren, so you can 'zip' it
-" over to the right with this mapping.
-"
-" This should preserve your last yank/delete as well.
-nnoremap zl :let @z=@"<cr>x$p:let @"=@z<cr>
-
-" Keep the cursor in place while joining lines
-nnoremap J mzJ`z" Indent/dedent/autoindent what you just pasted.
-
-nnoremap <lt>> V`]<
-nnoremap ><lt> V`]>
-nnoremap =- V`]=
-" }}}
+" }}} FileTypes
 
 " Plugin settings {{{
 
 
 " {{{ Surround vim
+" use char2nr to obtain number
 let g:surround_40 = "(\r)"
-let g:surround_40 = "(\r)"
+let g:surround_41 = "(\r)"
+let g:surround_91 = "[\r]"
+let g:surround_93 = "[\r]"
 " }}}
 
 let g:brkptsDefStartMode = "functions"
@@ -870,13 +896,14 @@ let g:ctrlp_max_files = 0
 "nnoremap <leader>. :CtrlPTag<cr>
 "nnoremap <leader>E :CtrlP ../
 
-"let g:ctrlp_prompt_mappings = {
-"\ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<s-tab>'],
-"\ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<tab>'],
-"\ 'PrtHistory(-1)':       ['<c-n>'],
-"\ 'PrtHistory(1)':        ['<c-p>'],
-"\ 'ToggleFocus()':        ['<c-tab>'],
-"\ }
+let g:ctrlp_prompt_mappings = {
+\ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<s-tab>'],
+\ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<tab>'],
+\ 'PrtHistory(-1)':       ['<c-n>'],
+\ 'PrtHistory(1)':        ['<c-p>'],
+\ 'AcceptSelection("h")': ['<c-i>'],
+\ 'ToggleFocus()':        ['<c-tab>'],
+\ }
 
 "let ctrlp_filter_greps = "".
     "\ "egrep -iv '\\.(" .

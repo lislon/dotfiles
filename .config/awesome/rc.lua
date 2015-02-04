@@ -203,6 +203,9 @@ root.buttons(awful.util.table.join(
 globalkeys = awful.util.table.join(
     -- My custom bindings
     awful.key({ modkey }, "F12", function () awful.util.spawn("dm-tool lock") end),
+    -- Screenshot
+    -- https://github.com/gyazo/Gyazo-for-Linux
+    awful.key({ }, "Print", function () awful.util.spawn("gyazo") end),
     awful.key({ modkey, "Shift" }, "i", function () 
         naughty.notify({ preset = naughty.config.presets.info,
                          title = "Reconnecting Wifi",
