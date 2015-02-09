@@ -333,15 +333,26 @@ nnoremap <f9> mzggg?G`z
 
 " Misc stuff {{{1
 
-fun! English(exercise)
-    split ~/Documents/english.txt
-    resize 3
+fun! English(num)
+    " English
+    above sview ~/Documents/english.txt
     set scrollbind
-    normal /exercice
+    execute "/exercise " . a:num
+    execute "/\\v^1\\\."
+    execute "/\\v^1\\\."
+    " Russian
+    above sview ~/Documents/english.txt
+    execute "/exercise " . a:num
+    execute "/\\v^1\\\."
     
-    "split ~/Documents/english.txt
-    "resize 3
-    "set scrollbind
+    " Work
+    above execute "split ~/Documents/exercice_".a:num.".txt"
+    set noscrollbind
+    resize 3
+    wincmd k
+    resize 3
+    wincmd k
+    resize 3
 
 endf
 
@@ -553,7 +564,7 @@ nnoremap <leader>gw :Gwrite<CR><CR>
 nnoremap <leader>gl :silent! Glog<CR>:bot copen<CR>
 nnoremap <leader>gp :Ggrep<Space>
 nnoremap <leader>gm :Gmove<Space>
-nnoremap <leader>gb :Git branch<Space>
+nnoremap <leader>gb :GitBlame<Space>
 nnoremap <leader>go :Git checkout<Space>
 nnoremap <leader>gps :Dispatch! git push<CR>
 nnoremap <leader>gpl :Dispatch! git pull<CR>
@@ -720,7 +731,7 @@ vnoremap <buffer> <localleader>c :call CoffeeRange()<CR>
 
 
 fun! InitFtCoffee()
-    nnoremap <buffer> <localleader>s :tabe ~\.vim\snippets\coffee.snippets
+    nnoremap <buffer> <localleader>s :tabe ~/.vim/snippets/coffee.snippets
     nnoremap <buffer> <localleader>c :CoffeeWatch vert
     vnoremap <buffer> <localleader>c :CoffeeRange
     " Remove parenthesis
@@ -746,7 +757,8 @@ augroup end
 augroup JavascriptBoywer
    au!
    " this one is which you're most likely to use?
-   autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> K :q!<CR>
+   " TODO: All except !rdpromo-*
+   "autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> K :q!<CR>
    autocmd BufRead */dist/** setlocal ro | nnoremap <buffer> K :q!<CR>
 augroup end
 " }}}
@@ -950,9 +962,33 @@ let g:NERDTreeMapOpenVSplit='<c-v>'
 if has('win32')
     let g:XkbSwitchLib = expand('~/dotfiles/bin/libxkbswitch32').'.dll'
     let g:ackprg = 'ag --nogroup --nocolor --column'
+else
+    let g:XkbSwitchIMappings = ['ru']
 endif
 let g:XkbSwitchEnabled = 1
 let g:rooter_change_directory_for_non_project_files = 1
+
+" {{{ LustyExplorer
+
+nnoremap <c-l> :LustyBufferExplorer<CR>
+nnoremap <c-s-l> :LustyFilesystemExplorerFromHere<CR>
+
+" }}}
+
+" {{{ jsdoc
+let g:jsdoc_default_mapping = 0
+nnoremap <silent> gc <Plug>jsdoc
+" }}}
+
+" {{{ Local settings
+if filereadable(expand("~/.vimrc_local"))
+    source ~/.vimrc_local
+else
+    let g:jiracomplete_url = 'http://your.jira.url/'
+    let g:jiracomplete_username = 'your_jira_username'
+    let g:jiracomplete_password = 'your_jira_password'  ""
+endif
+" }}}
 
 " }}}
 

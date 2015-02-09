@@ -46,7 +46,7 @@ ZSH_THEME="bira"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git composer fasd gitfast ssh-agent coffe autojump bower)
+plugins=(git composer fasd gitfast ssh-agent coffe autojump bower jira)
 # Use j <dirspec>
 #plugins=(git composer fasd gitfast)
 
@@ -56,6 +56,8 @@ source $ZSH/oh-my-zsh.sh
 
 #export PATH="/usr/local/bin:/usr/bin:/cygdrive/c/opt/git/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/cygdrive/c/Program Files (x86)/ATI Technologies/ATI.ACE/Core-Static:/cygdrive/c/Program Files (x86)/Common Files/Acronis/SnapAPI:/cygdrive/c/Program Files (x86)/Acronis/TrueImageHome:/cygdrive/c/Program Files/Windows Imaging:/cygdrive/c/Program Files (x86)/Calibre2:/cygdrive/c/opt/php:/cygdrive/c/opt/pear:/cygdrive/c/opt/git/bin:/cygdrive/c/opt/mysql5.6/bin:/cygdrive/c/opt/composer:/cygdrive/c/opt/putty:/cygdrive/c/opt/python/App:/cygdrive/c/opt/python/App/Scripts:/cygdrive/c/Program Files/TortoiseGit/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
+
+export ENV='development'
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8

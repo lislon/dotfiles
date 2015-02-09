@@ -78,3 +78,7 @@ install_vim
 echo "Plugin installation..."
 vim +PluginInstall +qall
 echo "Installation done."
+
+echo "Installation dependencies"
+echo "For jira"
+pip install requests

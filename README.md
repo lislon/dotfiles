@@ -23,6 +23,9 @@ Additional plugin installation
 
  - For ack https://github.com/chocolatey/chocolatey/wiki/Installation 
    Then ``choco install ag``
+ - For Jira
+       pip install requests
+
 
 Command-t installation
 ----------------------
@@ -56,5 +59,4 @@ Cheatsheet for new stuff
 
  Todo
  ----
- Select till } ?
-
+Search in tree

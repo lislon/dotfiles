@@ -13,6 +13,11 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 "Plugin 'Rykka/riv.vim'
 Plugin 'tpope/vim-fugitive'
+
+" Dependency for jira
+Plugin 'lh-vim-lib'
+Plugin 'mnpk/vim-jira-complete'
+
 "Plugin 'joonty/vim-phpqa.git'
 Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdcommenter'
@@ -73,17 +78,6 @@ Plugin 'jaxbot/browserlink.vim'
 call vundle#end()            " required
 
 filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList          - list configured plugins
-" :PluginInstall(!)    - install (update) plugins
-" :PluginSearch(!) foo - search (or refresh cache first) for foo
-" :PluginClean(!)      - confirm (or auto-approve) removal of unused plugins
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
 set rtp+=~/.vim/bundle/vim-colors-solarized
 "set rtp+=~/.vim/bundle/ycm32
 "set g:js_indent=~/.vim/bundle/web-indent/indent/javascript.vim

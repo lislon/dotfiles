@@ -8,8 +8,8 @@ snippet cl2
 	console.log(${1})
 
 # If error
-snippet ifecb
-	if (err) return cb(err)
+snippet iferr
+	if (err) { ${1:cb}(err); return }
 
 # backbone.marionette
 snippet bm
