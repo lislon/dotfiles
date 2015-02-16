@@ -60,3 +60,4 @@ Cheatsheet for new stuff
  Todo
  ----
 Search in tree
+Highlight current file in NERDTree

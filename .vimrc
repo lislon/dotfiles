@@ -240,7 +240,7 @@ if has('win32')
     :nnoremap <A-3> :GundoToggle<CR>
 else
     :nnoremap <leader>t :NERDTreeFocusToggle<CR>
-    :nnoremap <s-q> :NERDTreeFocusToggle<CR>
+    :nnoremap <s-q> :NERDTreeFocus<CR>
     :nnoremap <leader>T :NERDTreeFind<CR>
     :nnoremap <A-3> :GundoToggle<CR>
 endif
@@ -809,6 +809,7 @@ augroup NerdTree
     autocmd FileType nerdtree :hi NonText guifg=bg 
     autocmd FileType nerdtree :nnoremap <buffer>H 20<C-w><
     autocmd FileType nerdtree :nnoremap <buffer>L 20<C-w>>
+    autocmd FileType nerdtree :nnoremap <buffer><s-q> <C-w>p
 augroup end
 " }}}
 
@@ -835,7 +836,14 @@ autocmd FileType html setlocal nowrap
 augroup end
 " }}}
 
+" FileType: Sh {{{
+augroup Sh
+    autocmd FileType sh call BindRunCommand("F5", "sh %:p", "")
+augroup end
+" }}}
+
 " FileType: Javascript {{{
+
 augroup JavaScript
     autocmd FileType javascript noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
@@ -852,6 +860,8 @@ augroup JavaScript
         \ --vim.keys.out=""
         \ --vim.keys.up="S-F11" <CR>:nbstart<CR>
 augroup end
+
+"nnoremap <localLeader>d 
 " }}}
 
 " }}} FileTypes
@@ -872,8 +882,14 @@ let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 let g:delimitMate_expand_cr = 1
 let g:syntastic_javascript_checkers = ['jshint']
+
+" {{{ NerdTree
 let g:NERDTreeCopyCmd='cp '
 let g:NERDTreeDirArrows=0
+let g:nerdtree_tabs_synchronize_view=0
+" Conflicts with F5 (Stealing focus)
+let g:nerdtree_tabs_autofind=0
+" }}}
 let g:syntastic_mode_map = {
             \ "mode": "active",
             \ "active_filetypes": [],
@@ -885,7 +901,6 @@ let g:syntastic_enable_signs = 1
 "let g:ctrlp_cmd = 'CtrlPMRU'
 "let g:ctrlp_clear_cache_on_exit = 1
 "let g:ctrlp_open_new_file = 'r'
-"let g:ctrlp_mruf_exclude = '\v[\\/](public|build)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
 "let g:ctrlp_mruf_case_sensitive = 0
 "let g:ctrlp_by_filename = 1
 "let g:ctrlp_working_path_mode = 'ra'
@@ -896,6 +911,7 @@ let g:syntastic_enable_signs = 1
 let g:ctrlp_dont_split = 'NERD_tree_2'
 let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
 let g:ctrlp_max_files = 0
+let g:ctrlp_mruf_exclude = '\v[\\/](public|build|doc)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
 
 "let g:ctrlp_jump_to_buffer = 0
 "let g:ctrlp_working_path_mode = 0
@@ -970,7 +986,7 @@ let g:rooter_change_directory_for_non_project_files = 1
 
 " {{{ LustyExplorer
 
-nnoremap <c-l> :LustyBufferExplorer<CR>
+"nnoremap <c-l> :LustyBufferExplorer<CR>
 nnoremap <c-s-l> :LustyFilesystemExplorerFromHere<CR>
 
 " }}}
@@ -999,4 +1015,11 @@ fun! Sorder(list)
     call sort(new_list)
     return new_list
 endf
+" }}}
+
+" {{{ Project navigation
+
+command! SwCommon NERDTree rdpromo-common
+command! SwSite   NERDTree rdpromo-site
+command! SwMarkup NERDTree rdpromo-markup
 " }}}

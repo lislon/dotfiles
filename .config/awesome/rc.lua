@@ -398,5 +398,5 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 
 -- {{{ Autostart
 awful.util.spawn_with_shell("pidgin")
-awful.util.spawn_with_shell('setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle"')
+awful.util.spawn_with_shell('setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle" && echo "spawn ok" > /tmp/lua.txt')
 -- }}}
