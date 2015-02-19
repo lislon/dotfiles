@@ -67,7 +67,7 @@ Plugin 'mattn/gist-vim'
 
 "Js 
 Plugin 'heavenshell/vim-jsdoc'
-Plugin 'jaxbot/browserlink.vim'
+"Plugin 'jaxbot/browserlink.vim'
 
 Plugin 'marijnh/tern_for_vim'
 

@@ -29,7 +29,7 @@
 [diff]
 	;external = ~/dotfiles/bin/git_diff_wrapper
 [merge]
-	tool = vimdiff
+	tool = fugitive
 [difftool]
 	promt = false
 	prompt = false
@@ -47,3 +47,5 @@
 	tool = vimdiff
 [github]
 	user = lislon
+[mergetool "fugitive"]
+	cmd = vim -f -c \"Gdiff\" \"$MERGED\"

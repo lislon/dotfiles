@@ -23,6 +23,7 @@ set splitbelow
 set ff=unix
 set hidden
 set spell spelllang=en_us
+set dictionary+=/usr/share/dict/words
 
 
 " Allow backspace after append
@@ -45,6 +46,7 @@ set isfname-=, " Allow to gf work in rtp
 
 " Man page
 nnoremap M K
+nnoremap K <nop>
 "inoremap <Esc> <nop>
 inoremap jk <Esc>
 
@@ -160,7 +162,6 @@ if &diff
     color skittles_dark
     noremap Q :cquit<CR>
 else
-    nnoremap <silent>K :call QuitPrompt()<CR>
     nnoremap <silent><c-K> :call QuitPrompt()<CR>
     nnoremap Q <nop>
 endif
@@ -176,6 +177,12 @@ noremap <down> <nop>
 
 " }}}
 
+" Window switching {{{
+"map <C-h> <C-w>h
+"map <C-j> <C-w>j
+"map <C-k> <C-w>k
+"map <C-l> <C-w>l
+" }}}
 
 " Reset cursor position when loading old file {{{
 function! ResCur()
@@ -335,7 +342,7 @@ nnoremap <leader>m :MRU<CR>
 nnoremap <C-S-G> :echo getcwd()<CR>
 
 " Panic Button
-nnoremap <f9> mzggg?G`z
+"nnoremap <f9> mzggg?G`z
 " }}}
 
 " Misc stuff {{{1
@@ -519,14 +526,9 @@ augroup END
 " F5 for running current file {{{
 function! RunCmd(cmd, bufCommand)
     let chunks = split(a:cmd, " ")
+    " Expand %
     let chunks[-1] = expand(chunks[-1])
     let cmd = join(chunks, ' ')
-
-    "if a:is_last == "last"
-        "let cmd = g:last_f5_run_cmd
-    "else
-        "let g:last_f5_run_cmd = cmd
-    "end
 
     let ft = &l:filetype
     botright copen
@@ -555,10 +557,14 @@ fun! BindRunCommand(key, command, bufCallback)
     silent execute cmd
 endf
 
+fun! RunMake()
+    if &makeprg != 'make'
+        make
+    endif
+endf
 
 "command! RunBash call RunCmd("")
-"nnoremap <F5> :<C-u>up\|call RunCmd("", "")<CR>
-"nnoremap <C-F5> :<C-u>up\|call RunCmd("", "last")<CR>
+nnoremap <silent><F5> :silent call RunMake()<BAR>copen<BAR>redraw!<CR>
 " }}}
 
 " Figutive git bindings {{{
@@ -700,7 +706,7 @@ function! RedirMessages(msgcmd, destcmd)
     "
     if strlen(a:destcmd) " destcmd is not an empty string
         silent execute a:destcmd
-        nnoremap <buffer> K :q!<cr>
+        nnoremap <buffer> <c-K> :q!<cr>
     endif
 
     " Place the messages in the destination buffer.
@@ -767,8 +773,8 @@ augroup JavascriptBoywer
    au!
    " this one is which you're most likely to use?
    " TODO: All except !rdpromo-*
-   "autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> K :q!<CR>
-   autocmd BufRead */dist/** setlocal ro | nnoremap <buffer> K :q!<CR>
+   "autocmd BufRead */public/**.js setlocal ro | nnoremap <buffer> <c-K> :q!<CR>
+   autocmd BufRead */dist/** setlocal ro | nnoremap <buffer> <c-K> :q!<CR>
 augroup end
 " }}}
 
@@ -803,10 +809,11 @@ nnoremap =- V`]=
 augroup QuickFix
     au!
     " Exit from grep
-    autocmd FileType qf :nnoremap <silent> <buffer> K :q!<CR><C-w><C-l>
+    autocmd FileType qf :nnoremap <silent> <buffer> <c-K> :q!<CR><C-w><C-l>
         \ :unlet! g:qfix_win<CR>
     autocmd FileType qf :nnoremap <silent> <buffer> <F4> :q!<CR><C-w><C-l>
         \ :unlet! g:qfix_win<CR>
+    autocmd FileType qf :nnoremap <silent> <buffer> <F5> <C-w><C-p>
 augroup end
 " }}}
 
@@ -852,13 +859,23 @@ augroup end
 " }}}
 
 " FileType: Javascript {{{
+fun! InitFtJavaScript()
+    if match(expand("%:p"), "[\\/]test[\\/]") >= 0
+        call BindRunCommand("F5", "mocha %:p", '/error')
+        call BindRunCommand("F9", "node-inspector & mocha --debug-brk %", '')
+        
+    else
+        call BindRunCommand("F5", "node %:p", "")
+        call BindRunCommand("F9", "node-inspector & node --debug-brk %", '')
+    endif
+endfun
 
 augroup JavaScript
+    au!
     autocmd FileType javascript noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
     autocmd FileType javascript nnoremap <buffer> <localleader>s :tabe ~/.vim/snippets/javascript.snippets<CR>
-    autocmd FileType javascript call BindRunCommand("F5", "node %:p", "")
     " Run debbugger on current file (to install npm -g i node-vim-inspector)
     autocmd FileType javascript nnoremap <buffer> <leader>d :silent nbclose<CR>:Start node-vim-inspector %
         \ --vim.keys.break="F9"
@@ -868,12 +885,19 @@ augroup JavaScript
         \ --vim.keys.next="F10"
         \ --vim.keys.out=""
         \ --vim.keys.up="S-F11" <CR>:nbstart<CR>
+
+    autocmd FileType javascript call InitFtJavaScript()
 augroup end
 
-"nnoremap <localLeader>d 
-" }}}
 
 " }}} FileTypes
+
+" Python {{{
+augroup python
+    " this one is which you're most likely to use?
+    autocmd FileType python call BindRunCommand("F5", "python %", '') 
+augroup end
+" }}}
 
 " Plugin settings {{{
 
@@ -907,7 +931,6 @@ let g:syntastic_mode_map = {
 let g:syntastic_auto_jump = 0
 let g:syntastic_enable_signs = 1
 
-"let g:ctrlp_cmd = 'CtrlPMRU'
 "let g:ctrlp_clear_cache_on_exit = 1
 "let g:ctrlp_open_new_file = 'r'
 "let g:ctrlp_mruf_case_sensitive = 0
@@ -918,9 +941,10 @@ let g:syntastic_enable_signs = 1
 " Ctrl-P {{{
 
 let g:ctrlp_dont_split = 'NERD_tree_2'
+let g:ctrlp_cmd = 'CtrlPMRU'
 let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
 let g:ctrlp_max_files = 0
-let g:ctrlp_mruf_exclude = '\v[\\/](public|build|doc)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
+let g:ctrlp_mruf_exclude = '\v[\\/](.git|build|doc)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
 
 "let g:ctrlp_jump_to_buffer = 0
 "let g:ctrlp_working_path_mode = 0
@@ -991,12 +1015,13 @@ else
     let g:XkbSwitchIMappings = ['ru']
 endif
 let g:XkbSwitchEnabled = 1
-let g:rooter_change_directory_for_non_project_files = 1
+" Disabled because i can't run mocha from qf window
+let g:rooter_change_directory_for_non_project_files = 0
 
 " {{{ LustyExplorer
 
-"nnoremap <c-l> :LustyBufferExplorer<CR>
-nnoremap <c-s-l> :LustyFilesystemExplorerFromHere<CR>
+nnoremap gl :LustyBufferExplorer<CR>
+nnoremap <c-l> :LustyFilesystemExplorerFromHere<CR>
 
 " }}}
 
