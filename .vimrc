@@ -152,10 +152,28 @@ set guioptions-=L  "remove left-hand scroll bar
 
 " Quit commands {{{
 fun! QuitPrompt()
+   " Close nerd tree
+   let nr = s:GetNerdTreeWinNr()
+   if nr != -1 && winnr('$') == 2
+       :exe nr . 'wincmd w'
+       :q
+   endif
    if has("gui_running") && tabpagenr("$") == 1 && winnr("$") <= 2
       let choice = confirm("Close?", "&yes\n&no", 1)
       if choice == 1 | q | endif
    else | q | endif
+endfun
+
+fun! s:GetNerdTreeWinNr()
+    let i = 0
+    while i < winnr('$')
+        let ft = getwinvar(i, '&ft')
+        if ft == 'nerdtree'
+            return i
+        endif
+        let i += 1
+    endwhile
+    return -1
 endfun
 
 if &diff
@@ -559,12 +577,13 @@ endf
 
 fun! RunMake()
     if &makeprg != 'make'
-        make
+        silent make
+        "copen
     endif
 endf
 
 "command! RunBash call RunCmd("")
-nnoremap <silent><F5> :silent call RunMake()<BAR>copen<BAR>redraw!<CR>
+nnoremap <silent><F5> :call RunMake()<CR>
 " }}}
 
 " Figutive git bindings {{{
@@ -858,9 +877,18 @@ augroup Sh
 augroup end
 " }}}
 
+" FileType: help {{{
+augroup HelpFileType
+    au!
+    " this one is which you're most likely to use?
+    autocmd FileType help nnoremap M <c-]><CR>
+augroup end
+" }}}
+
 " FileType: Javascript {{{
 fun! InitFtJavaScript()
-    if match(expand("%:p"), "[\\/]test[\\/]") >= 0
+    " ~/Sources/sometest/ok
+    if match(expand("%:p"), 'Sources[\\/].\{-}[\\/]test[\\/]') >= 0
         call BindRunCommand("F5", "mocha %:p", '/error')
         call BindRunCommand("F9", "node-inspector & mocha --debug-brk %", '')
         
