@@ -97,8 +97,12 @@ let g:solarized_termcolors=256
 
 if has('gui_running') || has('unix')
     set background=dark
-    :colorscheme solarized
-    set background=dark
+    try
+        :colorscheme solarized
+        set background=dark
+    catch /^Vim\%((\a\+))
+        :colorscheme default
+    endtry
 else
     set background=dark
     :colorscheme skittles_dark
@@ -157,6 +161,7 @@ if &diff
     noremap Q :cquit<CR>
 else
     nnoremap <silent>K :call QuitPrompt()<CR>
+    nnoremap <silent><c-K> :call QuitPrompt()<CR>
     nnoremap Q <nop>
 endif
 
@@ -171,12 +176,6 @@ noremap <down> <nop>
 
 " }}}
 
-" Window switching {{{
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
-" }}}
 
 " Reset cursor position when loading old file {{{
 function! ResCur()
@@ -227,17 +226,18 @@ augroup END
 " Irritations
 :nnoremap <F10> :vs ~/dotfiles/README.md<CR>G
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
-:nnoremap <F2> :w<CR>
-:inoremap <F2> <Esc>:w<CR>
+:nnoremap <F2> :update<CR>
+:inoremap <F2> <C-O>:update<CR>
+:vnoremap <F2> <C-C>:update<CR>
 :nnoremap <F6> :set paste!<CR>
 
 " Alt + 1 - NERD Tree
 if has('win32')
-    :nnoremap <A-1> :NERDTreeFocusToggle<CR>
-    :nnoremap <A-E> :NERDTreeFocusToggle<CR>
-    :nnoremap <A-~> :NERDTreeFocusToggle<CR>
     :nnoremap <A-2> :NERDTreeFind<CR>
     :nnoremap <A-3> :GundoToggle<CR>
+    :nnoremap <s-q> :NERDTreeFocus<CR>
+    :nnoremap <leader>t :NERDTreeFocusToggle<CR>
+    :nnoremap <leader>T :NERDTreeFind<CR>
 else
     :nnoremap <leader>t :NERDTreeFocusToggle<CR>
     :nnoremap <s-q> :NERDTreeFocus<CR>
@@ -281,7 +281,14 @@ nnoremap <silent><leader>+ :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
 nnoremap <silent><leader>= :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
 nnoremap <silent><leader>- :execute "vertical resize " . (winwidth(0) * 2/3)<CR>
 
-nnoremap <c-k> :messages<CR>
+" CTRL-Tab is Next window
+noremap <C-Tab> <C-W>w
+inoremap <C-Tab> <C-O><C-W>w
+cnoremap <C-Tab> <C-C><C-W>w
+onoremap <C-Tab> <C-C><C-W>w
+
+
+"nnoremap <c-k> :wq<CR>
 
 " Select all
 nnoremap vaa ggVGg_
@@ -390,6 +397,9 @@ function! DeleteLine()
 endfunction
 
 nnoremap <silent>dd :<C-u>call DeleteLine()<Esc>
+:
+" Prevent corrupting of delete buffer by using single deletion
+nnoremap x "_x
 " }}}
 
 
@@ -397,7 +407,6 @@ nnoremap <silent>dd :<C-u>call DeleteLine()<Esc>
 augroup CursorLine
     autocmd!
     autocmd VimEnter,WinEnter,BufWinEnter,InsertLeave * setlocal cursorline
-    autocmd WinLeave,InsertEnter * setlocal nocursorline
 augroup end CursorLine
 
 " Highlight traling spaces

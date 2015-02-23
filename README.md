@@ -57,6 +57,11 @@ Cheatsheet for new stuff
  - <leader>lt Commant-T
  - <leader>a  Ack
 
+ Visual mode:
+ - oO - move start/end selection
+ - aB - select outer {
+ - X - delete full lines
+
  Todo
  ----
 Search in tree
