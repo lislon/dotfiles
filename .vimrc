@@ -252,23 +252,10 @@ augroup END
 :nnoremap <F10> :vs ~/dotfiles/README.md<CR>G
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
 :nnoremap <F2> :update<CR>
-:inoremap <F2> <C-O>:update<CR>
+:inoremap <F2> <Esc>:update<CR>
 :vnoremap <F2> <C-C>:update<CR>
 :nnoremap <F6> :set paste!<CR>
 
-" Alt + 1 - NERD Tree
-if has('win32')
-    :nnoremap <A-2> :NERDTreeFind<CR>
-    :nnoremap <A-3> :GundoToggle<CR>
-    :nnoremap <s-q> :NERDTreeFocus<CR>
-    :nnoremap <leader>t :NERDTreeFocusToggle<CR>
-    :nnoremap <leader>T :NERDTreeFind<CR>
-else
-    :nnoremap <leader>t :NERDTreeFocusToggle<CR>
-    :nnoremap <s-q> :NERDTreeFocus<CR>
-    :nnoremap <leader>T :NERDTreeFind<CR>
-    :nnoremap <A-3> :GundoToggle<CR>
-endif
 
 " Ctrl+N switch options !! Confclits with TextMate
 ":imap <Tab> <C-P>
@@ -414,7 +401,7 @@ highlight! MatchParen cterm=NONE ctermbg=gray ctermfg=white
 
 " Delete line but not copy blank {{{
 function! DeleteLine()
-    if v:count < 1 && getline(line('.')) == ""
+    if v:count < 1 && match(getline(line('.')), '^\s*$') >= 0
         normal! "_dd
     else
         execute "normal! ".v:count."dd"
@@ -886,6 +873,15 @@ augroup end
 " }}}
 
 " FileType: Javascript {{{
+
+" Splits [1, 2, 3, 4, 5] to multi lines
+fun! ArrSp()
+    normal! vi[
+    :s/,\s*/,/
+    :exe "normal! o\ei\<CR>\evi[=vi[\ea\<CR>\e"
+endfun
+
+
 fun! InitFtJavaScript()
     " ~/Sources/sometest/ok
     if match(expand("%:p"), 'Sources[\\/].\{-}[\\/]test[\\/]') >= 0
@@ -896,6 +892,7 @@ fun! InitFtJavaScript()
         call BindRunCommand("F5", "node %:p", "")
         call BindRunCommand("F9", "node-inspector & node --debug-brk %", '')
     endif
+    command! ArrSp call ArrSp()
 endfun
 
 augroup JavaScript
@@ -945,7 +942,29 @@ let g:delimitMate_expand_cr = 1
 let g:syntastic_javascript_checkers = ['jshint']
 
 " {{{ NerdTree
+
+fun! NERDTreeFocusAndFind()
+    if s:GetNerdTreeWinNr() != -1
+        NERDTreeFocus
+    else
+        NERDTreeFind
+    endif
+endf
+
+" Alt + 1 - NERD Tree
+if has('win32')
+    :nnoremap <A-2> :NERDTreeFind<CR>
+    :nnoremap <A-3> :GundoToggle<CR>
+    :nnoremap <silent><s-q> :NERDTreeFocus<CR>
+    :nnoremap <leader>T :NERDTreeFind<CR>
+else
+    :nnoremap <silent><s-q> :call NERDTreeFocusAndFind()<CR>
+    :nnoremap <leader>T :NERDTreeFind<CR>
+    :nnoremap <A-3> :GundoToggle<CR>
+endif
+
 let g:NERDTreeCopyCmd='cp '
+let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows=0
 let g:nerdtree_tabs_synchronize_view=0
 " Conflicts with F5 (Stealing focus)
