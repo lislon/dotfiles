@@ -40,7 +40,7 @@ Plugin 'scrooloose/syntastic'
 Plugin 'bling/vim-airline'
 Plugin 'LustyExplorer'
 Plugin 'airblade/vim-rooter'
-
+Plugin 'tpope/vim-unimpaired' 
 Plugin 'xolox/vim-misc'
 Plugin 'mileszs/ack.vim'
 Plugin 'pangloss/vim-javascript'

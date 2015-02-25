@@ -943,10 +943,12 @@ let g:syntastic_javascript_checkers = ['jshint']
 
 " {{{ NerdTree
 
+" Autofocus file if NERDTree is not visible
 fun! NERDTreeFocusAndFind()
     if s:GetNerdTreeWinNr() != -1
         NERDTreeFocus
     else
+        NERDTreeFocus
         NERDTreeFind
     endif
 endf
