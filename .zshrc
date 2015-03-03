@@ -133,6 +133,7 @@ bindkey '\C-xu' universal-argument
 # >> BEFOREtwo threeAFTER<<
 # >> BEFOREfourAFTER<<
 setopt rc_expand_param
+setopt correct
 alias gl='git --no-pager log --oneline --graph -5'
 alias gpush='git push'
 alias s="sudo "

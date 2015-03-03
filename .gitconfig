@@ -19,6 +19,7 @@
 [core]
 	autocrlf = false
 	excludesfiles = ~/dotfiles/.gitignore_global
+	editor = /usr/bin/vim
 [color]
 	diff = auto
 	status = auto
@@ -26,8 +27,6 @@
 	interactive = auto
 	ui = true
 	pager = true
-[diff]
-	;external = ~/dotfiles/bin/git_diff_wrapper
 [merge]
 	tool = fugitive
 [difftool]

@@ -112,6 +112,8 @@ endif
 
 if has ('win32')
     set guifont=Powerline_Consolas:h11:cRUSSIAN
+elseif has('gui_running')
+    set guifont=Liberation\ Mono\ for\ Powerline\ 11
 else
     set guifont=Powerline\ Consolas\ 10
 endif
@@ -221,12 +223,12 @@ augroup END
 "copy
 :vnoremap <C-Insert> "+y
 "paste (Insert like = p, Shift+Insrt like P)
-:nnoremap <Insert> "+p
-:inoremap <Insert> <c-o>"+p
-:nnoremap <S-Insert> "+P
+:nnoremap <Insert> "+P
+:inoremap <Insert> <c-o>"+P
+:nmap <S-Insert> yo"+P
 :inoremap <S-Insert> <c-o>"+P
-
-" Wrap to vim fold 
+ 
+ "Wrap to vim fold 
 :vnoremap <Leader>f <Esc>'>o" }}}<Esc>'<O"  {{{<Left><Left><Left><Left>
 
 " Very left & Very Right
@@ -251,9 +253,9 @@ augroup END
 " Irritations
 :nnoremap <F10> :vs ~/dotfiles/README.md<CR>G
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
-:nnoremap <F2> :update<CR>
-:inoremap <F2> <Esc>:update<CR>
-:vnoremap <F2> <C-C>:update<CR>
+:nnoremap <silent> <F2> :update<CR>
+:inoremap <silent> <F2> <Esc>:update<CR>
+:vnoremap <silent> <F2> <C-C>:update<CR>
 :nnoremap <F6> :set paste!<CR>
 
 
@@ -295,6 +297,11 @@ nnoremap <silent><leader>- :execute "vertical resize " . (winwidth(0) * 2/3)<CR>
 
 " CTRL-Tab is Next window
 noremap <C-Tab> <C-W>w
+inoremap <C-Tab> <C-O><C-W>w
+cnoremap <C-Tab> <C-C><C-W>w
+onoremap <C-Tab> <C-C><C-W>w
+
+noremap <S-Tab> gt
 inoremap <C-Tab> <C-O><C-W>w
 cnoremap <C-Tab> <C-C><C-W>w
 onoremap <C-Tab> <C-C><C-W>w
@@ -344,7 +351,7 @@ inoremap <c-^> @<Esc>kyWjPA<BS>
 nnoremap <leader>m :MRU<CR>
 
 " Ctrl+Shift+G - show CWD
-nnoremap <C-S-G> :echo getcwd()<CR>
+nnoremap <C-S-G> :echo 'cwd: ' .getcwd() .'	file: '.expand('%:p')<CR>
 
 " Panic Button
 "nnoremap <f9> mzggg?G`z
@@ -571,6 +578,7 @@ endf
 
 "command! RunBash call RunCmd("")
 nnoremap <silent><F5> :call RunMake()<CR>
+nnoremap <silent><S-F5> :call RunMake()<CR>
 " }}}
 
 " Figutive git bindings {{{
@@ -742,6 +750,8 @@ endf
 
 command! -range=% -bar -nargs=1 Test2 call s:ShowArgs(<line1>, <line2>, <q-args>)
 
+
+
 " CoffeeScript {{{
 
 fun! CoffeeRange() range
@@ -810,6 +820,13 @@ nnoremap =- V`]=
 " }}}
 
 " FileTypes {{{
+
+" FileType: Gitcommit {{{
+augroup GitCommit
+    au!
+    autocmd FileType gitcommit :ab <buffer> r RDPROM
+augroup end
+" }}}
 
 " FileType: QuickFix {{{
 augroup QuickFix
@@ -917,12 +934,13 @@ augroup end
 
 " }}} FileTypes
 
-" Python {{{
+" FileType: Python {{{
 augroup python
     " this one is which you're most likely to use?
     autocmd FileType python call BindRunCommand("F5", "python %", '') 
 augroup end
 " }}}
+" }}} FileTypes
 
 " Plugin settings {{{
 
@@ -948,7 +966,6 @@ fun! NERDTreeFocusAndFind()
     if s:GetNerdTreeWinNr() != -1
         NERDTreeFocus
     else
-        NERDTreeFocus
         NERDTreeFind
     endif
 endf
@@ -967,7 +984,7 @@ endif
 
 let g:NERDTreeCopyCmd='cp '
 let g:NERDTreeMinimalUI=1
-let g:NERDTreeDirArrows=0
+let g:NERDTreeDirArrows=1
 let g:nerdtree_tabs_synchronize_view=0
 " Conflicts with F5 (Stealing focus)
 let g:nerdtree_tabs_autofind=0
@@ -1035,6 +1052,15 @@ let g:ctrlp_prompt_mappings = {
 
 "let g:ctrlp_user_command = ['.git/', my_ctrlp_ffind_command, my_ctrlp_ffind_command]
 "let g:ctrlp_user_command = 'find %s -type f'
+
+" }}}
+
+" {{{ YouCompleteMe
+
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " }}}
 

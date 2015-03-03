@@ -44,6 +44,7 @@ Plugin 'tpope/vim-unimpaired'
 Plugin 'xolox/vim-misc'
 Plugin 'mileszs/ack.vim'
 Plugin 'pangloss/vim-javascript'
+Plugin 'tabmerge'
 "Plugin 'moll/vim-node'
 
 Plugin 'tpope/vim-dispatch'
@@ -71,6 +72,7 @@ Plugin 'heavenshell/vim-jsdoc'
 
 Plugin 'marijnh/tern_for_vim'
 
+"Plugin 'ervandew/supertab'
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'vim-scripts/indenthtml.vim'
 
