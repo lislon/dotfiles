@@ -351,6 +351,8 @@ awful.rules.rules = {
                      buttons = clientbuttons } },
     { rule = { class = "Gnome-terminal" },
         properties = { size_hints_honor = false } }, -- Fix bottom edge gap
+    { rule = { class = "Gvim" },
+        properties = { size_hints_honor = false } }, -- Fix bottom edge gap
     { rule = { class = "Pidgin" },
       properties = { tag = tags[1][4] } },
     { rule = { class = "MPlayer" },
@@ -398,5 +400,6 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 
 -- {{{ Autostart
 awful.util.spawn_with_shell("pidgin")
-awful.util.spawn_with_shell('setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle" && echo "spawn ok" > /tmp/lua.txt')
+awful.util.spawn_with_shell('env > /tmp/lua.txt 2>&1')
+awful.util.spawn_with_shell('setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle"')
 -- }}}
