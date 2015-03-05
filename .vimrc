@@ -1132,6 +1132,7 @@ else
 endif
 let g:XkbSwitchEnabled = 1
 
+" Fix irritating behaviour when I press / on russian layout
 fun! XkbRepeat()
     if g:XkbSwitchEnabled == 1 
         let lang = libcall(g:XkbSwitchLib, 'Xkb_Switch_getXkbLayout', '')       
