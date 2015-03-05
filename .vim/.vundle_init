@@ -65,12 +65,13 @@ Plugin 'vim-coffee-script'
 Plugin 'lyokha/vim-xkbswitch'
 Plugin 'mattn/webapi-vim'
 Plugin 'mattn/gist-vim'
+Plugin 'othree/xml.vim'
 
 "Js 
 Plugin 'heavenshell/vim-jsdoc'
 "Plugin 'jaxbot/browserlink.vim'
 
-Plugin 'marijnh/tern_for_vim'
+"Plugin 'marijnh/tern_for_vim'
 
 "Plugin 'ervandew/supertab'
 "Plugin 'Valloric/YouCompleteMe'

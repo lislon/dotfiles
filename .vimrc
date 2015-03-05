@@ -253,9 +253,9 @@ augroup END
 " Irritations
 :nnoremap <F10> :vs ~/dotfiles/README.md<CR>G
 ":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
-:nnoremap <silent> <F2> :update<CR>
-:inoremap <silent> <F2> <Esc>:update<CR>
-:vnoremap <silent> <F2> <C-C>:update<CR>
+:nnoremap <silent> <F2> :w<CR>
+:inoremap <silent> <F2> <Esc>:w<CR>
+:vnoremap <silent> <F2> <C-C>:w<CR>
 :nnoremap <F6> :set paste!<CR>
 
 
@@ -957,7 +957,7 @@ let g:brkptsDefStartMode = "functions"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 let g:delimitMate_expand_cr = 1
-let g:syntastic_javascript_checkers = ['jshint']
+let g:syntastic_javascript_checkers = ['jshint', 'jsl']
 
 " {{{ NerdTree
 
@@ -1083,6 +1083,8 @@ end
 let g:NERDTreeMapOpenInTab='<c-t>'
 let g:NERDTreeMapOpenSplit='<c-i>'
 let g:NERDTreeMapOpenVSplit='<c-v>'
+
+" {{{ XkbSwitch
 if has('win32')
     let g:XkbSwitchLib = expand('~/dotfiles/bin/libxkbswitch32').'.dll'
     let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -1090,6 +1092,21 @@ else
     let g:XkbSwitchIMappings = ['ru']
 endif
 let g:XkbSwitchEnabled = 1
+
+fun! XkbRepeat()
+    if g:XkbSwitchEnabled == 1 
+        let lang = libcall(g:XkbSwitchLib, 'Xkb_Switch_getXkbLayout', '')       
+        if lang == "ru"
+            call feedkeys('/')
+            return
+        endif
+    endif
+    normal! .
+endf
+nnoremap <silent> . :call XkbRepeat()<CR>
+
+
+" }}}
 " Disabled because i can't run mocha from qf window
 let g:rooter_change_directory_for_non_project_files = 0
 

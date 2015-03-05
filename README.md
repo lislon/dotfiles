@@ -62,7 +62,11 @@ Cheatsheet for new stuff
  - aB - select outer {
  - X - delete full lines
 
- Todo
- ----
-Search in tree
-Highlight current file in NERDTree
+Todo
+----
+
+ - Search in tree
+ - Highlight current file in NERDTree
+ - CSS tags autocomplete
+ - In insert mode trim string if it's one-liner
+
