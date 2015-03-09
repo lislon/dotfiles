@@ -16,6 +16,9 @@ IF NOT EXIST "%HOMEPATH%\.vim" (
 
 mklink %HOMEPATH%\.gitconfig %HOMEPATH%\dotfiles\.gitconfig
 
+GOTO:Run
+
+------------------------------
 :install_vim
 
 set "bundledir=%vimfiles%\bundle"
@@ -32,9 +35,21 @@ IF NOT EXIST %bundledir%\Vundle.vim (
   git clone https://github.com/gmarik/Vundle.vim.git %bundledir%\Vundle.vim
 )
 
+vim +:PluginInstall
+
+GOTO:EOF
+
+REM ------------------------------
+:install_cmathcer
+
+cd %HOMEPATH%\dotfiles\.vim\bundle\ctrlp-cmatcher\
+install_windows.bat
 GOTO:EOF
 
 REM Powerline fonts
 REM git clone https://github.com/runsisi/consolas-font-for-powerline 
 
+:Run
+
 call:install_vim
+call:install_cmathcer

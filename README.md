@@ -67,6 +67,6 @@ Todo
 
  - Search in tree
  - Highlight current file in NERDTree
- - CSS tags autocomplete
  - In insert mode trim string if it's one-liner
+ - In insert mode if line is empty, replace current line with insert
 

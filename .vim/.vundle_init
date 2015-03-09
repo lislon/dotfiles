@@ -41,6 +41,9 @@ Plugin 'bling/vim-airline'
 Plugin 'LustyExplorer'
 Plugin 'airblade/vim-rooter'
 Plugin 'tpope/vim-unimpaired' 
+" . repeats plugins
+Plugin 'tpope/vim-repeat'
+Plugin 'svermeulen/vim-easyclip'
 Plugin 'xolox/vim-misc'
 Plugin 'mileszs/ack.vim'
 Plugin 'pangloss/vim-javascript'
@@ -69,8 +72,9 @@ Plugin 'othree/xml.vim'
 
 "Js 
 Plugin 'heavenshell/vim-jsdoc'
-"Plugin 'jaxbot/browserlink.vim'
-
+Plugin 'jaxbot/browserlink.vim'
+Plugin 'maksimr/vim-jsbeautify'
+Plugin 'einars/js-beautify'
 "Plugin 'marijnh/tern_for_vim'
 
 "Plugin 'ervandew/supertab'

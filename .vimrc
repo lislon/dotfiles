@@ -24,6 +24,7 @@ set ff=unix
 set hidden
 set spell spelllang=en_us
 set dictionary+=/usr/share/dict/words
+set clipboard=unnamed " Yank, delete, paste use system register *
 
 
 " Allow backspace after append
@@ -220,13 +221,18 @@ augroup END
 " }}}
 
 " General bindigs {{{
+
+
+" :PI For plugin installation
+command! PI PluginInstall
 "copy
-:vnoremap <C-Insert> "+y
-"paste (Insert like = p, Shift+Insrt like P)
-:nnoremap <Insert> "+P
-:inoremap <Insert> <c-o>"+P
-:nmap <S-Insert> yo"+P
-:inoremap <S-Insert> <c-o>"+P
+":vnoremap <C-Insert> "+y
+""paste (Insert like = p, Shift+Insrt like P)
+":nnoremap <Insert> "+P
+:inoremap <Insert> <c-o>"+]p<Esc>==
+":nmap <S-Insert> yo"+P
+":inoremap <S-Insert> <c-o>"+P
+
  
  "Wrap to vim fold 
 :vnoremap <Leader>f <Esc>'>o" }}}<Esc>'<O"  {{{<Left><Left><Left><Left>
@@ -263,7 +269,7 @@ augroup END
 ":imap <Tab> <C-P>
 
 " Insert new line without insert mode
-nnoremap <Enter> mZO<Esc>`Z
+nnoremap <Enter> o<Esc>
 " Remove line above
 nnoremap <C-S-Enter> mZkdd`Z
 
@@ -318,9 +324,6 @@ nnoremap <leader>N :set relativenumber!<CR>
 " Toggle line numbers
 nnoremap <leader>n :setlocal number!<cr>
 
-map <leader>c <plug>NERDCommenterToggle
-" I am always hit <leader>s to comment
-map <leader>s <plug>NERDCommenterToggle
 " Bind this shit to something else to prevent conflict with NerdCommneter
 map <localLeader>rd <Plug>RooterChangeToRootDirectory
 "map <leader>cs <plug>NERDCommenterSexy
@@ -328,12 +331,9 @@ map <localLeader>rd <Plug>RooterChangeToRootDirectory
 " Remove trailing spaces
 nnoremap <silent> <leader>ts :let _oldts = @/<CR>:%s/\v\s+$//<CR>:let @/=_oldts<CR>
 
-" Copy path to buffer and show it in console
-nnoremap <c-s-g> :let @*=expand("%:p")<CR>:echo expand("%:p")<CR>
-
 " Auto reindent when paste
-nnoremap p ]p
-nnoremap P ]P
+"nnoremap p ]p
+"nnoremap P ]P
 
 nmap <C-Enter> o<Esc>
 
@@ -351,7 +351,7 @@ inoremap <c-^> @<Esc>kyWjPA<BS>
 nnoremap <leader>m :MRU<CR>
 
 " Ctrl+Shift+G - show CWD
-nnoremap <C-S-G> :echo 'cwd: ' .getcwd() .'	file: '.expand('%:p')<CR>
+nnoremap <C-S-G> :echo 'cwd: ' .getcwd() .'	file: '.expand('%:p') \| :call EasyClip#Yank(expand('%:p'))<CR>
 
 " Panic Button
 "nnoremap <f9> mzggg?G`z
@@ -407,15 +407,15 @@ highlight! MatchParen cterm=NONE ctermbg=gray ctermfg=white
 
 
 " Delete line but not copy blank {{{
-function! DeleteLine()
-    if v:count < 1 && match(getline(line('.')), '^\s*$') >= 0
-        normal! "_dd
-    else
-        execute "normal! ".v:count."dd"
-    endif
-endfunction
+"function! DeleteLine()
+    "if v:count < 1 && match(getline(line('.')), '^\s*$') >= 0
+        "normal! "_dd
+    "else
+        "execute "normal! ".v:count."dd"
+    "endif
+"endfunction
 
-nnoremap <silent>dd :<C-u>call DeleteLine()<Esc>
+"nnoremap <silent>dd :<C-u>call DeleteLine()<Esc>
 :
 " Prevent corrupting of delete buffer by using single deletion
 nnoremap x "_x
@@ -870,8 +870,16 @@ augroup end
 
 " FileType: Html {{{
 augroup Html
-au!
-autocmd FileType html setlocal nowrap
+    au!
+    autocmd FileType html setlocal nowrap
+    autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
+augroup end
+" }}}
+
+" FileType: css {{{
+augroup Css
+    au!
+    autocmd FileType css noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 augroup end
 " }}}
 
@@ -918,6 +926,7 @@ augroup JavaScript
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
     autocmd FileType javascript nnoremap <buffer> <localleader>s :tabe ~/.vim/snippets/javascript.snippets<CR>
+    autocmd FileType javascript vnoremap <buffer>  <c-f> :call RangeJsBeautify()<cr>
     " Run debbugger on current file (to install npm -g i node-vim-inspector)
     autocmd FileType javascript nnoremap <buffer> <leader>d :silent nbclose<CR>:Start node-vim-inspector %
         \ --vim.keys.break="F9"
@@ -989,6 +998,12 @@ let g:nerdtree_tabs_synchronize_view=0
 " Conflicts with F5 (Stealing focus)
 let g:nerdtree_tabs_autofind=0
 " }}}
+" NerdCommnter {{{
+map <leader>c <plug>NERDCommenterToggle
+" I am always hit <leader>s to comment
+map <leader>s <plug>NERDCommenterToggle
+" }}}
+" Syntastic {{{
 let g:syntastic_mode_map = {
             \ "mode": "active",
             \ "active_filetypes": [],
@@ -996,6 +1011,9 @@ let g:syntastic_mode_map = {
             \ }
 let g:syntastic_auto_jump = 0
 let g:syntastic_enable_signs = 1
+" }}}
+
+" Ctrl-P {{{
 
 "let g:ctrlp_clear_cache_on_exit = 1
 "let g:ctrlp_open_new_file = 'r'
@@ -1004,11 +1022,11 @@ let g:syntastic_enable_signs = 1
 "let g:ctrlp_working_path_mode = 'ra'
 "let g:ctrlp_mruf_default_order = 1
 
-" Ctrl-P {{{
-
 let g:ctrlp_dont_split = 'NERD_tree_2'
 let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
+if filereadable(expand(" %HOME%/dotfiles/.vim/bundle/ctrlp-cmatcher/autoload/build"))
+    echo expand(" %HOME%/dotfiles/.vim/bundle/ctrlp-cmatcher/autoload/build")
+endif
 let g:ctrlp_max_files = 0
 let g:ctrlp_mruf_exclude = '\v[\\/](.git|build|doc)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
 
@@ -1054,7 +1072,6 @@ let g:ctrlp_prompt_mappings = {
 "let g:ctrlp_user_command = 'find %s -type f'
 
 " }}}
-
 " {{{ YouCompleteMe
 
 " make YCM compatible with UltiSnips (using supertab)
@@ -1062,6 +1079,28 @@ let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-n>'
 
+" }}}
+" EasyClip {{{
+
+let g:EasyClipAutoFormat = 1
+
+let g:EasyClipUseCutDefaults = 0
+nmap s <Plug>MoveMotionPlug
+xmap s <Plug>MoveMotionXPlug
+nmap ss <Plug>MoveMotionLinePlug
+
+let g:EasyClipUsePasteToggleDefaults = 0
+
+nmap <c-n> <plug>EasyClipSwapPasteForward 
+" Yank current file name to buffer
+nnoremap <leader>yf :call EasyClip#Yank(expand('%:p'))<cr>
+" Substitue
+nmap <silent> gs <plug>SubstituteOverMotionMap
+nmap gss <plug>SubstituteLine
+xmap gs <plug>XEasyClipPaste
+" }}}
+" Repeat.vim {{{
+silent! call repeat#set("\<Plug>NERDCommenterToggle", v:count)
 " }}}
 
 let g:airline_powerline_fonts = 1
