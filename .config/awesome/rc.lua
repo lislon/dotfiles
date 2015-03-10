@@ -349,6 +349,8 @@ awful.rules.rules = {
                      focus = true,
                      keys = clientkeys,
                      buttons = clientbuttons } },
+    { rule = { instance = "plugin-container" },
+     properties = { floating = true } },
     { rule = { class = "Gnome-terminal" },
         properties = { size_hints_honor = false } }, -- Fix bottom edge gap
     { rule = { class = "Gvim" },
