@@ -404,4 +404,5 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 awful.util.spawn_with_shell("pidgin")
 awful.util.spawn_with_shell('env > /tmp/lua.txt 2>&1')
 awful.util.spawn_with_shell('setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle"')
+awful.util.spawn_with_shell('ssh-agent')
 -- }}}

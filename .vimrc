@@ -604,8 +604,8 @@ nnoremap <silent><S-F5> :call RunMake()<CR>
 " }}}
 
 " Figutive git bindings {{{
-nnoremap <leader>ga :Git add %:p<CR><CR>
-nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gas :Git add . \| Gstatus<CR><CR>
+nnoremap <leader>gs :update \| Gstatus<CR>
 nnoremap <leader>gc :Gcommit -v -q<CR>
 nnoremap <leader>gt :Gcommit -v -q %:p<CR>
 nnoremap <leader>gd :Gdiff<CR>
