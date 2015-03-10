@@ -24,7 +24,7 @@ set ff=unix
 set hidden
 set spell spelllang=en_us
 set dictionary+=/usr/share/dict/words
-set clipboard=unnamed " Yank, delete, paste use system register *
+set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
 
 
 " Allow backspace after append
@@ -61,15 +61,15 @@ nnoremap <leader>wsn :WinMessage scriptnames<CR>
 nnoremap <leader>wrt :WinMessage set rtp?<CR>
 
 " Linux buffers
-if has('unix')
-    noremap  Y "+Y
-    noremap  p "+p
-    noremap  P "+P
-    vnoremap y "+y
-    vnoremap Y "+Y
-    vnoremap p "+p
-    vnoremap P "+P
-endif
+"if has('unix')
+    "noremap  Y "+Y
+    "noremap  p "+p
+    "noremap  P "+P
+    "vnoremap y "+y
+    "vnoremap Y "+Y
+    "vnoremap p "+p
+    "vnoremap P "+P
+"endif
 
 " Suck-in line below to newborn if body
 " if () {
@@ -229,7 +229,7 @@ command! PI PluginInstall
 ":vnoremap <C-Insert> "+y
 ""paste (Insert like = p, Shift+Insrt like P)
 ":nnoremap <Insert> "+P
-:inoremap <Insert> <c-o>"+]p<Esc>==
+:inoremap <Insert> <c-o>"+]P<Esc>==
 ":nmap <S-Insert> yo"+P
 ":inoremap <S-Insert> <c-o>"+P
 
