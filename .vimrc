@@ -359,6 +359,28 @@ nnoremap <C-S-G> :echo 'cwd: ' .getcwd() .'	file: '.expand('%:p') \| :call EasyC
 
 " Misc stuff {{{1
 
+" Indent block {{{
+function! SelectIndent()
+  let cur_line = line(".")
+  let cur_ind = indent(cur_line)
+  let line = cur_line
+  while indent(line - 1) >= cur_ind
+    let line = line - 1
+  endw
+  exe "normal " . line . "G"
+  exe "normal V"
+  let line = cur_line
+  while indent(line + 1) >= cur_ind
+    let line = line + 1
+  endw
+  exe "normal " . line . "G"
+endfunction
+
+nnoremap vip :call SelectIndent()<CR>
+
+
+" }}}
+
 fun! English(num)
     " English
     above sview ~/Documents/english.txt
@@ -593,7 +615,7 @@ nnoremap <leader>gw :Gwrite<CR><CR>
 nnoremap <leader>gl :silent! Glog<CR>:bot copen<CR>
 nnoremap <leader>gp :Ggrep<Space>
 nnoremap <leader>gm :Gmove<Space>
-nnoremap <leader>gb :GitBlame<Space>
+nnoremap <leader>gb :Gblame<Space>
 nnoremap <leader>go :Git checkout<Space>
 nnoremap <leader>gps :Dispatch! git push<CR>
 nnoremap <leader>gpl :Dispatch! git pull<CR>
@@ -949,6 +971,15 @@ augroup python
     autocmd FileType python call BindRunCommand("F5", "python %", '') 
 augroup end
 " }}}
+
+" FileType: Git {{{
+augroup git
+    au!
+    " this one is which you're most likely to use?
+    autocmd FileType git set foldlevel=9
+augroup end
+" }}}
+
 " }}} FileTypes
 
 " Plugin settings {{{
