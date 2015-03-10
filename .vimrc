@@ -997,7 +997,7 @@ let g:brkptsDefStartMode = "functions"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 let g:delimitMate_expand_cr = 1
-let g:syntastic_javascript_checkers = ['jshint', 'jsl']
+let g:syntastic_javascript_checkers = ['jshint']
 
 " {{{ NerdTree
 
@@ -1119,6 +1119,7 @@ let g:EasyClipUseCutDefaults = 0
 nmap s <Plug>MoveMotionPlug
 xmap s <Plug>MoveMotionXPlug
 nmap ss <Plug>MoveMotionLinePlug
+nmap Y yy
 
 let g:EasyClipUsePasteToggleDefaults = 0
 

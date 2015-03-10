@@ -158,8 +158,8 @@ alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle"'
 
 calk() { for exp in $argv; do print "$exp = $(( exp ))"; done; }
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-export XDG_CONFIG_HOME=~/.config
+#export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+#export XDG_CONFIG_HOME=~/.config
