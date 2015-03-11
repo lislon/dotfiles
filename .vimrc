@@ -223,6 +223,10 @@ augroup END
 " General bindigs {{{
 
 
+nnoremap <localleader>s :let b:file = "~/.vim/snippets/" . &ft . ".snippets" 
+            \ \| let b:is_r = filereadable(b:file) 
+            \ \| exe b:is_r ? "tabe ".b:file : "echo 'Not found ".b:file."'"<CR>
+
 " :PI For plugin installation
 command! PI PluginInstall
 "copy
@@ -617,8 +621,7 @@ nnoremap <leader>gp :Ggrep<Space>
 nnoremap <leader>gm :Gmove<Space>
 nnoremap <leader>gb :Gblame<Space>
 nnoremap <leader>go :Git checkout<Space>
-nnoremap <leader>gps :Dispatch! git push<CR>
-nnoremap <leader>gpl :Dispatch! git pull<CR>
+nnoremap <leader>gps :Dispatch! git pull && git push<CR>
 nnoremap <leader>gpl :Dispatch! git pull<CR>
 nnoremap <leader>grh :!git reset --hard FETCH_HEAD
 " }}}
@@ -784,7 +787,6 @@ vnoremap <buffer> <localleader>c :call CoffeeRange()<CR>
 
 
 fun! InitFtCoffee()
-    nnoremap <buffer> <localleader>s :tabe ~/.vim/snippets/coffee.snippets
     nnoremap <buffer> <localleader>c :CoffeeWatch vert
     vnoremap <buffer> <localleader>c :CoffeeRange
     " Remove parenthesis
@@ -947,7 +949,6 @@ augroup JavaScript
     autocmd FileType javascript noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <c-s> " +  + "<Esc><Left><Left><Left>i
-    autocmd FileType javascript nnoremap <buffer> <localleader>s :tabe ~/.vim/snippets/javascript.snippets<CR>
     autocmd FileType javascript vnoremap <buffer>  <c-f> :call RangeJsBeautify()<cr>
     " Run debbugger on current file (to install npm -g i node-vim-inspector)
     autocmd FileType javascript nnoremap <buffer> <leader>d :silent nbclose<CR>:Start node-vim-inspector %
