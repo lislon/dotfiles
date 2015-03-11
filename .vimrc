@@ -223,9 +223,8 @@ augroup END
 " General bindigs {{{
 
 
-nnoremap <localleader>s :let b:file = "~/.vim/snippets/" . &ft . ".snippets" 
-            \ \| let b:is_r = filereadable(b:file) 
-            \ \| exe b:is_r ? "tabe ".b:file : "echo 'Not found ".b:file."'"<CR>
+nnoremap <localleader>s :exe "tab sview ~/.vim/bundle/vim-snippets/snippets/" . &ft . ".snippets"<CR>
+nnoremap <localleader>S :exe "tabe ~/.vim/snippets/" . &ft . ".snippets"<CR>
 
 " :PI For plugin installation
 command! PI PluginInstall

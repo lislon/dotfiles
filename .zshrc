@@ -98,6 +98,8 @@ setopt extended_glob
 # Allow multi-selections from menu using Ctrl+o
 bindkey -M menuselect '\C-o' accept-and-menu-complete
 bindkey '\C-i' complete-word
+# Show stats if commands takes longer then 10 sec
+REPORTTIME=10
 # zstyle :completion:function:completer:command:argument:tag
 zstyle ':completion:::::' completer _expand _complete _approximate _ignored
 zstyle ':completion:*:approximate:*' max-errors \
