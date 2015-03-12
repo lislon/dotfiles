@@ -81,6 +81,11 @@ Plugin 'einars/js-beautify'
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'vim-scripts/indenthtml.vim'
 
+"PHP
+Bundle 'tobyS/vmustache'
+Bundle 'tobyS/pdv'
+Bundle 'shawncplus/phpcomplete.vim'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required

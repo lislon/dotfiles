@@ -227,7 +227,7 @@ nnoremap <localleader>s :exe "tab sview ~/.vim/bundle/vim-snippets/snippets/" . 
 nnoremap <localleader>S :exe "tabe ~/.vim/snippets/" . &ft . ".snippets"<CR>
 
 " :PI For plugin installation
-command! PI PluginInstall
+command! PI :w | PluginInstall
 "copy
 ":vnoremap <C-Insert> "+y
 ""paste (Insert like = p, Shift+Insrt like P)
@@ -265,6 +265,7 @@ command! PI PluginInstall
 :nnoremap <silent> <F2> :w<CR>
 :inoremap <silent> <F2> <Esc>:w<CR>
 :vnoremap <silent> <F2> <C-C>:w<CR>
+:cnoremap <silent> <F2> <C-C>:w<CR>
 :nnoremap <F6> :set paste!<CR>
 
 
@@ -843,7 +844,12 @@ nnoremap =- V`]=
 " }}}
 
 " FileTypes {{{
-
+" FileType: PHP {{{
+augroup Php
+    au!
+    autocmd FileType php nnoremap <buffer> <localleader>d :call pdv#DocumentCurrentLine()<CR>
+augroup end
+" }}}
 " FileType: Gitcommit {{{
 augroup GitCommit
     au!
@@ -880,7 +886,7 @@ augroup Vim
     au!
     autocmd FileType vim setlocal foldcolumn=3
     autocmd FileType vim setlocal foldmethod=marker
-    autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
+    "autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
 augroup end
     " }}}
 
@@ -1110,6 +1116,9 @@ let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-n>'
 
+" }}}
+" {{{ Pdv PHPDoc
+let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
 " }}}
 " EasyClip {{{
 
