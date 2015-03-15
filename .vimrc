@@ -1,5 +1,5 @@
 source ~/.vim/.vundle_init
-" Basic stuff --------------------------- {{{
+" Basic stuff {{{
 
 set shiftwidth=4
 set tabstop=4
@@ -101,8 +101,11 @@ let g:solarized_termcolors=256
 if has('gui_running') || has('unix')
     set background=dark
     try
-        :colorscheme solarized
-        set background=dark
+        "let g:seoul256_background = 235
+        "colorscheme seoul256
+        ":colorscheme solarized
+        :colorscheme Tomorrow-Night-Bright
+        "set background=dark
     catch /^Vim\%((\a\+))
         :colorscheme default
     endtry
@@ -161,7 +164,8 @@ fun! QuitPrompt()
        :exe nr . 'wincmd w'
        :q
    endif
-   if has("gui_running") && tabpagenr("$") == 1 && winnr("$") <= 2
+
+   if has("gui_running") && tabpagenr("$") == 1 && winnr("$") == 1
       let choice = confirm("Close?", "&yes\n&no", 1)
       if choice == 1 | q | endif
    else | q | endif
@@ -297,8 +301,8 @@ nnoremap gk k
 nnoremap <space> zazz
 vnoremap <space> zazz
 
-" wrap argument with (): somefunction|argument => somefunction(argumment)
-inoremap <c-j> (<Esc>Ea)
+inoremap <c-j> <c-o>j
+inoremap <c-k> <c-o>k
 
 " <Leader> + increase window width by 1/3
 nnoremap <silent><leader>+ :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
@@ -469,8 +473,6 @@ nnoremap <down>  :lnext<cr>zvzz
 " }}}
 "nnoremap <leader>g mC:silent execute "grep -r ".shellescape(expand("<cWORD>"))." ."<cr>:copen 20<cr>
 
-" Vimscript debugger
-autocmd FileType vim nnoremap <silent> <F7> :BreakPts<CR>
 
 command! ErrorsToggle call ErrorsToggle()
 function! ErrorsToggle() " {{{
@@ -844,10 +846,13 @@ nnoremap =- V`]=
 " }}}
 
 " FileTypes {{{
+
 " FileType: PHP {{{
 augroup Php
     au!
     autocmd FileType php nnoremap <buffer> <localleader>d :call pdv#DocumentCurrentLine()<CR>
+    autocmd FileType php noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
+    autocmd FileType php inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
 augroup end
 " }}}
 " FileType: Gitcommit {{{
@@ -856,7 +861,6 @@ augroup GitCommit
     autocmd FileType gitcommit :ab <buffer> r RDPROM
 augroup end
 " }}}
-
 " FileType: QuickFix {{{
 augroup QuickFix
     au!
@@ -868,7 +872,6 @@ augroup QuickFix
     autocmd FileType qf :nnoremap <silent> <buffer> <F5> <C-w><C-p>
 augroup end
 " }}}
-
 " FileType: NerdTree {{{
 augroup NerdTree
     au!
@@ -880,23 +883,22 @@ augroup NerdTree
     autocmd FileType nerdtree :nnoremap <buffer><s-q> <C-w>p
 augroup end
 " }}}
-
 " FileType: Vim {{{
 augroup Vim
     au!
     autocmd FileType vim setlocal foldcolumn=3
     autocmd FileType vim setlocal foldmethod=marker
+    " Vimscript debugger
+    autocmd FileType vim nnoremap <buffer><silent> <F7> :BreakPts<CR>
     "autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
 augroup end
     " }}}
-
 " FileType: Awesome rc.lua {{{
 augroup AwesomeRcLua
     au!
     autocmd FileType lua setlocal foldcolumn=3 | setlocal foldmethod=marker
 augroup end
     " }}}
-
 " FileType: Html {{{
 augroup Html
     au!
@@ -904,20 +906,17 @@ augroup Html
     autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 augroup end
 " }}}
-
 " FileType: css {{{
 augroup Css
     au!
     autocmd FileType css noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 augroup end
 " }}}
-
 " FileType: Sh {{{
 augroup Sh
     autocmd FileType sh call BindRunCommand("F5", "sh %:p", "")
 augroup end
 " }}}
-
 " FileType: help {{{
 augroup HelpFileType
     au!
@@ -925,7 +924,6 @@ augroup HelpFileType
     autocmd FileType help nnoremap M <c-]><CR>
 augroup end
 " }}}
-
 " FileType: Javascript {{{
 
 " Splits [1, 2, 3, 4, 5] to multi lines
@@ -970,14 +968,12 @@ augroup end
 
 
 " }}} FileTypes
-
 " FileType: Python {{{
 augroup python
     " this one is which you're most likely to use?
     autocmd FileType python call BindRunCommand("F5", "python %", '') 
 augroup end
 " }}}
-
 " FileType: Git {{{
 augroup git
     au!
@@ -990,22 +986,23 @@ augroup end
 
 " Plugin settings {{{
 
-
-" {{{ Surround vim
+" {{{ Plugin:Surround vim
 " use char2nr to obtain number
 let g:surround_40 = "(\r)"
 let g:surround_41 = "(\r)"
 let g:surround_91 = "[\r]"
 let g:surround_93 = "[\r]"
 " }}}
-
+" {{{ Plugin:Misc
 let g:brkptsDefStartMode = "functions"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 let g:delimitMate_expand_cr = 1
+" }}}
+" Plugin:Syntastic {{{
 let g:syntastic_javascript_checkers = ['jshint']
-
-" {{{ NerdTree
+" }}}
+" {{{ Plugin:NerdTree
 
 " Autofocus file if NERDTree is not visible
 fun! NERDTreeFocusAndFind()
@@ -1015,6 +1012,12 @@ fun! NERDTreeFocusAndFind()
         NERDTreeFind
     endif
 endf
+
+let g:NERDCreateDefaultMappings = 0
+let g:NERDTreeMapOpenInTab='<c-t>'
+let g:NERDTreeMapOpenSplit='<c-i>'
+let g:NERDTreeMapOpenVSplit='<c-v>'
+
 
 " Alt + 1 - NERD Tree
 if has('win32')
@@ -1035,12 +1038,12 @@ let g:nerdtree_tabs_synchronize_view=0
 " Conflicts with F5 (Stealing focus)
 let g:nerdtree_tabs_autofind=0
 " }}}
-" NerdCommnter {{{
+" {{{ Plugin:NerdCommnter
 map <leader>c <plug>NERDCommenterToggle
 " I am always hit <leader>s to comment
 map <leader>s <plug>NERDCommenterToggle
 " }}}
-" Syntastic {{{
+" {{{ Plugin:Syntastic
 let g:syntastic_mode_map = {
             \ "mode": "active",
             \ "active_filetypes": [],
@@ -1049,8 +1052,7 @@ let g:syntastic_mode_map = {
 let g:syntastic_auto_jump = 0
 let g:syntastic_enable_signs = 1
 " }}}
-
-" Ctrl-P {{{
+" {{{ Plugin:Ctrl-P
 
 "let g:ctrlp_clear_cache_on_exit = 1
 "let g:ctrlp_open_new_file = 'r'
@@ -1109,7 +1111,7 @@ let g:ctrlp_prompt_mappings = {
 "let g:ctrlp_user_command = 'find %s -type f'
 
 " }}}
-" {{{ YouCompleteMe
+" {{{ Plugin:YouCompleteMe
 
 " make YCM compatible with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
@@ -1117,7 +1119,7 @@ let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " }}}
-" {{{ UltiSnips
+" {{{ Plugin:UltiSnips
 
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -1127,11 +1129,13 @@ let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
 
+let g:snips_author = 'Boris Avdeev <elephant@lislon.ru>'
+
 " }}}
-" {{{ Pdv PHPDoc
+" {{{ Plugin:Pdv PHPDoc
 let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
 " }}}
-" EasyClip {{{
+" {{{ Plugin:EasyClip
 
 let g:EasyClipAutoFormat = 1
 
@@ -1140,42 +1144,32 @@ nmap s <Plug>MoveMotionPlug
 xmap s <Plug>MoveMotionXPlug
 nmap ss <Plug>MoveMotionLinePlug
 nmap Y yy
-
 let g:EasyClipUsePasteToggleDefaults = 0
 
-nmap <c-n> <plug>EasyClipSwapPasteForward 
-" Yank current file name to buffer
-nnoremap <leader>yf :call EasyClip#Yank(expand('%:p'))<cr>
+"nmap <c-n> <plug>EasyClipSwapPasteForward 
+
 " Substitue
 nmap <silent> gs <plug>SubstituteOverMotionMap
 nmap gss <plug>SubstituteLine
 xmap gs <plug>XEasyClipPaste
 " }}}
-" Repeat.vim {{{
+" {{{ Plugin:Repeat.vim
 silent! call repeat#set("\<Plug>NERDCommenterToggle", v:count)
 " }}}
-
+" {{{ Plugin:vim-smooth-scroll
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+" }}}
+" {{{ Plugin:vim-airline
 let g:airline_powerline_fonts = 1
-let g:NERDCreateDefaultMappings = 0
-"let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
-" Often i am edit files on compiled dir in nodejs...
-"let g:NERDTreeIgnore=['public$[[dir]]']
-let g:CommandTMaxHeight = 10
-let g:CommandTMinHeight = 10
-" find not work for me under windows :(
-let g:CommandTMatchWindowReverse = 1
-
-if has('win32')
-    let g:CommandTFileScanner = 'git'
-else
-    "let g:CommandTFileScanner = 'find'
-end
-"let g:CommandTHighlightColor = 'Search'
-let g:NERDTreeMapOpenInTab='<c-t>'
-let g:NERDTreeMapOpenSplit='<c-i>'
-let g:NERDTreeMapOpenVSplit='<c-v>'
-
-" {{{ XkbSwitch
+" }}}
+" {{{ Plugin:vim-multiply-cursors
+let g:multi_cursor_exit_from_visual_mode = 0
+let g:multi_cursor_exit_from_insert_mode = 0
+" }}}
+" {{{ Plugin:XkbSwitch
 if has('win32')
     let g:XkbSwitchLib = expand('~/dotfiles/bin/libxkbswitch32').'.dll'
     let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -1199,31 +1193,20 @@ nnoremap <silent> . :call XkbRepeat()<CR>
 
 
 " }}}
+" {{{ Plugin:Rooter
 " Disabled because i can't run mocha from qf window
 let g:rooter_change_directory_for_non_project_files = 0
-
-" {{{ LustyExplorer
+" }}}
+" {{{ Plugin:LustyExplorer
 
 nnoremap gl :LustyBufferExplorer<CR>
 nnoremap <c-l> :LustyFilesystemExplorerFromHere<CR>
 
 " }}}
-
-" {{{ jsdoc
+" {{{ Plugin:jsdoc
 let g:jsdoc_default_mapping = 0
 nnoremap <silent> gc <Plug>jsdoc
 " }}}
-
-" {{{ Local settings
-if filereadable(expand("~/.vimrc_local"))
-    source ~/.vimrc_local
-else
-    let g:jiracomplete_url = 'http://your.jira.url/'
-    let g:jiracomplete_username = 'your_jira_username'
-    let g:jiracomplete_password = 'your_jira_password'  ""
-endif
-" }}}
-
 " }}}
 
 " {{{ Test

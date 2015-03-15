@@ -31,7 +31,6 @@ Plugin 'tomtom/tlib_vim'
 "Plugin 'garbas/vim-snipmate'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
-Plugin 'altercation/vim-colors-solarized'
 Plugin 'Raimondi/delimitMate'
 Plugin 'kien/ctrlp.vim'
 "Plugin 'wincent/command-t'
@@ -76,6 +75,7 @@ Plugin 'heavenshell/vim-jsdoc'
 Plugin 'jaxbot/browserlink.vim'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'einars/js-beautify'
+Plugin 'terryma/vim-smooth-scroll'
 "Plugin 'marijnh/tern_for_vim'
 
 "Plugin 'ervandew/supertab'
@@ -83,10 +83,26 @@ Plugin 'einars/js-beautify'
 "Plugin 'vim-scripts/indenthtml.vim'
 
 "PHP
-Bundle 'tobyS/vmustache'
-Bundle 'tobyS/pdv'
-Bundle 'shawncplus/phpcomplete.vim'
+Plugin 'tobyS/vmustache'
+Plugin 'tobyS/pdv'
+Plugin 'tobyS/skeletons.vim'
+Plugin 'shawncplus/phpcomplete.vim'
 
+Plugin 'Shougo/vimproc.vim'
+Plugin 'Shougo/unite.vim'
+Plugin 'terryma/vim-multiple-cursors'
+
+" Color themems
+ Plugin 'altercation/vim-colors-solarized'
+" Plugin 'tomasr/molokai'
+" Plugin 'Lokaltog/vim-distinguished'
+" Plugin 'chriskempson/base16-vim'
+" Plugin 'tpope/vim-vividchalk'
+ Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
+" Plugin 'rainux/vim-desert-warm-256'
+" Plugin 'nanotech/jellybeans.vim'
+" Plugin 'junegunn/seoul256.vim'
+" Plugin 'vim-scripts/wombat256.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
