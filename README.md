@@ -46,6 +46,11 @@ Nodejs related installation
           A jsl will now be found in jsl-0.3.0/src/Linux_All_DBG.OBJ/jsl. To make it generally accessible do something like:
           * ln -s /whatever/jsl-0.3.0/src/Linux_All_DBG.OBJ /my/bin/jsl 
 
+Vimproc
+-------
+
+Copy ``cp ~/dotfiles/bin/vimproc_win32.dll ~\.vim\bundle\vimproc.vim\autoload\vimproc_win32.dll``
+
 Cheatsheet for new stuff
 -----------------------
 

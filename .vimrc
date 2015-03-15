@@ -8,6 +8,7 @@ set autoindent
 set incsearch
 "set hlsearch
 set wildmode=full
+set noshowmode
 set gdefault
 set ignorecase
 " For /seARCH
@@ -26,6 +27,10 @@ set spell spelllang=en_us
 set dictionary+=/usr/share/dict/words
 set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
 
+" Turn off sound
+set vb
+set t_vb=
+
 
 " Allow backspace after append
 set backspace=indent,eol,start
@@ -34,8 +39,12 @@ set switchbuf=useopen
 
 :syntax on
 filetype plugin indent on
-" Keep 3 lines below and above the cursor
-set scrolloff=3
+" Keep 10 lines below and above the cursor
+set scrolloff=10
+
+" Lower the delay of escaping out of other modes
+" set timeout timeoutlen=1000 ttimeoutlen=1
+set timeout timeoutlen=200 ttimeoutlen=1
 
 set foldcolumn=0
 "set autochdir
@@ -226,12 +235,15 @@ augroup END
 
 " General bindigs {{{
 
-
+" Built-in and custom snippets
 nnoremap <localleader>s :exe "tab sview ~/.vim/bundle/vim-snippets/snippets/" . &ft . ".snippets"<CR>
 nnoremap <localleader>S :exe "tabe ~/.vim/snippets/" . &ft . ".snippets"<CR>
 
+" <Leader>``: Force quit all
+nnoremap <Leader>`` :qa!<cr>
+
 " :PI For plugin installation
-command! PI :w | PluginInstall
+command! PI :update | PluginInstall
 "copy
 ":vnoremap <C-Insert> "+y
 ""paste (Insert like = p, Shift+Insrt like P)
@@ -240,8 +252,8 @@ command! PI :w | PluginInstall
 ":nmap <S-Insert> yo"+P
 ":inoremap <S-Insert> <c-o>"+P
 
- 
- "Wrap to vim fold 
+
+ "Wrap to vim fold
 :vnoremap <Leader>f <Esc>'>o" }}}<Esc>'<O"  {{{<Left><Left><Left><Left>
 
 " Very left & Very Right
@@ -260,7 +272,7 @@ command! PI :w | PluginInstall
 :inoremap <C-a> <Esc>I
 :inoremap <C-e> <Esc>A
 
-:nnoremap <F1> :help 
+:nnoremap <F1> :help
 :nnoremap <F12> :tabe ~/dotfiles/.vimrc<CR>
 :nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
 " Irritations
@@ -352,21 +364,56 @@ nnoremap <leader>a :tab split<CR>:Ack ""<Left>
 nnoremap <leader>A :tab split<CR>:Ack <C-r><C-w><CR>
 
 " Recent files
-nnoremap <leader>m :MRU<CR>
+nnoremap <leader>m :<C-u>Unite file_mru<CR>
 " Copy line from above word-by-word
 inoremap <c-^> @<Esc>kyWjPA<BS>
 
 nnoremap <leader>m :MRU<CR>
 
-" Ctrl+Shift+G - show CWD
-nnoremap <C-S-G> :echo 'cwd: ' .getcwd() .'	file: '.expand('%:p') \| :call EasyClip#Yank(expand('%:p'))<CR>
+" Ctrl+g copy path to clipboard
+nnoremap <c-g> :echo "Path '".expand('%:p')."' copied to clipboard" \| :call EasyClip#Yank(expand('%:p'))<CR>
+
+" <Leader>cd: Switch to the directory of the open buffer
+nnoremap <Leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Panic Button
 "nnoremap <f9> mzggg?G`z
 " }}}
 
+
+" Ctrl-[hl]: Move left/right by word
+cnoremap <c-h> <s-left>
+cnoremap <c-l> <s-right>
+
+" Ctrl-Space: Show history
+cnoremap <c-@> <c-f>
+cnoremap <c-j> <down>
+cnoremap <c-k> <up>
+
+" Ctrl-v: Paste
+cnoremap <c-v> <c-r>"
+
+
+" _ : Quick horizontal splits
+nnoremap _ :sp<cr>
+
+" | : Quick vertical splits
+nnoremap <bar> :vsp<cr>
+
 " Misc stuff {{{1
 
+" {{{ Extra whitespace
+" listchar=trail is not as flexible, use the below to highlight trailing
+" whitespace. Don't do it for unite windows or readonly files
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+    augroup MyAutoCmd
+    autocmd BufWinEnter * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+$/ | endif
+    autocmd InsertEnter * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+\%#\@<!$/ | endif
+    autocmd InsertLeave * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+$/ | endif
+    autocmd BufWinLeave * if &modifiable && &ft!='unite' | call clearmatches() | endif
+augroup END
+" }}}
 " Indent block {{{
 function! SelectIndent()
   let cur_line = line(".")
@@ -400,7 +447,7 @@ fun! English(num)
     above sview ~/Documents/english.txt
     execute "/exercise " . a:num
     execute "/\\v^1\\\."
-    
+
     " Work
     above execute "split ~/Documents/exercice_".a:num.".txt"
     set noscrollbind
@@ -847,22 +894,22 @@ nnoremap =- V`]=
 
 " FileTypes {{{
 
-" FileType: PHP {{{
-augroup Php
+" FileType: php {{{
+augroup php
     au!
     autocmd FileType php nnoremap <buffer> <localleader>d :call pdv#DocumentCurrentLine()<CR>
     autocmd FileType php noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType php inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
 augroup end
 " }}}
-" FileType: Gitcommit {{{
-augroup GitCommit
+" FileType: gitcommit {{{
+augroup gitcommit
     au!
     autocmd FileType gitcommit :ab <buffer> r RDPROM
 augroup end
 " }}}
-" FileType: QuickFix {{{
-augroup QuickFix
+" FileType: quickfix {{{
+augroup quickfix
     au!
     " Exit from grep
     autocmd FileType qf :nnoremap <silent> <buffer> <c-K> :q!<CR><C-w><C-l>
@@ -872,8 +919,8 @@ augroup QuickFix
     autocmd FileType qf :nnoremap <silent> <buffer> <F5> <C-w><C-p>
 augroup end
 " }}}
-" FileType: NerdTree {{{
-augroup NerdTree
+" FileType: nerdtree {{{
+augroup nerdtree
     au!
     " Space to open/close folders
     autocmd FileType nerdtree nmap <buffer><special><silent> <Space> <CR>
@@ -883,8 +930,8 @@ augroup NerdTree
     autocmd FileType nerdtree :nnoremap <buffer><s-q> <C-w>p
 augroup end
 " }}}
-" FileType: Vim {{{
-augroup Vim
+" FileType: vim {{{
+augroup vim
     au!
     autocmd FileType vim setlocal foldcolumn=3
     autocmd FileType vim setlocal foldmethod=marker
@@ -893,38 +940,38 @@ augroup Vim
     "autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
 augroup end
     " }}}
-" FileType: Awesome rc.lua {{{
-augroup AwesomeRcLua
+" FileType: awesome rc.lua {{{
+augroup awesomerclua
     au!
     autocmd FileType lua setlocal foldcolumn=3 | setlocal foldmethod=marker
 augroup end
     " }}}
-" FileType: Html {{{
-augroup Html
+" FileType: html {{{
+augroup html
     au!
     autocmd FileType html setlocal nowrap
     autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 augroup end
 " }}}
 " FileType: css {{{
-augroup Css
+augroup css
     au!
     autocmd FileType css noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 augroup end
 " }}}
-" FileType: Sh {{{
-augroup Sh
+" FileType: sh {{{
+augroup sh
     autocmd FileType sh call BindRunCommand("F5", "sh %:p", "")
 augroup end
 " }}}
 " FileType: help {{{
-augroup HelpFileType
+augroup helpfiletype
     au!
     " this one is which you're most likely to use?
     autocmd FileType help nnoremap M <c-]><CR>
 augroup end
 " }}}
-" FileType: Javascript {{{
+" FileType: javascript {{{
 
 " Splits [1, 2, 3, 4, 5] to multi lines
 fun! ArrSp()
@@ -947,7 +994,7 @@ fun! InitFtJavaScript()
     command! ArrSp call ArrSp()
 endfun
 
-augroup JavaScript
+augroup javascript
     au!
     autocmd FileType javascript noremap <buffer> <silent> <Leader>; :call cosco#commaOrSemiColon()<CR>
     autocmd FileType javascript inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
@@ -968,17 +1015,23 @@ augroup end
 
 
 " }}} FileTypes
-" FileType: Python {{{
+" FileType: python {{{
 augroup python
     " this one is which you're most likely to use?
     autocmd FileType python call BindRunCommand("F5", "python %", '') 
 augroup end
 " }}}
-" FileType: Git {{{
+" FileType: git {{{
 augroup git
     au!
     " this one is which you're most likely to use?
     autocmd FileType git set foldlevel=9
+augroup end
+" }}}
+" FileType: unite {{{
+augroup unite
+    au!
+    autocmd FileType unite nnoremap <buffer> <silent> <c-k> :<C-u>UniteClose<CR>
 augroup end
 " }}}
 
@@ -1166,8 +1219,10 @@ noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 let g:airline_powerline_fonts = 1
 " }}}
 " {{{ Plugin:vim-multiply-cursors
-let g:multi_cursor_exit_from_visual_mode = 0
-let g:multi_cursor_exit_from_insert_mode = 0
+let g:lsmulti_cursor_exit_from_visual_mode = 0
+let g:lsmulti_cursor_exit_from_insert_mode = 0
+" For example, setting it to {'\':1} will make insert-mode mappings beginning with the default leader key work in multi-cursor mode. 
+let g:lsmulti_cursor_insert_maps = { 'j': 1 }
 " }}}
 " {{{ Plugin:XkbSwitch
 if has('win32')
@@ -1206,6 +1261,8 @@ nnoremap <c-l> :LustyFilesystemExplorerFromHere<CR>
 " {{{ Plugin:jsdoc
 let g:jsdoc_default_mapping = 0
 nnoremap <silent> gc <Plug>jsdoc
+" }}}
+" {{{ Plugin:unite
 " }}}
 " }}}
 
