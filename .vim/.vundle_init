@@ -93,6 +93,10 @@ Plugin 'Shougo/vimproc.vim'
 Plugin 'Shougo/unite.vim'
 Plugin 'Shougo/neomru.vim'
 Plugin 'Shougo/unite-session'
+"Plugin 'ujihisa/unite-colorscheme'
+if has('win32')
+    Plugin 'sgur/unite-everything'
+endif
 Plugin 'terryma/vim-multiple-cursors'
 
 " Color themems
@@ -106,6 +110,7 @@ Plugin 'terryma/vim-multiple-cursors'
 " Plugin 'nanotech/jellybeans.vim'
 " Plugin 'junegunn/seoul256.vim'
 " Plugin 'vim-scripts/wombat256.vim'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required

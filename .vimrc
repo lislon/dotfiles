@@ -28,8 +28,8 @@ set dictionary+=/usr/share/dict/words
 set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
 
 " Turn off sound
-set vb
-set t_vb=
+"set vb
+"set t_vb=
 
 
 " Allow backspace after append
@@ -236,8 +236,8 @@ augroup END
 " General bindigs {{{
 
 " Built-in and custom snippets
-nnoremap <localleader>s :exe "tab sview ~/.vim/bundle/vim-snippets/snippets/" . &ft . ".snippets"<CR>
-nnoremap <localleader>S :exe "tabe ~/.vim/snippets/" . &ft . ".snippets"<CR>
+nnoremap <localleader>s :exe "tab sview ~/.vim/bundle/vim-snippets/UltiSnips/" . &ft . ".snippets"<CR>
+nnoremap <localleader>S :exe "tabe ~/.vim/UltiSnips/" . &ft . ".snippets"<CR>
 
 " <Leader>``: Force quit all
 nnoremap <Leader>`` :qa!<cr>
@@ -1256,6 +1256,10 @@ let g:rooter_change_directory_for_non_project_files = 0
 let g:jsdoc_default_mapping = 0
 nnoremap <silent> gc <Plug>jsdoc
 " }}}
+" {{{ Plugin:unite-everything
+let g:unite_source_everything_cmd_path = expand("%HOME%/dotfiles/bin/es.exe")
+" }}}
+
 " {{{ Plugin:unite
 
 " MRU files
@@ -1267,6 +1271,17 @@ nnoremap <silent> <c-p> :<C-u>Unite -start-insert file_rec/async:~/Sources<CR>
 nnoremap <silent> <leader>b :<C-u>Unite -start-insert -complete file:~/.vim/bundle<CR>
 nnoremap <silent> <leader>cs :<C-u>Unite codesearch<CR>
 nnoremap <silent> <leader>l :<C-u>Unite line<CR>
+
+"call unite#filters#matcher_default#use(['matcher_default'])
+"call unite#filters#matcher_default#use(['matcher_fuzzy'])
+if executable(g:unite_source_everything_cmd_path)
+    nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru everything<CR>
+else
+    nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru<CR>
+endif
+nnoremap <leader>r :<C-u>Unite -start-insert file_rec/async:!<CR>
+nnoremap <c-l> :<C-u>UniteWithBufferDir -start-insert file buffer<CR>
+nnoremap <c-G> :<C-u>Unite line<CR>
 
 let g:unite_source_history_yank_enable = 1
 nnoremap <leader>y :<C-u>Unite history/yank<CR>
@@ -1283,6 +1298,25 @@ call unite#custom#profile('codesearch', 'context', {
 \       'matcher_exclude_node_modules'
 \   ]
 \ })
+
+call unite#custom#profile('line', 'context', {
+            \   'winheight': 50,
+            \ })
+
+if has('win32') && executable('ag')
+    let g:unite_source_grep_command = 'ag'
+    let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+    let g:unite_source_grep_recursive_opt = ''
+endif
+
+
+call unite#custom#source(
+            \ 'buffer,file_rec/async,file_rec', 'matchers',
+            \ ['converter_tail', 'matcher_default'])
+
+call unite#custom#source(
+            \ 'file_rec/async,file_rec', 'converters',
+            \ ['converter_file_directory'])
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()
