@@ -71,7 +71,7 @@ Todo
 ----
 
  - Search in tree
- - Highlight current file in NERDTree
  - In insert mode trim string if it's one-liner
  - In insert mode if line is empty, replace current line with insert
+ - <Tab> key not work in JS snippet f()
 

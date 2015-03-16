@@ -44,7 +44,7 @@ set scrolloff=10
 
 " Lower the delay of escaping out of other modes
 " set timeout timeoutlen=1000 ttimeoutlen=1
-set timeout timeoutlen=200 ttimeoutlen=1
+set timeout timeoutlen=500 ttimeoutlen=1
 
 set foldcolumn=0
 "set autochdir
@@ -363,12 +363,8 @@ nnoremap <leader>a :tab split<CR>:Ack ""<Left>
 " Search word under cursor in cwd
 nnoremap <leader>A :tab split<CR>:Ack <C-r><C-w><CR>
 
-" Recent files
-nnoremap <leader>m :<C-u>Unite file_mru<CR>
 " Copy line from above word-by-word
 inoremap <c-^> @<Esc>kyWjPA<BS>
-
-nnoremap <leader>m :MRU<CR>
 
 " Ctrl+g copy path to clipboard
 nnoremap <c-g> :echo "Path '".expand('%:p')."' copied to clipboard" \| :call EasyClip#Yank(expand('%:p'))<CR>
@@ -378,7 +374,6 @@ nnoremap <Leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Panic Button
 "nnoremap <f9> mzggg?G`z
-" }}}
 
 
 " Ctrl-[hl]: Move left/right by word
@@ -393,12 +388,13 @@ cnoremap <c-k> <up>
 " Ctrl-v: Paste
 cnoremap <c-v> <c-r>"
 
-
 " _ : Quick horizontal splits
 nnoremap _ :sp<cr>
 
 " | : Quick vertical splits
 nnoremap <bar> :vsp<cr>
+
+" }}}
 
 " Misc stuff {{{1
 
@@ -986,7 +982,6 @@ fun! InitFtJavaScript()
     if match(expand("%:p"), 'Sources[\\/].\{-}[\\/]test[\\/]') >= 0
         call BindRunCommand("F5", "mocha %:p", '/error')
         call BindRunCommand("F9", "node-inspector & mocha --debug-brk %", '')
-        
     else
         call BindRunCommand("F5", "node %:p", "")
         call BindRunCommand("F9", "node-inspector & node --debug-brk %", '')
@@ -1031,7 +1026,8 @@ augroup end
 " FileType: unite {{{
 augroup unite
     au!
-    autocmd FileType unite nnoremap <buffer> <silent> <c-k> :<C-u>UniteClose<CR>
+    "autocmd FileType unite nnoremap <buffer> <silent> <c-k> :<C-u>UniteClose<CR>
+    "autocmd FileType unite inoremap <buffer> <silent> <c-k> <Esc>:<C-u>UniteClose<CR>
 augroup end
 " }}}
 
@@ -1107,12 +1103,6 @@ let g:syntastic_enable_signs = 1
 " }}}
 " {{{ Plugin:Ctrl-P
 
-"let g:ctrlp_clear_cache_on_exit = 1
-"let g:ctrlp_open_new_file = 'r'
-"let g:ctrlp_mruf_case_sensitive = 0
-"let g:ctrlp_by_filename = 1
-"let g:ctrlp_working_path_mode = 'ra'
-"let g:ctrlp_mruf_default_order = 1
 
 let g:ctrlp_dont_split = 'NERD_tree_2'
 let g:ctrlp_cmd = 'CtrlPMRU'
@@ -1122,12 +1112,6 @@ endif
 let g:ctrlp_max_files = 0
 let g:ctrlp_mruf_exclude = '\v[\\/](.git|build|doc)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
 
-"let g:ctrlp_jump_to_buffer = 0
-"let g:ctrlp_working_path_mode = 0
-"let g:ctrlp_match_window_reversed = 1
-"let g:ctrlp_split_window = 0
-"let g:ctrlp_max_height = 20
-"let g:ctrlp_extensions = ['tag']
 
 "let g:ctrlp_map = '<leader>,'
 "nnoremap <leader>. :CtrlPTag<cr>
@@ -1162,6 +1146,7 @@ let g:ctrlp_prompt_mappings = {
 
 "let g:ctrlp_user_command = ['.git/', my_ctrlp_ffind_command, my_ctrlp_ffind_command]
 "let g:ctrlp_user_command = 'find %s -type f'
+
 
 " }}}
 " {{{ Plugin:YouCompleteMe
@@ -1210,15 +1195,16 @@ xmap gs <plug>XEasyClipPaste
 silent! call repeat#set("\<Plug>NERDCommenterToggle", v:count)
 " }}}
 " {{{ Plugin:vim-smooth-scroll
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+nnoremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+nnoremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+nnoremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
+nnoremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 " }}}
 " {{{ Plugin:vim-airline
 let g:airline_powerline_fonts = 1
 " }}}
 " {{{ Plugin:vim-multiply-cursors
+" Ctrl+N, Ctrl-P - next, Ctrl-X - shift
 let g:lsmulti_cursor_exit_from_visual_mode = 0
 let g:lsmulti_cursor_exit_from_insert_mode = 0
 " For example, setting it to {'\':1} will make insert-mode mappings beginning with the default leader key work in multi-cursor mode. 
@@ -1235,14 +1221,18 @@ let g:XkbSwitchEnabled = 1
 
 " Fix irritating behaviour when I press / on russian layout
 fun! XkbRepeat()
-    if g:XkbSwitchEnabled == 1 
-        let lang = libcall(g:XkbSwitchLib, 'Xkb_Switch_getXkbLayout', '')       
+    if g:XkbSwitchEnabled == 1
+        let lang = libcall(g:XkbSwitchLib, 'Xkb_Switch_getXkbLayout', '')
         if lang == "ru"
             call feedkeys('/')
             return
         endif
     endif
-    normal! .
+    if g:loaded_repeat == 1
+        call repeat#run(1)
+    else
+        normal! .
+    endif
 endf
 nnoremap <silent> . :call XkbRepeat()<CR>
 
@@ -1263,6 +1253,75 @@ let g:jsdoc_default_mapping = 0
 nnoremap <silent> gc <Plug>jsdoc
 " }}}
 " {{{ Plugin:unite
+
+" MRU files
+nnoremap <leader>m :<c-u>Unite file_mru -no-start-insert<CR>
+
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+nnoremap <leader>r :<C-u>Unite -start-insert file_rec/async:!<CR>
+
+let g:unite_source_history_yank_enable = 1
+nnoremap <leader>y :<C-u>Unite history/yank<CR>
+
+nnoremap <silent> <leader>b :<C-u>Unite buffer bookmark<CR>
+call unite#custom#profile('default', 'context', {
+\   'start_insert': 1,
+\   'winheight': 10,
+\   'direction': 'botright',
+\ })
+
+autocmd FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()
+    " Overwrite settings.
+
+    imap <buffer> jk      <Plug>(unite_insert_leave)
+    imap <buffer> <c-k>   <Plug>(unite_exit)
+    nmap <buffer> <c-k>   <Plug>(unite_exit)
+
+    imap <buffer><expr> j unite#smart_map('j', '')
+    imap <buffer> <TAB>   <Plug>(unite_select_next_line)
+    imap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
+    imap <buffer> '     <Plug>(unite_quick_match_default_action)
+    nmap <buffer> '     <Plug>(unite_quick_match_default_action)
+    imap <buffer><expr> x
+                \ unite#smart_map('x', "\<Plug>(unite_quick_match_choose_action)")
+    nmap <buffer> x     <Plug>(unite_quick_match_choose_action)
+    nmap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
+    imap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
+    imap <buffer> <C-y>     <Plug>(unite_narrowing_path)
+    nmap <buffer> <C-y>     <Plug>(unite_narrowing_path)
+    nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
+    nmap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
+    imap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
+    nnoremap <silent><buffer><expr> l
+                \ unite#smart_map('l', unite#do_action('default'))
+
+    let unite = unite#get_current_unite()
+    if unite.profile_name ==# 'search'
+        nnoremap <silent><buffer><expr> r     unite#do_action('replace')
+    else
+        nnoremap <silent><buffer><expr> r     unite#do_action('rename')
+    endif
+
+    nnoremap <silent><buffer><expr> cd     unite#do_action('lcd')
+    nnoremap <buffer><expr> S      unite#mappings#set_current_filters(
+                \ empty(unite#mappings#get_current_filters()) ?
+                \ ['sorter_reverse'] : [])
+
+    " Runs "split" action by <C-s>.
+    imap <silent><buffer><expr> <C-i>     unite#do_action('split')
+    imap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
+    nmap <silent><buffer><expr> <C-i>     unite#do_action('split')
+    nmap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
+endfunction
+
+" }}}
+" Plugin:Browserify {{{
+augroup css
+    au!
+    autocmd InsertLeave *.css :BLReloadCSS
+augroup end
+let g:bl_pagefiletypes = ['html', 'javascript', 'php', 'jade']
 " }}}
 " }}}
 
