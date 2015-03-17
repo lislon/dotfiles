@@ -87,6 +87,7 @@ Plugin 'tobyS/vmustache'
 Plugin 'tobyS/pdv'
 Plugin 'tobyS/skeletons.vim'
 Plugin 'shawncplus/phpcomplete.vim'
+Plugin 'junkblocker/unite-codesearch'
 
 Plugin 'Shougo/vimproc.vim'
 Plugin 'Shougo/unite.vim'

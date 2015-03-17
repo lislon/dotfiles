@@ -73,5 +73,6 @@ Todo
  - Search in tree
  - In insert mode trim string if it's one-liner
  - In insert mode if line is empty, replace current line with insert
- - <Tab> key not work in JS snippet f()
+ - <Tab> key not work in JS snippet service(f<Tab>)
+ - gvim not sees jshint
 

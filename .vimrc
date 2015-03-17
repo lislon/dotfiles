@@ -247,8 +247,11 @@ command! PI :update | PluginInstall
 "copy
 ":vnoremap <C-Insert> "+y
 ""paste (Insert like = p, Shift+Insrt like P)
-":nnoremap <Insert> "+P
+
+" nomap Insert
+:nnoremap <Insert> "+p
 :inoremap <Insert> <c-o>"+]P<Esc>==
+:inoremap <S-Insert> <c-o>"+]P<Esc>==
 ":nmap <S-Insert> yo"+P
 ":inoremap <S-Insert> <c-o>"+P
 
@@ -898,6 +901,12 @@ augroup php
     autocmd FileType php inoremap <buffer> <silent> <Leader>; <c-o>:call cosco#commaOrSemiColon()<CR>
 augroup end
 " }}}
+" {{{ FileType: nginx
+augroup nginx
+    " this one is which you're most likely to use?
+    autocmd BufWritePost /etc/nginx/sites-available/*.conf :!sudo service nginx reload
+augroup end
+" }}}
 " FileType: gitcommit {{{
 augroup gitcommit
     au!
@@ -1050,6 +1059,7 @@ let g:delimitMate_expand_cr = 1
 " }}}
 " Plugin:Syntastic {{{
 let g:syntastic_javascript_checkers = ['jshint']
+let g:syntastic_debug_file = '~/syntastic.log'
 " }}}
 " {{{ Plugin:NerdTree
 
@@ -1242,12 +1252,6 @@ nnoremap <silent> . :call XkbRepeat()<CR>
 " Disabled because i can't run mocha from qf window
 let g:rooter_change_directory_for_non_project_files = 0
 " }}}
-" {{{ Plugin:LustyExplorer
-
-nnoremap gl :LustyBufferExplorer<CR>
-nnoremap <c-l> :LustyFilesystemExplorerFromHere<CR>
-
-" }}}
 " {{{ Plugin:jsdoc
 let g:jsdoc_default_mapping = 0
 nnoremap <silent> gc <Plug>jsdoc
@@ -1255,19 +1259,29 @@ nnoremap <silent> gc <Plug>jsdoc
 " {{{ Plugin:unite
 
 " MRU files
-nnoremap <leader>m :<c-u>Unite file_mru -no-start-insert<CR>
+nnoremap <leader>m :<c-u>Unite file_mru -start-insert<CR>
 
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-nnoremap <leader>r :<C-u>Unite -start-insert file_rec/async:!<CR>
+call unite#filters#matcher_default#use(['matcher_glob'])
+call unite#custom#source('file_rec,file_rec/async', 'ignore_pattern', '\vnode_modules')
+nnoremap <silent> <c-p> :<C-u>Unite -start-insert file_rec/async:~/Sources<CR>
+nnoremap <silent> <leader>b :<C-u>Unite -start-insert -complete file:~/.vim/bundle<CR>
+nnoremap <silent> <leader>cs :<C-u>Unite codesearch<CR>
+nnoremap <silent> <leader>l :<C-u>Unite line<CR>
 
 let g:unite_source_history_yank_enable = 1
 nnoremap <leader>y :<C-u>Unite history/yank<CR>
 
-nnoremap <silent> <leader>b :<C-u>Unite buffer bookmark<CR>
+nnoremap <silent> <c-l> :<C-u>Unite bookmark:* buffer file:!<CR>
 call unite#custom#profile('default', 'context', {
 \   'start_insert': 1,
 \   'winheight': 10,
 \   'direction': 'botright',
+\ })
+call unite#custom#profile('codesearch', 'context', {
+\   'start_insert': 1,
+\   'filters': [
+\       'matcher_exclude_node_modules'
+\   ]
 \ })
 
 autocmd FileType unite call s:unite_my_settings()
@@ -1288,11 +1302,14 @@ function! s:unite_my_settings()
     nmap <buffer> x     <Plug>(unite_quick_match_choose_action)
     nmap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
     imap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
-    imap <buffer> <C-y>     <Plug>(unite_narrowing_path)
+    imap <buffer> <C-y>     <Esc><Plug>(unite_narrowing_path)
     nmap <buffer> <C-y>     <Plug>(unite_narrowing_path)
     nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
     nmap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
+    nmap <buffer> <C-d>     <Plug>(unite_input_directory)
     imap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
+    nmap <buffer> <Esc>     <Plug>(unite_exit)
+    "nmap <buffer> <Tab>     <Plug>(unite_complete)
     nnoremap <silent><buffer><expr> l
                 \ unite#smart_map('l', unite#do_action('default'))
 
@@ -1315,6 +1332,9 @@ function! s:unite_my_settings()
     nmap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
 endfunction
 
+" }}}
+" {{{ Plugin:unite-codesearch
+let g:unite_source_codesearch_command = $HOME."/.go/bin/csearch"
 " }}}
 " Plugin:Browserify {{{
 augroup css
