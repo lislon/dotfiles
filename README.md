@@ -75,4 +75,4 @@ Todo
  - In insert mode if line is empty, replace current line with insert
  - <Tab> key not work in JS snippet service(f<Tab>)
  - gvim not sees jshint
-
+ - select by indentation

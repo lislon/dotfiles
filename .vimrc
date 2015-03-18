@@ -23,7 +23,9 @@ set splitright
 set splitbelow
 set ff=unix
 set hidden
-set spell spelllang=en_us
+if has('gui_running')
+    set spell spelllang=en_us
+endif
 set dictionary+=/usr/share/dict/words
 set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
 
@@ -106,6 +108,10 @@ set iminsert=0
 set imsearch=0
 
 let g:solarized_termcolors=256
+
+if filereadable('../.vimrc_local')
+    source ../.vimrc_local
+end
 
 if has('gui_running') || has('unix')
     set background=dark
@@ -312,6 +318,9 @@ nnoremap k gk
 nnoremap gj j
 nnoremap gk k
 
+" <Alt_D> Digraph insertion :h digraph
+inoremap <a-d> <c-k>
+
 "Space to toggle folds
 nnoremap <space> zazz
 vnoremap <space> zazz
@@ -330,7 +339,8 @@ inoremap <C-Tab> <C-O><C-W>w
 cnoremap <C-Tab> <C-C><C-W>w
 onoremap <C-Tab> <C-C><C-W>w
 
-noremap <S-Tab> gt
+noremap 1 gT
+noremap 2 gt
 inoremap <C-Tab> <C-O><C-W>w
 cnoremap <C-Tab> <C-C><C-W>w
 onoremap <C-Tab> <C-C><C-W>w
@@ -904,7 +914,7 @@ augroup end
 " {{{ FileType: nginx
 augroup nginx
     " this one is which you're most likely to use?
-    autocmd BufWritePost /etc/nginx/sites-available/*.conf :!sudo service nginx reload
+    "autocmd BufWritePost /etc/nginx/sites-available/*.conf :!sudo service nginx reload
 augroup end
 " }}}
 " FileType: gitcommit {{{
@@ -918,8 +928,6 @@ augroup quickfix
     au!
     " Exit from grep
     autocmd FileType qf :nnoremap <silent> <buffer> <c-K> :q!<CR><C-w><C-l>
-        \ :unlet! g:qfix_win<CR>
-    autocmd FileType qf :nnoremap <silent> <buffer> <F4> :q!<CR><C-w><C-l>
         \ :unlet! g:qfix_win<CR>
     autocmd FileType qf :nnoremap <silent> <buffer> <F5> <C-w><C-p>
 augroup end
@@ -1039,6 +1047,12 @@ augroup unite
     "autocmd FileType unite inoremap <buffer> <silent> <c-k> <Esc>:<C-u>UniteClose<CR>
 augroup end
 " }}}
+" FileType: jade {{{
+augroup jade
+    au!
+    autocmd FileType jade IndentGuidesToggle
+augroup end
+    " }}}
 
 " }}} FileTypes
 
@@ -1059,7 +1073,7 @@ let g:delimitMate_expand_cr = 1
 " }}}
 " Plugin:Syntastic {{{
 let g:syntastic_javascript_checkers = ['jshint']
-let g:syntastic_debug_file = '~/syntastic.log'
+let g:syntastic_debug_file = $HOME.'/syntastic.log'
 " }}}
 " {{{ Plugin:NerdTree
 
@@ -1171,8 +1185,10 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+"let g:UltiSnipsJumpForwardTrigger="<c-b>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
