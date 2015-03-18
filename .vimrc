@@ -24,7 +24,7 @@ set splitbelow
 set ff=unix
 set hidden
 if has('gui_running')
-    set spell spelllang=en_us
+    set spell spelllang=ru_ru,en_us
 endif
 set dictionary+=/usr/share/dict/words
 set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
@@ -60,7 +60,7 @@ set isfname-=, " Allow to gf work in rtp
 nnoremap M K
 nnoremap K <nop>
 "inoremap <Esc> <nop>
-inoremap jk <Esc>
+inoremap kj <Esc>
 
 "Uppercase current word
 inoremap <C-u> <Esc>mdgUiw`da
@@ -339,8 +339,8 @@ inoremap <C-Tab> <C-O><C-W>w
 cnoremap <C-Tab> <C-C><C-W>w
 onoremap <C-Tab> <C-C><C-W>w
 
-noremap 1 gT
-noremap 2 gt
+"noremap 1 gT
+"noremap 2 gt
 inoremap <C-Tab> <C-O><C-W>w
 cnoremap <C-Tab> <C-C><C-W>w
 onoremap <C-Tab> <C-C><C-W>w
@@ -851,8 +851,8 @@ fun! InitFtCoffee()
     nnoremap <buffer> <localleader>r :s/(/ /<CR>:s/);//<CR>
 
     if match(expand("%:p"), "[\\/]test[\\/]") >= 0
-        call BindRunCommand("F5", 
-                    \ "mocha --compilers coffee:coffee-script/register %:p", 
+        call BindRunCommand("F5",
+                    \ "mocha --compilers coffee:coffee-script/register %:p",
                     \ '/error')
     else
         call BindRunCommand("F5", "coffee %:p", "")
@@ -913,8 +913,8 @@ augroup end
 " }}}
 " {{{ FileType: nginx
 augroup nginx
-    " this one is which you're most likely to use?
-    "autocmd BufWritePost /etc/nginx/sites-available/*.conf :!sudo service nginx reload
+    au!
+    autocmd BufReadPost /etc/nginx/*/*.conf set ft=nginx
 augroup end
 " }}}
 " FileType: gitcommit {{{
@@ -937,7 +937,7 @@ augroup nerdtree
     au!
     " Space to open/close folders
     autocmd FileType nerdtree nmap <buffer><special><silent> <Space> <CR>
-    autocmd FileType nerdtree :hi NonText guifg=bg 
+    autocmd FileType nerdtree :hi NonText guifg=bg
     autocmd FileType nerdtree :nnoremap <buffer>H 20<C-w><
     autocmd FileType nerdtree :nnoremap <buffer>L 20<C-w>>
     autocmd FileType nerdtree :nnoremap <buffer><s-q> <C-w>p
@@ -1016,7 +1016,7 @@ augroup javascript
     autocmd FileType javascript nnoremap <buffer> <leader>d :silent nbclose<CR>:Start node-vim-inspector %
         \ --vim.keys.break="F9"
         \ --vim.keys.continue="F8"
-        \ --vim.keys.down="" 
+        \ --vim.keys.down=""
         \ --vim.keys.in="F11"
         \ --vim.keys.next="F10"
         \ --vim.keys.out=""
@@ -1030,7 +1030,7 @@ augroup end
 " FileType: python {{{
 augroup python
     " this one is which you're most likely to use?
-    autocmd FileType python call BindRunCommand("F5", "python %", '') 
+    autocmd FileType python call BindRunCommand("F5", "python %", '')
 augroup end
 " }}}
 " FileType: git {{{
@@ -1050,7 +1050,6 @@ augroup end
 " FileType: jade {{{
 augroup jade
     au!
-    autocmd FileType jade IndentGuidesToggle
 augroup end
     " }}}
 
@@ -1065,11 +1064,19 @@ let g:surround_41 = "(\r)"
 let g:surround_91 = "[\r]"
 let g:surround_93 = "[\r]"
 " }}}
+" {{{ Plugin:indentLine
+let g:indentLine_char = '┊'
+let g:indentLine_fileType = ['jade']
+" }}}
 " {{{ Plugin:Misc
 let g:brkptsDefStartMode = "functions"
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
 let g:delimitMate_expand_cr = 1
+" }}}
+" {{{ Plugin:Ack
+let g:ack_default_options =
+            \ " -s -H --nocolor --nogroup --column --smart-case --follow"
 " }}}
 " Plugin:Syntastic {{{
 let g:syntastic_javascript_checkers = ['jshint']
@@ -1210,7 +1217,7 @@ nmap ss <Plug>MoveMotionLinePlug
 nmap Y yy
 let g:EasyClipUsePasteToggleDefaults = 0
 
-"nmap <c-n> <plug>EasyClipSwapPasteForward 
+"nmap <c-n> <plug>EasyClipSwapPasteForward
 
 " Substitue
 nmap <silent> gs <plug>SubstituteOverMotionMap
@@ -1233,7 +1240,7 @@ let g:airline_powerline_fonts = 1
 " Ctrl+N, Ctrl-P - next, Ctrl-X - shift
 let g:lsmulti_cursor_exit_from_visual_mode = 0
 let g:lsmulti_cursor_exit_from_insert_mode = 0
-" For example, setting it to {'\':1} will make insert-mode mappings beginning with the default leader key work in multi-cursor mode. 
+" For example, setting it to {'\':1} will make insert-mode mappings beginning with the default leader key work in multi-cursor mode.
 let g:lsmulti_cursor_insert_maps = { 'j': 1 }
 " }}}
 " {{{ Plugin:XkbSwitch
@@ -1296,13 +1303,13 @@ else
     nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru<CR>
 endif
 nnoremap <leader>r :<C-u>Unite -start-insert file_rec/async:!<CR>
-nnoremap <c-l> :<C-u>UniteWithBufferDir -start-insert file buffer<CR>
+nnoremap <c-l> :<C-u>UniteWithBufferDir -start-insert file<CR>
 nnoremap <c-G> :<C-u>Unite line<CR>
 
 let g:unite_source_history_yank_enable = 1
 nnoremap <leader>y :<C-u>Unite history/yank<CR>
 
-nnoremap <silent> <c-l> :<C-u>Unite bookmark:* buffer file:!<CR>
+"nnoremap <silent> <c-l> :<C-u>Unite bookmark:* buffer file:!<CR>
 call unite#custom#profile('default', 'context', {
 \   'start_insert': 1,
 \   'winheight': 10,
@@ -1316,8 +1323,8 @@ call unite#custom#profile('codesearch', 'context', {
 \ })
 
 call unite#custom#profile('line', 'context', {
-            \   'winheight': 50,
-            \ })
+\   'winheight': 50,
+\ })
 
 if has('win32') && executable('ag')
     let g:unite_source_grep_command = 'ag'
@@ -1327,22 +1334,21 @@ endif
 
 
 call unite#custom#source(
-            \ 'buffer,file_rec/async,file_rec', 'matchers',
+            \ 'file', 'matchers',
             \ ['converter_tail', 'matcher_default'])
 
-call unite#custom#source(
-            \ 'file_rec/async,file_rec', 'converters',
-            \ ['converter_file_directory'])
+"call unite#custom#source(
+            "\ 'file_rec/async,file_rec', 'converters',
+            "\ ['converter_file_directory'])
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()
     " Overwrite settings.
-
-    imap <buffer> jk      <Plug>(unite_insert_leave)
+    imap <buffer> kj      <Plug>(unite_insert_leave)
     imap <buffer> <c-k>   <Plug>(unite_exit)
     nmap <buffer> <c-k>   <Plug>(unite_exit)
 
-    imap <buffer><expr> j unite#smart_map('j', '')
+    imap <buffer><expr> k unite#smart_map('k', '')
     imap <buffer> <TAB>   <Plug>(unite_select_next_line)
     imap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
     imap <buffer> '     <Plug>(unite_quick_match_default_action)

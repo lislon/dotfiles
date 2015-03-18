@@ -79,6 +79,7 @@ Plugin 'terryma/vim-smooth-scroll'
 "Plugin 'marijnh/tern_for_vim'
 
 "Plugin 'ervandew/supertab'
+" Not hels with js
 "Plugin 'Valloric/YouCompleteMe'
 "Plugin 'vim-scripts/indenthtml.vim'
 
@@ -98,7 +99,7 @@ if has('win32')
     Plugin 'sgur/unite-everything'
 endif
 Plugin 'terryma/vim-multiple-cursors'
-Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'Yggdroot/indentLine'
 
 
 " Color themems
