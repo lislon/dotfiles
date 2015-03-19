@@ -54,17 +54,11 @@ Copy ``cp ~/dotfiles/bin/vimproc_win32.dll ~\.vim\bundle\vimproc.vim\autoload\vi
 Cheatsheet for new stuff
 -----------------------
 
- - ``]m [m``  - Move to next JS NOPENOPENOPE/block {}
- - <leader>lf Lusty File explorer
- - <leader>lb Lusty Buffer
- - <leader>lg Lusty bufferGrep
- - <leader>lm MRU
- - <leader>lt Commant-T
- - <leader>a  Ack
+ Normal mode:
+ - @: - repat last ex command
 
  Visual mode:
  - oO - move start/end selection
- - aB - select outer {
  - X - delete full lines
 
 Todo
@@ -76,3 +70,4 @@ Todo
  - <Tab> key not work in JS snippet service(f<Tab>)
  - gvim not sees jshint
  - select by indentation
+ - grep in current project

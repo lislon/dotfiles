@@ -61,6 +61,7 @@ nnoremap M K
 nnoremap K <nop>
 "inoremap <Esc> <nop>
 inoremap kj <Esc>
+inoremap jk <Esc>
 
 "Uppercase current word
 inoremap <C-u> <Esc>mdgUiw`da
@@ -256,6 +257,7 @@ command! PI :update | PluginInstall
 
 " nomap Insert
 :nnoremap <Insert> "+p
+:cnoremap <S-Insert> <c-r>+
 :inoremap <Insert> <c-o>"+]P<Esc>==
 :inoremap <S-Insert> <c-o>"+]P<Esc>==
 ":nmap <S-Insert> yo"+P
@@ -1132,54 +1134,6 @@ let g:syntastic_mode_map = {
 let g:syntastic_auto_jump = 0
 let g:syntastic_enable_signs = 1
 " }}}
-" {{{ Plugin:Ctrl-P
-
-
-let g:ctrlp_dont_split = 'NERD_tree_2'
-let g:ctrlp_cmd = 'CtrlPMRU'
-if filereadable(expand(" %HOME%/dotfiles/.vim/bundle/ctrlp-cmatcher/autoload/build"))
-    echo expand(" %HOME%/dotfiles/.vim/bundle/ctrlp-cmatcher/autoload/build")
-endif
-let g:ctrlp_max_files = 0
-let g:ctrlp_mruf_exclude = '\v[\\/](.git|build|doc)[\\/]|\.(tmp|txt)$|[\\/]Temp[\\/]'
-
-
-"let g:ctrlp_map = '<leader>,'
-"nnoremap <leader>. :CtrlPTag<cr>
-"nnoremap <leader>E :CtrlP ../
-
-let g:ctrlp_prompt_mappings = {
-\ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<s-tab>'],
-\ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<tab>'],
-\ 'PrtHistory(-1)':       ['<c-n>'],
-\ 'PrtHistory(1)':        ['<c-p>'],
-\ 'AcceptSelection("h")': ['<c-i>'],
-\ 'ToggleFocus()':        ['<c-tab>'],
-\ }
-
-"let ctrlp_filter_greps = "".
-    "\ "egrep -iv '\\.(" .
-    "\ "jar|class|swp|swo|log|so|o|pyc|jpe?g|png|gif|mo|po" .
-    "\ ")$' | " .
-    "\ "egrep -v '^(\\./)?(" .
-    "\ "deploy/|lib/|classes/|libs/|deploy/vendor/|.git/|.hg/|.svn/|.*migrations/|docs/build/" .
-    "\ ")'"
-
-"let my_ctrlp_user_command = "" .
-    "\ "find %s '(' -type f -or -type l ')' -maxdepth 15 -not -path '*/\\.*/*' | " .
-    "\ ctrlp_filter_greps
-
-"let my_ctrlp_git_command = "" .
-    "\ "cd %s && git ls-files --exclude-standard -co | " .
-    "\ ctrlp_filter_greps
-
-"let my_ctrlp_ffind_command = "ffind --semi-restricted --dir %s --type e -B -f"
-
-"let g:ctrlp_user_command = ['.git/', my_ctrlp_ffind_command, my_ctrlp_ffind_command]
-"let g:ctrlp_user_command = 'find %s -type f'
-
-
-" }}}
 " {{{ Plugin:YouCompleteMe
 
 " make YCM compatible with UltiSnips (using supertab)
@@ -1285,107 +1239,153 @@ let g:unite_source_everything_cmd_path = expand("%HOME%/dotfiles/bin/es.exe")
 
 " {{{ Plugin:unite
 
-" MRU files
-nnoremap <leader>m :<c-u>Unite file_mru -start-insert<CR>
 
-call unite#filters#matcher_default#use(['matcher_glob'])
-call unite#custom#source('file_rec,file_rec/async', 'ignore_pattern', '\vnode_modules')
-nnoremap <silent> <c-p> :<C-u>Unite -start-insert file_rec/async:~/Sources<CR>
-nnoremap <silent> <leader>b :<C-u>Unite -start-insert -complete file:~/.vim/bundle<CR>
-nnoremap <silent> <leader>cs :<C-u>Unite codesearch<CR>
-nnoremap <silent> <leader>l :<C-u>Unite line<CR>
+" {{{ grep
 
-"call unite#filters#matcher_default#use(['matcher_default'])
-"call unite#filters#matcher_default#use(['matcher_fuzzy'])
-if executable(g:unite_source_everything_cmd_path)
-    nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru everything<CR>
-else
-    nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru<CR>
-endif
-nnoremap <leader>r :<C-u>Unite -start-insert file_rec/async:!<CR>
-nnoremap <c-l> :<C-u>UniteWithBufferDir -start-insert file<CR>
-nnoremap <c-G> :<C-u>Unite line<CR>
 
-let g:unite_source_history_yank_enable = 1
-nnoremap <leader>y :<C-u>Unite history/yank<CR>
-
-"nnoremap <silent> <c-l> :<C-u>Unite bookmark:* buffer file:!<CR>
-call unite#custom#profile('default', 'context', {
-\   'start_insert': 1,
-\   'winheight': 10,
-\   'direction': 'botright',
-\ })
-call unite#custom#profile('codesearch', 'context', {
-\   'start_insert': 1,
-\   'filters': [
-\       'matcher_exclude_node_modules'
-\   ]
-\ })
-
-call unite#custom#profile('line', 'context', {
-\   'winheight': 50,
-\ })
-
-if has('win32') && executable('ag')
+if executable('pt')
+    let g:unite_source_grep_command = 'pt'
+    let g:unite_source_grep_default_opts = '--nogroup --nocolor -S'
+    let g:unite_source_grep_recursive_opt = ''
+    let g:unite_source_grep_encoding = 'utf-8'
+elseif executable('ag')
     let g:unite_source_grep_command = 'ag'
     let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
     let g:unite_source_grep_recursive_opt = ''
 endif
+" }}}
+
+" GREP in project (,ff)
+nnoremap <silent> <Leader>ff :<C-u>Unite grep:.
+ \ -buffer-name=search-buffer -auto-preview<CR>
+
+" GREP word under cursor (,fw)
+nnoremap <silent> <Leader>fw :<C-u>UniteWithCursorWord grep:.
+            \ -buffer-name=search-buffer -auto-preview<CR>
+" MRU files (,m)
+nnoremap <leader>m :<c-u>Unite file_mru -start-insert<CR>
+" Line Search (,l)
+nnoremap <silent> <leader>l :<C-u>Unite line -start-insert<CR>
+" New file in same buffer (use -tab for new buffer)
+nnoremap <silent> <leader>n :<C-u>UniteWithBufferDir file/new
+            \ -start-insert -winheight=1 -here<CR>
+" List project files
+nnoremap <silent> <c-p> :<C-u>UniteWithProjectDir file_rec/async -start-insert<CR>
+nnoremap <silent> <leader>p :<C-u>UniteWithProjectDir file_rec/async -start-insert<CR>
+
+call unite#custom#source('file_rec/async', 'matchers', ['converter_relative_word', 'matcher_default'])
+
+"call unite#filters#matcher_default#use(['matcher_glob'])
+call unite#custom#source('file_rec/async', 'ignore_pattern',
+            \ '\v(node_modules|public)')
+"call unite#custom#source('file_rec', 'ignore_globs', split(&wildignore, ','))
+
+"let g:unite_source_alias_aliases = {
+            "\   'test' : {
+            "\     'source': 'file_rec',
+            "\     'args': '~/',
+            "\   },
+            "\   'b' : 'buffer',
+            "\ }
+
+"nnoremap <silent> <c-p> :<C-u>Unite -start-insert file_rec/async:~/Sources<CR>
+"nnoremap <silent> <leader>b :<C-u>Unite -start-insert -complete file:~/.vim/bundle<CR>
+"nnoremap <silent> <leader>cs :<C-u>Unite codesearch<CR>
+
+""call unite#filters#matcher_default#use(['matcher_default'])
+""call unite#filters#matcher_default#use(['matcher_fuzzy'])
+"if executable(g:unite_source_everything_cmd_path)
+    "nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru everything<CR>
+"else
+    "nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru<CR>
+"endif
+"nnoremap <leader>r :<C-u>Unite -start-insert file_rec/async:!<CR>
+"nnoremap <c-l> :<C-u>UniteWithBufferDir -start-insert file<CR>
+
+"let g:unite_source_history_yank_enable = 1
+"nnoremap <leader>y :<C-u>Unite history/yank<CR>
+
+""nnoremap <silent> <c-l> :<C-u>Unite bookmark:* buffer file:!<CR>
+"call unite#custom#profile('default', 'context', {
+"\   'start_insert': 1,
+"\   'winheight': 10,
+"\   'direction': 'botright',
+"\ })
+"call unite#custom#profile('codesearch', 'context', {
+"\   'start_insert': 1,
+"\   'filters': [
+"\       'matcher_exclude_node_modules'
+"\   ]
+"\ })
 
 
-call unite#custom#source(
-            \ 'file', 'matchers',
-            \ ['converter_tail', 'matcher_default'])
+"call unite#custom#profile('line', 'context', {
+"\   'winheight': 50,
+"\ })
+
+
 
 "call unite#custom#source(
-            "\ 'file_rec/async,file_rec', 'converters',
-            "\ ['converter_file_directory'])
+            "\ 'file', 'matchers',
+            "\ ['converter_tail', 'matcher_default'])
+
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()
     " Overwrite settings.
-    imap <buffer> kj      <Plug>(unite_insert_leave)
+    "imap <buffer> kj      <Plug>(unite_insert_leave)
     imap <buffer> <c-k>   <Plug>(unite_exit)
     nmap <buffer> <c-k>   <Plug>(unite_exit)
+    nmap <buffer> <Esc>   <Plug>(unite_exit)
 
-    imap <buffer><expr> k unite#smart_map('k', '')
-    imap <buffer> <TAB>   <Plug>(unite_select_next_line)
-    imap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
+    " Empty cache
+    nmap <buffer> <F5>   <Plug>(unite_redraw)
+    imap <buffer> <F5>   <Plug>(unite_redraw)
+
+    " Pressing backspace on empty input results to closing of unite
+    silent! iunmap <buffer> <Backspace>
+
+    " Fast selection
     imap <buffer> '     <Plug>(unite_quick_match_default_action)
     nmap <buffer> '     <Plug>(unite_quick_match_default_action)
-    imap <buffer><expr> x
-                \ unite#smart_map('x', "\<Plug>(unite_quick_match_choose_action)")
-    nmap <buffer> x     <Plug>(unite_quick_match_choose_action)
-    nmap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
-    imap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
-    imap <buffer> <C-y>     <Esc><Plug>(unite_narrowing_path)
-    nmap <buffer> <C-y>     <Plug>(unite_narrowing_path)
-    nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
-    nmap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
-    nmap <buffer> <C-d>     <Plug>(unite_input_directory)
-    imap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
-    nmap <buffer> <Esc>     <Plug>(unite_exit)
-    "nmap <buffer> <Tab>     <Plug>(unite_complete)
-    nnoremap <silent><buffer><expr> l
-                \ unite#smart_map('l', unite#do_action('default'))
 
-    let unite = unite#get_current_unite()
-    if unite.profile_name ==# 'search'
-        nnoremap <silent><buffer><expr> r     unite#do_action('replace')
-    else
-        nnoremap <silent><buffer><expr> r     unite#do_action('rename')
-    endif
+    "imap <buffer><expr> k unite#smart_map('k', '')
+    "imap <buffer> <TAB>   <Plug>(unite_select_next_line)
+    nmap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
+    imap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
+    "imap <buffer><expr> x
+                "\ unite#smart_map('x', "\<Plug>(unite_quick_match_choose_action)")
+    "nmap <buffer> x     <Plug>(unite_quick_match_choose_action)
+    "nmap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
+    "imap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
+    "imap <buffer> <C-y>     <Esc><Plug>(unite_narrowing_path)
+    "nmap <buffer> <C-y>     <Plug>(unite_narrowing_path)
+    "nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
+    "nmap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
+    "nmap <buffer> <C-d>     <Plug>(unite_input_directory)
+    "imap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
+    "nnoremap <silent><buffer><expr> l
+                "\ unite#smart_map('l', unite#do_action('default'))
 
-    nnoremap <silent><buffer><expr> cd     unite#do_action('lcd')
-    nnoremap <buffer><expr> S      unite#mappings#set_current_filters(
-                \ empty(unite#mappings#get_current_filters()) ?
-                \ ['sorter_reverse'] : [])
+    "let unite = unite#get_current_unite()
+    "if unite.profile_name ==# 'search'
+        "nnoremap <silent><buffer><expr> r     unite#do_action('replace')
+    "else
+        "nnoremap <silent><buffer><expr> r     unite#do_action('rename')
+    "endif
+
+    "nnoremap <silent><buffer><expr> cd     unite#do_action('lcd')
+    "nnoremap <buffer><expr> S      unite#mappings#set_current_filters(
+                "\ empty(unite#mappings#get_current_filters()) ?
+                "\ ['sorter_reverse'] : [])
 
     " Runs "split" action by <C-s>.
     imap <silent><buffer><expr> <C-i>     unite#do_action('split')
     imap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
-    nmap <silent><buffer><expr> <C-i>     unite#do_action('split')
+    nmap <silent><buffer><expr> <c-i>     unite#do_action('split')
     nmap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
+    " nmap <c-i> resets <tab>
+    nmap <buffer> <Tab>                  <Plug>(unite_choose_action)
 endfunction
 
 " }}}

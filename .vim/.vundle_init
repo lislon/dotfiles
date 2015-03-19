@@ -94,6 +94,7 @@ Plugin 'Shougo/vimproc.vim'
 Plugin 'Shougo/unite.vim'
 Plugin 'Shougo/neomru.vim'
 Plugin 'Shougo/unite-session'
+Plugin 'tsukkee/unite-help'
 "Plugin 'ujihisa/unite-colorscheme'
 if has('win32')
     Plugin 'sgur/unite-everything'
