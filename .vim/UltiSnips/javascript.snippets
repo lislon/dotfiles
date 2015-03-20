@@ -1,12 +1,20 @@
 snippet if "simple if"
-	if (${1:argument}) {
-		${VISUAL}$0
-	}
+if (${1:argument}) {
+	${VISUAL}$0
+}
 endsnippet
 
 snippet f "annonymous function" w
 function (${1:argument}) {
 	${VISUAL}$0
 }
+endsnippet
+
+snippet clo "console.log(arguments)" b
+console.log(arguments)
+endsnippet
+
+snippet re "node require" b
+${1:util} = require('$1'),
 endsnippet
 

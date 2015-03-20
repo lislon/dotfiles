@@ -76,7 +76,8 @@ Plugin 'jaxbot/browserlink.vim'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'einars/js-beautify'
 Plugin 'terryma/vim-smooth-scroll'
-"Plugin 'marijnh/tern_for_vim'
+"Plugin 'marijnh/tern_for_vim' " Not works in gvim in my env (Cannot start server)
+"Plugin 'int3/vim-taglist-plus'
 
 "Plugin 'ervandew/supertab'
 " Not hels with js

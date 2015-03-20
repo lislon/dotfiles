@@ -854,7 +854,7 @@ fun! InitFtCoffee()
 
     if match(expand("%:p"), "[\\/]test[\\/]") >= 0
         call BindRunCommand("F5",
-                    \ "mocha --compilers coffee:coffee-script/register %:p",
+                    \ "ENV=testing mocha --compilers coffee:coffee-script/register %:p",
                     \ '/error')
     else
         call BindRunCommand("F5", "coffee %:p", "")
@@ -896,7 +896,10 @@ augroup end
 nnoremap zl :let @z=@"<cr>x$p:let @"=@z<cr>
 
 " Keep the cursor in place while joining lines
-nnoremap J mzJ`z" Indent/dedent/autoindent what you just pasted.
+"nnoremap J mzJ`z
+nnoremap <silent> <Plug>JoinLines mzJ`z:call repeat#set("\<Plug>JoinLines", v:count)<CR>
+nmap J <Plug>JoinLines
+
 
 nnoremap <lt>> V`]<
 nnoremap ><lt> V`]>
@@ -922,8 +925,14 @@ augroup end
 " FileType: gitcommit {{{
 augroup gitcommit
     au!
-    autocmd FileType gitcommit :ab <buffer> r RDPROM
-augroup end
+    autocmd FileType gitcommit :nnoremap <silent><buffer> <c-l>
+                \ :silent let b:last_commit = system("git --no-pager show HEAD --format=%s -s")<CR>
+                \ :echo "Last commit: ".b:last_commit[:-2]<CR>
+    autocmd FileType gitcommit :inoremap <silent><buffer> <c-l>
+                \ <esc>
+                \ :silent let b:last_commit = system("git --no-pager show HEAD --format=%s -s")<CR>
+                \ :echo "Last commit: ".b:last_commit[:-2]<CR>
+    autocmd BufReadPost,FileReadPost .git/COMMIT_EDITMSG 1,2s/Please/No Please/
 " }}}
 " FileType: quickfix {{{
 augroup quickfix
@@ -1258,10 +1267,11 @@ endif
 " GREP in project (,ff)
 nnoremap <silent> <Leader>ff :<C-u>Unite grep:.
  \ -buffer-name=search-buffer -auto-preview<CR>
-
 " GREP word under cursor (,fw)
 nnoremap <silent> <Leader>fw :<C-u>UniteWithCursorWord grep:.
             \ -buffer-name=search-buffer -auto-preview<CR>
+" Find neaders file
+nnoremap <silent> <Leader>fn :<C-u>UniteWithBufferDir file -start-insert<CR>
 " MRU files (,m)
 nnoremap <leader>m :<c-u>Unite file_mru -start-insert<CR>
 " Line Search (,l)
@@ -1270,7 +1280,7 @@ nnoremap <silent> <leader>l :<C-u>Unite line -start-insert<CR>
 nnoremap <silent> <leader>n :<C-u>UniteWithBufferDir file/new
             \ -start-insert -winheight=1 -here<CR>
 " List project files
-nnoremap <silent> <c-p> :<C-u>UniteWithProjectDir file_rec/async -start-insert<CR>
+nnoremap <silent> <c-p> :<C-u>UniteWithProjectDir file_rec/async -start-insert -here -winheight=10<CR>
 nnoremap <silent> <leader>p :<C-u>UniteWithProjectDir file_rec/async -start-insert<CR>
 
 call unite#custom#source('file_rec/async', 'matchers', ['converter_relative_word', 'matcher_default'])
@@ -1360,7 +1370,7 @@ function! s:unite_my_settings()
     "imap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
     "imap <buffer> <C-y>     <Esc><Plug>(unite_narrowing_path)
     "nmap <buffer> <C-y>     <Plug>(unite_narrowing_path)
-    "nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
+    nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
     "nmap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
     "nmap <buffer> <C-d>     <Plug>(unite_input_directory)
     "imap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
