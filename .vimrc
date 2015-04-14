@@ -122,7 +122,7 @@ if has('gui_running') || has('unix')
         ":colorscheme solarized
         :colorscheme Tomorrow-Night-Bright
         "set background=dark
-    catch /^Vim\%((\a\+))
+    catch /^Vim\%((\a\+))/
         :colorscheme default
     endtry
 else
