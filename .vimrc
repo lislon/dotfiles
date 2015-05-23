@@ -62,6 +62,8 @@ nnoremap K <nop>
 "inoremap <Esc> <nop>
 inoremap kj <Esc>
 inoremap jk <Esc>
+" Emacs style
+inoremap fd <Esc>
 
 "Uppercase current word
 inoremap <C-u> <Esc>mdgUiw`da
@@ -140,10 +142,10 @@ endif
 " Tell vim to remember certain things when we exit
 " "  '10  :  marks will be remembered for up to 10 previously edited files
 " "  "100 :  will save up to 100 lines for each register
-" "  :20  :  up to 20 lines of command-line history will be remembered
+" "  :100  :  up to 100 lines of command-line history will be remembered
 " "  %    :  saves and restores the buffer list
 " "  n... :  where to save the viminfo files
-set viminfo='10,\"100,:20,%,n~/.viminfo
+set viminfo='10,\"100,:100,%,n~/.viminfo
 if has('persistent_undo')
     set undofile
     set undodir=~/.vimtmp/undo
@@ -409,8 +411,13 @@ nnoremap _ :sp<cr>
 " | : Quick vertical splits
 nnoremap <bar> :vsp<cr>
 
-" }}}
+" Jump to function end
+nnoremap ]f ]}k
+nnoremap [f [{j
+vnoremap ]f ]}k
+vnoremap [f [{j
 
+" }}}
 " Misc stuff {{{1
 
 " {{{ Extra whitespace
@@ -1067,7 +1074,6 @@ augroup end
 " }}} FileTypes
 
 " Plugin settings {{{
-
 " {{{ Plugin:Surround vim
 " use char2nr to obtain number
 let g:surround_40 = "(\r)"
@@ -1191,10 +1197,10 @@ xmap gs <plug>XEasyClipPaste
 silent! call repeat#set("\<Plug>NERDCommenterToggle", v:count)
 " }}}
 " {{{ Plugin:vim-smooth-scroll
-nnoremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-nnoremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-nnoremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-nnoremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+"nnoremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+"nnoremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+"nnoremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
+"nnoremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 " }}}
 " {{{ Plugin:vim-airline
 let g:airline_powerline_fonts = 1
@@ -1209,13 +1215,19 @@ let g:lsmulti_cursor_insert_maps = { 'j': 1 }
 " {{{ Plugin:XkbSwitch
 if has('win32')
     let g:XkbSwitchLib = expand('~/dotfiles/bin/libxkbswitch32').'.dll'
-    let g:ackprg = 'ag --nogroup --nocolor --column'
 else
     let g:XkbSwitchIMappings = ['ru']
 endif
 let g:XkbSwitchEnabled = 1
 
-" Fix irritating behaviour when I press / on russian layout
+augroup cmd
+    au!
+    " this one is which you're most likely to use?
+    autocmd CmdwinEnter * let g:qq = 1
+    autocmd CmdwinLeave * echo "Hello end"
+augroup end
+
+" Fix irritating behavior when I press / on russian layout
 fun! XkbRepeat()
     if g:XkbSwitchEnabled == 1
         let lang = libcall(g:XkbSwitchLib, 'Xkb_Switch_getXkbLayout', '')
@@ -1230,8 +1242,18 @@ fun! XkbRepeat()
         normal! .
     endif
 endf
-nnoremap <silent> . :call XkbRepeat()<CR>
+"nnoremap <silent> . :call XkbRepeat()<CR>
 
+fun! SearchInRus(key)
+    if exists('b:xkb_ilayout') && b:xkb_ilayout == "ru"
+        call libcall(g:XkbSwitchLib, 'Xkb_Switch_setXkbLayout', 'ru')
+        cnoremap <buffer> <silent> <Enter> <CR>:call libcall(g:XkbSwitchLib, 'Xkb_Switch_setXkbLayout', 'us')<CR>
+        cnoremap <buffer> <silent> <Esc> <C-C>:call libcall(g:XkbSwitchLib, 'Xkb_Switch_setXkbLayout', 'us')<CR>
+    endif
+    call feedkeys(a:key, 'n')
+endf
+nnoremap <silent> / :call SearchInRus('/')<CR>
+nnoremap <silent> ? :call SearchInRus('?')<CR>
 
 " }}}
 " {{{ Plugin:Rooter
@@ -1243,14 +1265,11 @@ let g:jsdoc_default_mapping = 0
 nnoremap <silent> gc <Plug>jsdoc
 " }}}
 " {{{ Plugin:unite-everything
-let g:unite_source_everything_cmd_path = expand("%HOME%/dotfiles/bin/es.exe")
+let g:unite_source_everything_cmd_path = substitute($HOME, "\\", "/", "g")."/dotfiles/bin/es.exe"
 " }}}
-
 " {{{ Plugin:unite
 
-
 " {{{ grep
-
 
 if executable('pt')
     let g:unite_source_grep_command = 'pt'
@@ -1259,23 +1278,26 @@ if executable('pt')
     let g:unite_source_grep_encoding = 'utf-8'
 elseif executable('ag')
     let g:unite_source_grep_command = 'ag'
-    let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+    let g:unite_source_grep_default_opts = '--nogroup --nocolor --column --hidden --ignore .git'
     let g:unite_source_grep_recursive_opt = ''
 endif
+
 " }}}
 
 " GREP in project (,ff)
 nnoremap <silent> <Leader>ff :<C-u>Unite grep:.
  \ -buffer-name=search-buffer -auto-preview<CR>
+" Grep in system
+nnoremap <silent> <Leader>fg :<C-u>Unite everything/async -start-insert<CR>
 " GREP word under cursor (,fw)
 nnoremap <silent> <Leader>fw :<C-u>UniteWithCursorWord grep:.
             \ -buffer-name=search-buffer -auto-preview<CR>
-" Find neaders file
+" Find neary-by file
 nnoremap <silent> <Leader>fn :<C-u>UniteWithBufferDir file -start-insert<CR>
 " MRU files (,m)
 nnoremap <leader>m :<c-u>Unite file_mru -start-insert<CR>
 " Line Search (,l)
-nnoremap <silent> <leader>l :<C-u>Unite line -start-insert<CR>
+nnoremap <silent> <leader>l :<C-u>Unite line -start-insert -default-action=persist_open<CR>
 " New file in same buffer (use -tab for new buffer)
 nnoremap <silent> <leader>n :<C-u>UniteWithBufferDir file/new
             \ -start-insert -winheight=1 -here<CR>
@@ -1288,6 +1310,8 @@ call unite#custom#source('file_rec/async', 'matchers', ['converter_relative_word
 "call unite#filters#matcher_default#use(['matcher_glob'])
 call unite#custom#source('file_rec/async', 'ignore_pattern',
             \ '\v(node_modules|public)')
+call unite#custom#source('everything,everything/async', 'ignore_pattern',
+            \ '\v(\.vimtmp)')
 "call unite#custom#source('file_rec', 'ignore_globs', split(&wildignore, ','))
 
 "let g:unite_source_alias_aliases = {
@@ -1361,8 +1385,9 @@ function! s:unite_my_settings()
 
     "imap <buffer><expr> k unite#smart_map('k', '')
     "imap <buffer> <TAB>   <Plug>(unite_select_next_line)
-    nmap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
-    imap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
+    " How i will switch window?
+    "nmap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
+    "imap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
     "imap <buffer><expr> x
                 "\ unite#smart_map('x', "\<Plug>(unite_quick_match_choose_action)")
     "nmap <buffer> x     <Plug>(unite_quick_match_choose_action)
