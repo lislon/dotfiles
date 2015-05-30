@@ -14,7 +14,14 @@ IF NOT EXIST "%HOMEPATH%\.vim" (
   mklink /J %HOMEPATH%\.vim %HOMEPATH%\dotfiles\.vim
 )
 
-mklink %HOMEPATH%\.gitconfig %HOMEPATH%\dotfiles\.gitconfig
+mklink /H %HOMEPATH%\.gitconfig %HOMEPATH%\dotfiles\.gitconfig
+
+
+IF EXIST "%HOMEPATH%\.emacs.d" (
+mklink /H %HOMEPATH%\.emacs.d\personal\my.el %HOMEPATH%\dotfiles\.emacs\personal\my.el 
+mklink /H %HOMEPATH%\.emacs.d\prelude-modules.el %HOMEPATH%\dotfiles\.emacs\prelude-modules.el
+)
+
 
 GOTO:Run
 
