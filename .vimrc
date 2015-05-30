@@ -1267,6 +1267,10 @@ nnoremap <silent> gc <Plug>jsdoc
 " {{{ Plugin:unite-everything
 let g:unite_source_everything_cmd_path = substitute($HOME, "\\", "/", "g")."/dotfiles/bin/es.exe"
 " }}}
+" {{{ Plugin:Sql-workbench
+let g:sw_tmp = "C:\\temp-sql"
+let g:sw_exe = "c:\\opt\\sql-workbench\\sqlwbconsole.exe"
+" }}}
 " {{{ Plugin:unite
 
 " {{{ grep
@@ -1287,12 +1291,12 @@ endif
 " GREP in project (,ff)
 nnoremap <silent> <Leader>ff :<C-u>Unite grep:.
  \ -buffer-name=search-buffer -auto-preview<CR>
-" Grep in system
+" Grep in system Anything
 nnoremap <silent> <Leader>fg :<C-u>Unite everything/async -start-insert<CR>
 " GREP word under cursor (,fw)
 nnoremap <silent> <Leader>fw :<C-u>UniteWithCursorWord grep:.
             \ -buffer-name=search-buffer -auto-preview<CR>
-" Find neary-by file
+" Find neary-by file - ,fn
 nnoremap <silent> <Leader>fn :<C-u>UniteWithBufferDir file -start-insert<CR>
 " MRU files (,m)
 nnoremap <leader>m :<c-u>Unite file_mru -start-insert<CR>
@@ -1386,8 +1390,8 @@ function! s:unite_my_settings()
     "imap <buffer><expr> k unite#smart_map('k', '')
     "imap <buffer> <TAB>   <Plug>(unite_select_next_line)
     " How i will switch window?
-    "nmap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
-    "imap <buffer> <C-w>     <Plug>(unite_delete_backward_path)
+    nmap <buffer> <C-S-w>     <Plug>(unite_delete_backward_path)
+    imap <buffer> <C-S-w>     <Plug>(unite_delete_backward_path)
     "imap <buffer><expr> x
                 "\ unite#smart_map('x', "\<Plug>(unite_quick_match_choose_action)")
     "nmap <buffer> x     <Plug>(unite_quick_match_choose_action)
@@ -1451,3 +1455,4 @@ command! SwCommon NERDTree rdpromo-common
 command! SwSite   NERDTree rdpromo-site
 command! SwMarkup NERDTree rdpromo-markup
 " }}}
+
