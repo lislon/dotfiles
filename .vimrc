@@ -28,7 +28,7 @@ if has('gui_running')
 endif
 set dictionary+=/usr/share/dict/words
 set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
-" > is flag for inserting new line when appening in register
+" > flag for inserting new line when appening in register ("Ayy)
 set cpoptions=ABceFs>
 " Turn off sound
 "set vb
