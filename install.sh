@@ -67,6 +67,9 @@ install_vim () {
         fi
         echo "Plugin installation..."
         vim +PluginInstall +qall
+        echo "Make vimproc"
+        cd ~/dotfiles/.vim/bundle/vimproc.vim/autoload/
+        make >/dev/null
     fi
 
 }
