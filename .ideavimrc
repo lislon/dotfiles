@@ -24,6 +24,11 @@
 :nmap <S-Enter> O<Esc>j
 :nmap <CR> o<Esc>k
 
+" Fast exit from insert mode
+:inoremap jk <Esc>
+:inoremap jj <Esc>
+:inoremap оо <Esc>
+
 :nmap <c-w> ci'
 
 :noremap <left> <nop>
