@@ -2,6 +2,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/dotfiles/.oh-my-zsh
 export LC_ALL='en_US.UTF-8'
+
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -19,7 +20,11 @@ COMPLETION_WAITING_DOTS="true"
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 plugins=(git composer fasd gitfast autojump bower npm)
-#plugins=(git composer fasd gitfast ssh-agent coffe autojump bower jira npm)
+if [ -f "/etc/arch-release" ]; then
+    export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
+elif `which ssh-agent &>/dev/null`; then
+    plugins+=(ssh-agent)
+fi
 # Use j <dirspec>
 #plugins=(git composer fasd gitfast)
 
@@ -36,6 +41,7 @@ alias gpush='git push'
 alias s="sudo "
 alias -g G="| grep -i"
 alias -g L="| less -R"
+alias -g F="| ack --passthru "
 alias ack="ack --pager='less -RFSX'"
 alias rclua="vim ~/.config/awesome/rc.lua"
 alias fx='setxkbmap -layout "us,ru" -option "grp:rctrl_toggle"'
@@ -57,7 +63,6 @@ export HISTSIZE=100000
 export HISTFILE="$HOME/.history"
 export SAVEHIST=$HISTSIZE
 export EDITOR='vim'
-
 setopt extended_glob
 setopt rc_expand_param
 setopt correct
