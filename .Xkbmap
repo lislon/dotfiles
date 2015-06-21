@@ -1,1 +1,1 @@
--layout "us,ru" -option "grp:rctrl_toggle" -option ctrl:nocaps
+-layout us,ru -option grp:rctrl_toggle -option ctrl:nocaps
