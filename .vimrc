@@ -28,7 +28,8 @@ if has('gui_running')
 endif
 set dictionary+=/usr/share/dict/words
 set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
-
+" > is flag for inserting new line when appening in register
+set cpoptions=ABceFs>
 " Turn off sound
 "set vb
 "set t_vb=
@@ -971,6 +972,13 @@ augroup vim
     "autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
 augroup end
     " }}}
+" FileType: zsh {{{
+augroup zsh
+    au!
+    autocmd FileType zsh setlocal foldcolumn=3
+    autocmd FileType zsh setlocal foldmethod=marker
+augroup end
+" }}}
 " FileType: awesome rc.lua {{{
 augroup awesomerclua
     au!

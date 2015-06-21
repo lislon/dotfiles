@@ -49,6 +49,8 @@ Plugin 'mileszs/ack.vim'
 Plugin 'pangloss/vim-javascript'
 Plugin 'tabmerge'
 "Plugin 'moll/vim-node'
+Plugin 'jceb/vim-orgmode'
+Plugin 'Lokaltog/vim-easymotion'
 
 Plugin 'tpope/vim-dispatch'
 Plugin 'tpope/vim-surround'
@@ -75,7 +77,8 @@ Plugin 'heavenshell/vim-jsdoc'
 Plugin 'jaxbot/browserlink.vim'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'einars/js-beautify'
-Plugin 'terryma/vim-smooth-scroll'
+"Plugin 'terryma/vim-smooth-scroll' " Irritates me when I want to have a brief
+" view on project
 "Plugin 'marijnh/tern_for_vim' " Not works in gvim in my env (Cannot start server)
 "Plugin 'int3/vim-taglist-plus'
 
@@ -102,7 +105,7 @@ if has('win32')
 endif
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'Yggdroot/indentLine'
-
+Plugin 'cosminadrianpopescu/vim-sql-workbench'
 
 " Color themems
  Plugin 'altercation/vim-colors-solarized'
@@ -122,7 +125,8 @@ call vundle#end()            " required
 
 filetype plugin indent on    " required
 set rtp+=~/.vim/bundle/vim-colors-solarized
-"set rtp+=~/.vim/bundle/ycm32
+" You complete me https://bitbucket.org/Haroogan/vim-youcompleteme-for-windows 
+"set rtp+=~/.vim/bundle/vim-ycm-windows
 "set g:js_indent=~/.vim/bundle/web-indent/indent/javascript.vim
 
 augroup VundleInit
