@@ -1,4 +1,5 @@
 " {{{ Vundle
+
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
@@ -16,8 +17,11 @@ call vundle#begin()
 
 
 Plugin 'gmarik/Vundle.vim'
+
 " }}}
+
 " {{{ General editing plugins
+
 
 " Smart closing quotes
 Plugin 'Raimondi/delimitMate'
@@ -46,8 +50,11 @@ Plugin 'tpope/vim-unimpaired'
 
 Plugin 'tpope/vim-fugitive'
 
+
 " }}}
+
 " {{{ File navigation
+
 Plugin 'scrooloose/nerdtree'
 Plugin 'NERD_Tree-and-ack'
 Plugin 'Lokaltog/vim-easymotion'
@@ -61,8 +68,11 @@ Plugin 'tsukkee/unite-help'
 if has('win32')
     Plugin 'sgur/unite-everything'
 endif
+
 " }}}
+
 " {{{ HTML/XML/Templates
+
 Plugin 'KabbAmine/vCoolor.vim'
 Plugin 'othree/xml.vim'
 Plugin 'jaxbot/browserlink.vim'
@@ -70,15 +80,21 @@ Plugin 'jaxbot/browserlink.vim'
 Plugin 'tmhedberg/matchit'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'mustache/vim-mustache-handlebars'
+
 " }}}
+
 " {{{ PHP
+
 Plugin 'tobyS/vmustache'
 Plugin 'tobyS/pdv'
 Plugin 'tobyS/skeletons.vim'
 Plugin 'shawncplus/phpcomplete.vim'
 Plugin 'junkblocker/unite-codesearch'
+
 " }}}
+
 " {{{ Javascript/Coffescript
+
 Plugin 'heavenshell/vim-jsdoc'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'vim-coffee-script'
@@ -86,19 +102,28 @@ Plugin 'einars/js-beautify'
 Plugin 'pangloss/vim-javascript'
 " Colon/Semicolon
 "Plugin 'lfilho/cosco.vim'
+
 " }}}
+
 " {{{ Utility Editing
+
 " . repeats plugins
 Plugin 'tpope/vim-repeat'
 Plugin 'svermeulen/vim-easyclip'
+
 " }}}
+
 " {{{ Autocomplete
+
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+
 " }}}
+
 " {{{ Color themes & statusbars
+
 Plugin 'bling/vim-airline'
 Plugin 'altercation/vim-colors-solarized'
 " Plugin 'tomasr/molokai'
@@ -110,17 +135,26 @@ Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
 " Plugin 'nanotech/jellybeans.vim'
 " Plugin 'junegunn/seoul256.vim'
 " Plugin 'vim-scripts/wombat256.vim'
+
 " }}}
+
 " {{{ Debugging vim
+
 Plugin 'vim-scripts/genutils'
 Plugin 'vim-scripts/BreakPts'
 Plugin 'Colortest'
+
 " }}}
+
 " {{{ General utilities
+
 Plugin 'tpope/vim-dispatch'
 Plugin 'airblade/vim-rooter'
+
 " }}}
+
 " {{{ I am not sure if I using this
+
 Plugin 'xolox/vim-misc'
 Plugin 'tabmerge'
 Plugin 'rosenfeld/conque-term'
@@ -143,7 +177,9 @@ Plugin 'mileszs/ack.vim'
 "Plugin 'L9'
 " Autocomplete typing - conflicts with ultisnip
 " Plugin 'othree/vim-autocomplpop'
+
 " }}}
+
 " {{{ Vundle finalizer
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -159,4 +195,4 @@ augroup VundleInit
     " this one is which you're most likely to use?
     autocmd FileWritePost ~/.vim/.vundle_init :PluginInstall
 augroup end
-    " }}}
+" }}}
