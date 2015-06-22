@@ -442,6 +442,7 @@ vnoremap ]f ]}k
 vnoremap [f [{j
 
 " }}}
+
 " Misc stuff {{{1
 
 " {{{ Extra whitespace
@@ -1463,11 +1464,8 @@ augroup end
 let g:bl_pagefiletypes = ['html', 'javascript', 'php', 'jade']
 " }}}
 " Plugin:vim-translate {{{
-".vimrc
-let g:goog_user_conf = {
-            \ 'langpair': 'en|ru',
-            \ 'v_key': 'T'
-            \ }
+" Shift +K https://github.com/soimort/translate-shell/wiki/Text-Editor-Integration
+nnoremap K :!trans <C-R><C-W><CR>
 " }}}
 " }}}
 

@@ -32,7 +32,7 @@ source $ZSH/oh-my-zsh.sh
 
 # }}}
 # {{{ Aliases
-alias myzsh="vim ~/dotfiles/.zshrc"
+alias myzsh="vim ~/dotfiles/.zshrc && reload"
 alias view=vim -R
 alias reload=". ~/.zshrc"
 alias v='f -e vim' # quick opening files with vim
@@ -52,6 +52,7 @@ alias svim='sudoedit'
 # OS-depend aliases
 if `which pacman &>/dev/null`; then
     alias i="sudo pacman -S"
+    alias is="pacman -Ss"
 elif `which apt-get &>/dev/null`; then
     alias i="sudo apt-get install "
 fi
@@ -63,9 +64,12 @@ export HISTSIZE=100000
 export HISTFILE="$HOME/.history"
 export SAVEHIST=$HISTSIZE
 export EDITOR='vim'
+# Fix backspace issue when using rxvt + ssh
+export TERM='xterm'
 setopt extended_glob
 setopt rc_expand_param
 setopt correct
+
 
 # Show stats if commands takes longer then 10 sec
 REPORTTIME=10
@@ -113,6 +117,23 @@ insert_sudo () { zle beginning-of-line; zle -U "sudo " }
 zle -N insert-sudo insert_sudo
 bindkey "^[s" insert-sudo
 
+man () {
+    tempo=`/usr/bin/man $*`
+    if [[ $? == 0 ]]; then
+            vim -R \
+            -u /dev/null \
+            -c 'set ft=man nomod nolist nonumber cpoptions-=<' \
+            -c 'syntax on' \
+            -c 'nnoremap q :q!<CR>' \
+            -c 'nnoremap <Space> <C-d>' \
+            -c 'nnoremap d <C-d>' \
+            -c 'nnoremap u <C-u>' \
+            -c 'nnoremap a <NOOP>' \
+            -c 'nnoremap A <NOOP>' \
+            -c 'nnoremap K :!trans <C-R><C-W><CR>' \
+            <(echo $tempo)
+    fi
+}
 
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
