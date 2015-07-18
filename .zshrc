@@ -19,8 +19,9 @@ COMPLETION_WAITING_DOTS="true"
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-plugins=(git composer fasd gitfast autojump bower npm)
+plugins=(git composer fasd gitfast autojump bower npm common-aliases wd)
 if [ -f "/etc/arch-release" ]; then
+    plugins+=(archlinux systemd)
     export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
 elif `which ssh-agent &>/dev/null`; then
     plugins+=(ssh-agent)
@@ -43,11 +44,18 @@ alias -g G="| grep -i"
 alias -g L="| less -R"
 alias -g F="| ack --passthru "
 alias ack="ack --pager='less -RFSX'"
-alias rclua="vim ~/.config/awesome/rc.lua"
-alias fx='setxkbmap -layout "us,ru" -option "grp:rctrl_toggle"'
+alias luarc="$EDITOR ~/.config/awesome/rc.lua"
+#alias fx='setxkbmap -layout "us,ru" -option "grp:rctrl_toggle"'
+alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle" -option ctrl:nocaps'
 alias help='man'
+alias cal='cal -m'
 alias ll='ls -hla'
-alias svim='sudoedit'
+alias svim='sudo -E vim'
+alias -s pdf='xdg-open'
+
+alias emax="emacsclient -t"                      # used to be "emacs -nw"
+alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
+alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
 
 # OS-depend aliases
 if `which pacman &>/dev/null`; then
@@ -69,6 +77,7 @@ export TERM='xterm'
 setopt extended_glob
 setopt rc_expand_param
 setopt correct
+setopt interactivecomments
 
 
 # Show stats if commands takes longer then 10 sec
@@ -92,14 +101,19 @@ zstyle ':completion:*:(node):*' ignored-patterns 'Gruntfile.js'
 # -g = glob pattern, (-.) glob modifier to allow only files or symlinks
 compdef '_files -g "*.jpg(-.)"' gimp
 # }}}
-# {{{ Misc 
+# {{{ Misc
 if [[ -f ~/.zshrc_local ]] ; then
 	source ~/.zshrc_local
+fi
+
+if [[ -f /etc/profile.d/fzf.zsh ]] ; then
+    source /etc/profile.d/fzf.zsh
 fi
 
 # Allow multi-selections from menu using Ctrl+o
 bindkey -M menuselect '\C-o' accept-and-menu-complete
 bindkey '\C-i' complete-word
+bindkey '\e#' pound-insert
 
 declare -U path
 path=( ~/bin ~/.local/bin $path )
@@ -121,16 +135,22 @@ man () {
     tempo=`/usr/bin/man $*`
     if [[ $? == 0 ]]; then
             vim -R \
-            -u /dev/null \
-            -c 'set ft=man nomod nolist nonumber cpoptions-=<' \
-            -c 'syntax on' \
-            -c 'nnoremap q :q!<CR>' \
-            -c 'nnoremap <Space> <C-d>' \
-            -c 'nnoremap d <C-d>' \
-            -c 'nnoremap u <C-u>' \
-            -c 'nnoremap a <NOOP>' \
-            -c 'nnoremap A <NOOP>' \
-            -c 'nnoremap K :!trans <C-R><C-W><CR>' \
+            -u NONE \
+            -c 'normal! M' \
+            -S =(echo '
+                set ft=man nomod nolist nonumber cpoptions-=<
+                set scrolloff=300 hlsearch ignorecase smartcase
+                syntax on
+                nnoremap q :q!<CR>
+                nnoremap <Space> <C-d>
+                nnoremap d <C-d>
+                nnoremap u <C-u>
+                nnoremap a <NOP>
+                nnoremap A <NOP>
+                nnoremap i <NOP>
+                nnoremap I <NOP>
+                nnoremap K :!trans <C-R><C-W><CR>'
+            ) \
             <(echo $tempo)
     fi
 }

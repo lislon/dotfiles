@@ -1024,7 +1024,9 @@ augroup end
 " }}}
 " FileType: sh {{{
 augroup sh
-    autocmd FileType sh call BindRunCommand("F5", "sh %:p", "")
+   au!
+   autocmd BufWritePost * if getline(1) =~ "^#!" | if getline(1) =~ "/bin/" | silent !chmod +x <afile> | endif | endif
+   autocmd FileType sh call BindRunCommand("F5", "sh %:p", "")
 augroup end
 " }}}
 " FileType: help {{{
@@ -1236,6 +1238,12 @@ silent! call repeat#set("\<Plug>NERDCommenterToggle", v:count)
 " }}}
 " {{{ Plugin:vim-airline
 let g:airline_powerline_fonts = 1
+
+if !exists('g:airline_symbols')
+      let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
+
 " }}}
 " {{{ Plugin:vim-multiply-cursors
 " Ctrl+N, Ctrl-P - next, Ctrl-X - shift
