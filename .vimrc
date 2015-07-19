@@ -30,6 +30,7 @@ set dictionary+=/usr/share/dict/words
 set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
 " > flag for inserting new line when appening in register ("Ayy)
 set cpoptions=ABceFs>
+set isfname=@,48-57,/,.,-,_,+,$,%,~
 " Turn off sound
 "set vb
 "set t_vb=
