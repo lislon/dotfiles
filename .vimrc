@@ -23,6 +23,8 @@ set splitright
 set splitbelow
 set ff=unix
 set hidden
+" Remove transperent background when running over ssh
+set t_ut=
 if has('gui_running')
     set spell spelllang=ru_ru,en_us
 endif
