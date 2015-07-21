@@ -53,10 +53,11 @@ alias cal='cal -m'
 alias ll='ls -hla'
 alias svim='sudo -E vim'
 alias -s pdf='xdg-open'
-
-alias emax="emacsclient -t"                      # used to be "emacs -nw"
-alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
-alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
+alias recent='find . -maxdepth 1 -type f -atime -1'             # show recent files
+#alias emax="emacsclient -t"                      # used to be "emacs -nw"
+#alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
+#alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
+alias sc-cat='systemctl cat'
 
 # OS-depend aliases
 if `which pacman &>/dev/null`; then
@@ -67,6 +68,11 @@ elif `which apt-get &>/dev/null`; then
 fi
 # }}}
 # {{{ Settings
+
+declare -U path
+path=( ~/bin ~/.local/bin $path )
+
+fpath=(~/dotfiles/.zshfunc $fpath)
 
 export ENV='development'
 export HISTSIZE=100000
@@ -102,24 +108,40 @@ zstyle ':completion:*:(node):*' ignored-patterns 'Gruntfile.js'
 # -g = glob pattern, (-.) glob modifier to allow only files or symlinks
 compdef '_files -g "*.jpg(-.)"' gimp
 # }}}
+# {{{ Man in vim
+man () {
+    tempo=`/usr/bin/man $*`
+    if [[ $? == 0 ]]; then
+        vim -R \
+            -u NONE \
+            -c 'normal! M' \
+            -S =(echo '
+        set ft=man nomod nolist nonumber cpoptions-=<
+        set scrolloff=300 hlsearch ignorecase smartcase
+        set clipboard=unnamed,unnamedplus
+        syntax on
+        nnoremap q :q!<CR>
+        nnoremap <Space> <C-d>
+        nnoremap d <C-d>
+        nnoremap u <C-u>
+        nnoremap a <NOP>
+        nnoremap A <NOP>
+        nnoremap i <NOP>
+        nnoremap I <NOP>
+        nnoremap K :!trans <C-R><C-W><CR>'
+        ) \
+            <(echo $tempo)
+    fi
+}
+# }}}
 # {{{ Misc
-if [[ -f ~/.zshrc_local ]] ; then
-	source ~/.zshrc_local
-fi
 
-if [[ -f /etc/profile.d/fzf.zsh ]] ; then
-    source /etc/profile.d/fzf.zsh
-fi
 
 # Allow multi-selections from menu using Ctrl+o
 bindkey -M menuselect '\C-o' accept-and-menu-complete
 bindkey '\C-i' complete-word
 bindkey '\e#' pound-insert
 
-declare -U path
-path=( ~/bin ~/.local/bin $path )
-
-fpath=(~/dotfiles/.zshfunc $fpath)
 # autoload -U -- ~/dotfiles/.zshfunc/[^_]*(:t)
 
 # Ctrl-X, U - and you can enter any name of widget to execute
@@ -132,34 +154,18 @@ insert_sudo () { zle beginning-of-line; zle -U "sudo " }
 zle -N insert-sudo insert_sudo
 bindkey "^[s" insert-sudo
 
-man () {
-    tempo=`/usr/bin/man $*`
-    if [[ $? == 0 ]]; then
-            vim -R \
-            -u NONE \
-            -c 'normal! M' \
-            -S =(echo '
-                set ft=man nomod nolist nonumber cpoptions-=<
-                set scrolloff=300 hlsearch ignorecase smartcase
-                syntax on
-                nnoremap q :q!<CR>
-                nnoremap <Space> <C-d>
-                nnoremap d <C-d>
-                nnoremap u <C-u>
-                nnoremap a <NOP>
-                nnoremap A <NOP>
-                nnoremap i <NOP>
-                nnoremap I <NOP>
-                nnoremap K :!trans <C-R><C-W><CR>'
-            ) \
-            <(echo $tempo)
-    fi
-}
-
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 #export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 #export XDG_CONFIG_HOME=~/.config
+
+if [[ -f /etc/profile.d/fzf.zsh ]] ; then
+    source /etc/profile.d/fzf.zsh
+fi
+
+if [[ -f ~/.zshrc_local ]] ; then
+    source ~/.zshrc_local
+fi
 
 # }}}

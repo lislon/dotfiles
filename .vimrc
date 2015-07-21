@@ -1026,7 +1026,7 @@ augroup end
 " FileType: sh {{{
 augroup sh
    au!
-   autocmd BufWritePost * if getline(1) =~ "^#!" | if getline(1) =~ "/bin/" | silent !chmod +x <afile> | endif | endif
+   autocmd BufWritePost * if getline(1) =~ "^#!" | silent !chmod +x <afile> | endif
    autocmd FileType sh call BindRunCommand("F5", "sh %:p", "")
 augroup end
 " }}}
