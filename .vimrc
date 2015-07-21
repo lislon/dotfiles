@@ -1018,9 +1018,20 @@ augroup css
 augroup end
 " }}}
 " FileType: sh {{{
+
+fun! Chmodsh(file)
+    if exists('b:sh_new_file') |
+        echo "Saving " . a:file
+        if getline(1) =~ "^#!"
+            exe "silent !chmod ug+x ".a:file
+        endif
+    endif
+endf
+
 augroup sh
    au!
-   autocmd BufWritePost * if getline(1) =~ "^#!" | silent !chmod +x <afile> | endif
+   autocmd BufNewFile * let b:sh_new_file = 1
+   autocmd BufWritePost *  call Chmodsh(expand("<afile>"))
    autocmd FileType sh call BindRunCommand("F5", "sh %:p", "")
 augroup end
 " }}}

@@ -109,30 +109,32 @@ zstyle ':completion:*:(node):*' ignored-patterns 'Gruntfile.js'
 compdef '_files -g "*.jpg(-.)"' gimp
 # }}}
 # {{{ Man in vim
-man () {
-    tempo=`/usr/bin/man $*`
-    if [[ $? == 0 ]]; then
-        vim -R \
-            -u NONE \
-            -c 'normal! M' \
-            -S =(echo '
-        set ft=man nomod nolist nonumber cpoptions-=<
-        set scrolloff=300 hlsearch ignorecase smartcase
-        set clipboard=unnamed,unnamedplus
-        syntax on
-        nnoremap q :q!<CR>
-        nnoremap <Space> <C-d>
-        nnoremap d <C-d>
-        nnoremap u <C-u>
-        nnoremap a <NOP>
-        nnoremap A <NOP>
-        nnoremap i <NOP>
-        nnoremap I <NOP>
-        nnoremap K :!trans <C-R><C-W><CR>'
-        ) \
-            <(echo $tempo)
-    fi
-}
+if [ -z "$SSH_TTY" ]; then
+    man () {
+        tempo=`/usr/bin/man $*`
+        if [[ $? == 0 ]]; then
+            vim -R \
+                -u NONE \
+                -c 'normal! M' \
+                -S =(echo '
+            set ft=man nomod nolist nonumber cpoptions-=<
+            set scrolloff=300 hlsearch ignorecase smartcase
+            set clipboard=unnamed,unnamedplus
+            syntax on
+            nnoremap q :q!<CR>
+            nnoremap <Space> <C-d>
+            nnoremap d <C-d>
+            nnoremap u <C-u>
+            nnoremap a <NOP>
+            nnoremap A <NOP>
+            nnoremap i <NOP>
+            nnoremap I <NOP>
+            nnoremap K :!trans <C-R><C-W><CR>'
+            ) \
+                <(echo $tempo)
+        fi
+    }
+fi
 # }}}
 # {{{ Misc
 
