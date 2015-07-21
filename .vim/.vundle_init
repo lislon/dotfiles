@@ -60,7 +60,9 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'NERD_Tree-and-ack'
 
 Plugin 'Shougo/vimproc.vim'
-Plugin 'Shougo/unite.vim'
+if version >= 704
+    Plugin 'Shougo/unite.vim'
+endif
 Plugin 'Shougo/neomru.vim'
 Plugin 'Shougo/unite-session'
 Plugin 'tsukkee/unite-help'
@@ -125,8 +127,10 @@ Plugin 'Matt-Deacalion/vim-systemd-syntax'
 
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
+if version >= 704
+    Plugin 'SirVer/ultisnips'
+    Plugin 'honza/vim-snippets'
+endif
 
 " }}}
 

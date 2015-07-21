@@ -120,16 +120,8 @@ end
 
 if has('gui_running') || has('unix')
     set background=dark
-    if version >= 740
-        try
-            "let g:seoul256_background = 235
-            "colorscheme seoul256
-            ":colorscheme solarized
-            :colorscheme Tomorrow-Night-Bright
-            "set background=dark
-        catch /^Vim\%((\a\+))/
-            :colorscheme default
-        endtry
+    if stridx(&rtp, 'solarized') != -1
+        :colorscheme Tomorrow-Night-Bright
     endif
 else
     set background=dark
@@ -1300,9 +1292,6 @@ let g:rooter_change_directory_for_non_project_files = 0
 let g:jsdoc_default_mapping = 0
 nnoremap <silent> gc <Plug>jsdoc
 " }}}
-" {{{ Plugin:unite-everything
-let g:unite_source_everything_cmd_path = substitute($HOME, "\\", "/", "g")."/dotfiles/bin/es.exe"
-" }}}
 " {{{ Plugin:Sql-workbench
 let g:sw_tmp = "C:\\temp-sql"
 let g:sw_exe = "c:\\opt\\sql-workbench\\sqlwbconsole.exe"
@@ -1344,7 +1333,7 @@ nnoremap <silent> <leader>n :<C-u>UniteWithBufferDir file/new
 nnoremap <silent> <c-p> :<C-u>UniteWithProjectDir file_rec/async -start-insert -here -winheight=10<CR>
 nnoremap <silent> <leader>p :<C-u>UniteWithProjectDir file_rec/async -start-insert<CR>
 
-if exists('unite#custom#source')
+if has('g:loaded_unite')
 
     call unite#custom#source('file_rec/async', 'matchers', ['converter_relative_word', 'matcher_default'])
 
@@ -1465,6 +1454,9 @@ if exists('unite#custom#source')
     endfunction
 endif
 
+" }}}
+" {{{ Plugin:unite-everything
+let g:unite_source_everything_cmd_path = substitute($HOME, "\\", "/", "g")."/dotfiles/bin/es.exe"
 " }}}
 " {{{ Plugin:unite-codesearch
 let g:unite_source_codesearch_command = $HOME."/.go/bin/csearch"
