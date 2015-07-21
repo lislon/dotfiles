@@ -120,15 +120,17 @@ end
 
 if has('gui_running') || has('unix')
     set background=dark
-    try
-        "let g:seoul256_background = 235
-        "colorscheme seoul256
-        ":colorscheme solarized
-        :colorscheme Tomorrow-Night-Bright
-        "set background=dark
-    catch /^Vim\%((\a\+))/
-        :colorscheme default
-    endtry
+    if version >= 740
+        try
+            "let g:seoul256_background = 235
+            "colorscheme seoul256
+            ":colorscheme solarized
+            :colorscheme Tomorrow-Night-Bright
+            "set background=dark
+        catch /^Vim\%((\a\+))/
+            :colorscheme default
+        endtry
+    endif
 else
     set background=dark
     :colorscheme skittles_dark
@@ -1321,7 +1323,6 @@ elseif executable('ag')
 endif
 
 " }}}
-
 " GREP in project (,ff)
 nnoremap <silent> <Leader>ff :<C-u>Unite grep:.
  \ -buffer-name=search-buffer -auto-preview<CR>
@@ -1343,123 +1344,126 @@ nnoremap <silent> <leader>n :<C-u>UniteWithBufferDir file/new
 nnoremap <silent> <c-p> :<C-u>UniteWithProjectDir file_rec/async -start-insert -here -winheight=10<CR>
 nnoremap <silent> <leader>p :<C-u>UniteWithProjectDir file_rec/async -start-insert<CR>
 
-call unite#custom#source('file_rec/async', 'matchers', ['converter_relative_word', 'matcher_default'])
+if exists('unite#custom#source')
 
-"call unite#filters#matcher_default#use(['matcher_glob'])
-call unite#custom#source('file_rec/async', 'ignore_pattern',
-            \ '\v(node_modules|public)')
-call unite#custom#source('everything,everything/async', 'ignore_pattern',
-            \ '\v(\.vimtmp)')
-"call unite#custom#source('file_rec', 'ignore_globs', split(&wildignore, ','))
+    call unite#custom#source('file_rec/async', 'matchers', ['converter_relative_word', 'matcher_default'])
 
-"let g:unite_source_alias_aliases = {
-            "\   'test' : {
-            "\     'source': 'file_rec',
-            "\     'args': '~/',
-            "\   },
-            "\   'b' : 'buffer',
-            "\ }
+    "call unite#filters#matcher_default#use(['matcher_glob'])
+    call unite#custom#source('file_rec/async', 'ignore_pattern',
+                \ '\v(node_modules|public)')
+    call unite#custom#source('everything,everything/async', 'ignore_pattern',
+                \ '\v(\.vimtmp)')
+    "call unite#custom#source('file_rec', 'ignore_globs', split(&wildignore, ','))
 
-"nnoremap <silent> <c-p> :<C-u>Unite -start-insert file_rec/async:~/Sources<CR>
-"nnoremap <silent> <leader>b :<C-u>Unite -start-insert -complete file:~/.vim/bundle<CR>
-"nnoremap <silent> <leader>cs :<C-u>Unite codesearch<CR>
+    "let g:unite_source_alias_aliases = {
+                "\   'test' : {
+                "\     'source': 'file_rec',
+                "\     'args': '~/',
+                "\   },
+                "\   'b' : 'buffer',
+                "\ }
 
-""call unite#filters#matcher_default#use(['matcher_default'])
-""call unite#filters#matcher_default#use(['matcher_fuzzy'])
-"if executable(g:unite_source_everything_cmd_path)
-    "nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru everything<CR>
-"else
-    "nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru<CR>
-"endif
-"nnoremap <leader>r :<C-u>Unite -start-insert file_rec/async:!<CR>
-"nnoremap <c-l> :<C-u>UniteWithBufferDir -start-insert file<CR>
+    "nnoremap <silent> <c-p> :<C-u>Unite -start-insert file_rec/async:~/Sources<CR>
+    "nnoremap <silent> <leader>b :<C-u>Unite -start-insert -complete file:~/.vim/bundle<CR>
+    "nnoremap <silent> <leader>cs :<C-u>Unite codesearch<CR>
 
-"let g:unite_source_history_yank_enable = 1
-"nnoremap <leader>y :<C-u>Unite history/yank<CR>
-
-""nnoremap <silent> <c-l> :<C-u>Unite bookmark:* buffer file:!<CR>
-"call unite#custom#profile('default', 'context', {
-"\   'start_insert': 1,
-"\   'winheight': 10,
-"\   'direction': 'botright',
-"\ })
-"call unite#custom#profile('codesearch', 'context', {
-"\   'start_insert': 1,
-"\   'filters': [
-"\       'matcher_exclude_node_modules'
-"\   ]
-"\ })
-
-
-"call unite#custom#profile('line', 'context', {
-"\   'winheight': 50,
-"\ })
-
-
-
-"call unite#custom#source(
-            "\ 'file', 'matchers',
-            "\ ['converter_tail', 'matcher_default'])
-
-
-autocmd FileType unite call s:unite_my_settings()
-function! s:unite_my_settings()
-    " Overwrite settings.
-    "imap <buffer> kj      <Plug>(unite_insert_leave)
-    imap <buffer> <c-k>   <Plug>(unite_exit)
-    nmap <buffer> <c-k>   <Plug>(unite_exit)
-    nmap <buffer> <Esc>   <Plug>(unite_exit)
-
-    " Empty cache
-    nmap <buffer> <F5>   <Plug>(unite_redraw)
-    imap <buffer> <F5>   <Plug>(unite_redraw)
-
-    " Pressing backspace on empty input results to closing of unite
-    silent! iunmap <buffer> <Backspace>
-
-    " Fast selection
-    imap <buffer> '     <Plug>(unite_quick_match_default_action)
-    nmap <buffer> '     <Plug>(unite_quick_match_default_action)
-
-    "imap <buffer><expr> k unite#smart_map('k', '')
-    "imap <buffer> <TAB>   <Plug>(unite_select_next_line)
-    " How i will switch window?
-    nmap <buffer> <C-S-w>     <Plug>(unite_delete_backward_path)
-    imap <buffer> <C-S-w>     <Plug>(unite_delete_backward_path)
-    "imap <buffer><expr> x
-                "\ unite#smart_map('x', "\<Plug>(unite_quick_match_choose_action)")
-    "nmap <buffer> x     <Plug>(unite_quick_match_choose_action)
-    "nmap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
-    "imap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
-    "imap <buffer> <C-y>     <Esc><Plug>(unite_narrowing_path)
-    "nmap <buffer> <C-y>     <Plug>(unite_narrowing_path)
-    nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
-    "nmap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
-    "nmap <buffer> <C-d>     <Plug>(unite_input_directory)
-    "imap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
-    "nnoremap <silent><buffer><expr> l
-                "\ unite#smart_map('l', unite#do_action('default'))
-
-    "let unite = unite#get_current_unite()
-    "if unite.profile_name ==# 'search'
-        "nnoremap <silent><buffer><expr> r     unite#do_action('replace')
+    ""call unite#filters#matcher_default#use(['matcher_default'])
+    ""call unite#filters#matcher_default#use(['matcher_fuzzy'])
+    "if executable(g:unite_source_everything_cmd_path)
+        "nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru everything<CR>
     "else
-        "nnoremap <silent><buffer><expr> r     unite#do_action('rename')
+        "nnoremap <c-p> :<C-u>Unite -start-insert file buffer file_mru<CR>
     "endif
+    "nnoremap <leader>r :<C-u>Unite -start-insert file_rec/async:!<CR>
+    "nnoremap <c-l> :<C-u>UniteWithBufferDir -start-insert file<CR>
 
-    "nnoremap <silent><buffer><expr> cd     unite#do_action('lcd')
-    "nnoremap <buffer><expr> S      unite#mappings#set_current_filters(
-                "\ empty(unite#mappings#get_current_filters()) ?
-                "\ ['sorter_reverse'] : [])
+    "let g:unite_source_history_yank_enable = 1
+    "nnoremap <leader>y :<C-u>Unite history/yank<CR>
 
-    " Runs "split" action by <C-s>.
-    imap <silent><buffer><expr> <C-i>     unite#do_action('split')
-    imap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
-    nmap <silent><buffer><expr> <c-i>     unite#do_action('split')
-    nmap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
-    " nmap <c-i> resets <tab>
-    nmap <buffer> <Tab>                  <Plug>(unite_choose_action)
-endfunction
+    ""nnoremap <silent> <c-l> :<C-u>Unite bookmark:* buffer file:!<CR>
+    "call unite#custom#profile('default', 'context', {
+    "\   'start_insert': 1,
+    "\   'winheight': 10,
+    "\   'direction': 'botright',
+    "\ })
+    "call unite#custom#profile('codesearch', 'context', {
+    "\   'start_insert': 1,
+    "\   'filters': [
+    "\       'matcher_exclude_node_modules'
+    "\   ]
+    "\ })
+
+
+    "call unite#custom#profile('line', 'context', {
+    "\   'winheight': 50,
+    "\ })
+
+
+
+    "call unite#custom#source(
+                "\ 'file', 'matchers',
+                "\ ['converter_tail', 'matcher_default'])
+
+
+    autocmd FileType unite call s:unite_my_settings()
+    function! s:unite_my_settings()
+        " Overwrite settings.
+        "imap <buffer> kj      <Plug>(unite_insert_leave)
+        imap <buffer> <c-k>   <Plug>(unite_exit)
+        nmap <buffer> <c-k>   <Plug>(unite_exit)
+        nmap <buffer> <Esc>   <Plug>(unite_exit)
+
+        " Empty cache
+        nmap <buffer> <F5>   <Plug>(unite_redraw)
+        imap <buffer> <F5>   <Plug>(unite_redraw)
+
+        " Pressing backspace on empty input results to closing of unite
+        silent! iunmap <buffer> <Backspace>
+
+        " Fast selection
+        imap <buffer> '     <Plug>(unite_quick_match_default_action)
+        nmap <buffer> '     <Plug>(unite_quick_match_default_action)
+
+        "imap <buffer><expr> k unite#smart_map('k', '')
+        "imap <buffer> <TAB>   <Plug>(unite_select_next_line)
+        " How i will switch window?
+        nmap <buffer> <C-S-w>     <Plug>(unite_delete_backward_path)
+        imap <buffer> <C-S-w>     <Plug>(unite_delete_backward_path)
+        "imap <buffer><expr> x
+                    "\ unite#smart_map('x', "\<Plug>(unite_quick_match_choose_action)")
+        "nmap <buffer> x     <Plug>(unite_quick_match_choose_action)
+        "nmap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
+        "imap <buffer> <C-z>     <Plug>(unite_toggle_transpose_window)
+        "imap <buffer> <C-y>     <Esc><Plug>(unite_narrowing_path)
+        "nmap <buffer> <C-y>     <Plug>(unite_narrowing_path)
+        nmap <buffer> <C-j>     <Plug>(unite_toggle_auto_preview)
+        "nmap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
+        "nmap <buffer> <C-d>     <Plug>(unite_input_directory)
+        "imap <buffer> <C-r>     <Plug>(unite_narrowing_input_history)
+        "nnoremap <silent><buffer><expr> l
+                    "\ unite#smart_map('l', unite#do_action('default'))
+
+        "let unite = unite#get_current_unite()
+        "if unite.profile_name ==# 'search'
+            "nnoremap <silent><buffer><expr> r     unite#do_action('replace')
+        "else
+            "nnoremap <silent><buffer><expr> r     unite#do_action('rename')
+        "endif
+
+        "nnoremap <silent><buffer><expr> cd     unite#do_action('lcd')
+        "nnoremap <buffer><expr> S      unite#mappings#set_current_filters(
+                    "\ empty(unite#mappings#get_current_filters()) ?
+                    "\ ['sorter_reverse'] : [])
+
+        " Runs "split" action by <C-s>.
+        imap <silent><buffer><expr> <C-i>     unite#do_action('split')
+        imap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
+        nmap <silent><buffer><expr> <c-i>     unite#do_action('split')
+        nmap <silent><buffer><expr> <C-v>     unite#do_action('vsplit')
+        " nmap <c-i> resets <tab>
+        nmap <buffer> <Tab>                  <Plug>(unite_choose_action)
+    endfunction
+endif
 
 " }}}
 " {{{ Plugin:unite-codesearch
