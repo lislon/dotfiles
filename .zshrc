@@ -39,6 +39,7 @@ alias reload=". ~/.zshrc"
 alias v='f -e vim' # quick opening files with vim
 alias gl='git --no-pager log --oneline --graph -5'
 alias gpush='git push'
+alias tmux='tmux -2'
 alias s="sudo "
 alias -g G="| grep -i"
 alias -g L="| less -R"
