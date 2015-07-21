@@ -27,6 +27,7 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'Raimondi/delimitMate'
 " Russian keyboard fixes
 
+Plugin 'Lokaltog/vim-easymotion'
 Plugin 'lyokha/vim-xkbswitch'
 Plugin 'tpope/vim-surround'
 
@@ -57,7 +58,6 @@ Plugin 'tpope/vim-fugitive'
 
 Plugin 'scrooloose/nerdtree'
 Plugin 'NERD_Tree-and-ack'
-Plugin 'Lokaltog/vim-easymotion'
 
 Plugin 'Shougo/vimproc.vim'
 Plugin 'Shougo/unite.vim'
@@ -67,6 +67,8 @@ Plugin 'tsukkee/unite-help'
 "Plugin 'ujihisa/unite-colorscheme'
 if has('win32')
     Plugin 'sgur/unite-everything'
+else
+    Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 endif
 
 " }}}
@@ -113,6 +115,12 @@ Plugin 'svermeulen/vim-easyclip'
 
 " }}}
 
+" {{{ File Types
+
+Plugin 'Matt-Deacalion/vim-systemd-syntax'
+
+" }}}
+
 " {{{ Autocomplete
 
 Plugin 'MarcWeber/vim-addon-mw-utils'
@@ -145,15 +153,6 @@ Plugin 'vim-scripts/BreakPts'
 Plugin 'Colortest'
 
 " }}}
-
-" {{{ General utilities
-
-Plugin 'tpope/vim-dispatch'
-Plugin 'airblade/vim-rooter'
-
-" }}}
-
-" {{{ I am not sure if I using this
 
 Plugin 'xolox/vim-misc'
 Plugin 'tabmerge'

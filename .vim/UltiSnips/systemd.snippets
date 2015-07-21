@@ -1,0 +1,14 @@
+snippet service
+[Unit]
+Description=$1
+
+[Service]
+# simple oneshot forking
+Type=${2:simple}
+ExecStart=/usr/bin/$3
+#ExecStop=
+
+[Install]
+WantedBy=default.target
+#Wants=
+endsnippet
