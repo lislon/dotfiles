@@ -64,7 +64,11 @@ if `which pacman &>/dev/null`; then
     alias i="sudo pacman -S"
     alias is="pacman -Ss"
 elif `which apt-get &>/dev/null`; then
-    alias i="sudo apt-get install "
+    alias i="sudo apt-get install"
+    alias is="sudo apt-get search"
+elif `which yum &>/dev/null`; then
+    alias i="sudo yum install"
+    alias is="sudo yum search"
 fi
 # }}}
 # {{{ Settings
