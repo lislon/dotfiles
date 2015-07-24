@@ -6,7 +6,8 @@ set tabstop=4
 set expandtab
 set autoindent
 set incsearch
-"set hlsearch
+" Annoying post highlight after search
+set nohlsearch
 set wildmode=full
 set noshowmode
 set gdefault
