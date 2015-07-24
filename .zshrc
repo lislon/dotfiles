@@ -33,7 +33,7 @@ source $ZSH/oh-my-zsh.sh
 
 # }}}
 # {{{ Aliases
-alias myzsh="vim ~/dotfiles/.zshrc && reload"
+alias myzsh="$EDITOR ~/dotfiles/.zshrc && reload"
 alias view=vim -R
 alias reload=". ~/.zshrc"
 alias v='f -e vim' # quick opening files with vim
@@ -54,7 +54,8 @@ alias ll='ls -hla'
 alias svim='sudo -E vim'
 alias -s pdf='xdg-open'
 alias recent='find . -maxdepth 1 -type f -atime -1'             # show recent files
-#alias emax="emacsclient -t"                      # used to be "emacs -nw"
+alias emax="emacsclient -nw"                      # used to be "emacs -nw"
+alias e="emacsclient -c"
 #alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
 #alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
 alias sc-cat='systemctl cat'
@@ -82,13 +83,26 @@ export ENV='development'
 export HISTSIZE=100000
 export HISTFILE="$HOME/.history"
 export SAVEHIST=$HISTSIZE
-export EDITOR='vim'
-# Fix backspace issue when using rxvt + ssh
-export TERM='xterm'
+#export EDITOR='vim'
+# locate / | fzf
+#    c-v open in vim
+#    c-V sudiedit
+export FZF_DEFAULT_OPTS='--extended --cycle '
 setopt extended_glob
 setopt rc_expand_param
 setopt correct
 setopt interactivecomments
+
+# Terminal in emacs do not show nice glyphs :( --workaround
+if [[ -n ${INSIDE_EMACS} ]]; then
+    # This shell runs inside an Emacs *shell*/*term* buffer.
+    #prompt walters
+    unsetopt zle
+    PS1='%{$terminfo[bold]$fg[green]%}%n@%m%{$reset_color%} %{$terminfo[bold]$fg[blue]%}%~%{$reset_color%} $ '
+else
+    #Fix backspace issue when using rxvt + ssh
+    export TERM='xterm'
+fi
 
 
 # Show stats if commands takes longer then 10 sec

@@ -56,6 +56,7 @@
 (prelude-require-package 'helm-pt)
 (prelude-require-package 'goto-last-change)
 (prelude-require-package 'google-translate)
+(prelude-require-package 'multi-term)
 (yas-global-mode 1)
 
 
@@ -161,7 +162,9 @@
 (setq org-cycle-separator-lines 0)
 
 ;; Maximize in start
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+(if (eq system-type 'windows-nt)
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+)
 
 (setq org-agenda-ndays 14)
 
@@ -785,6 +788,10 @@ as the default task."
 (define-key local-function-key-map "\033[73;5~" [(control =)])
 
 (load xsel-yank)
+
+;;;; Hook for showing colors in Conf[Xdefaults]
+
+(add-hook 'conf-xdefaults-mode-hook 'rainbow-mode)
 
 ;;;; Make windows load faster
 (server-start)
