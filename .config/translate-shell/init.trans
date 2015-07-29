@@ -1,0 +1,7 @@
+{
+    :translate-shell "0.9.0"
+    :show-original   false
+    :hl              "en"
+    :sl              "en"
+    :tl              "ru"
+}
