@@ -3,6 +3,12 @@
 export ZSH=$HOME/dotfiles/.oh-my-zsh
 export LC_ALL='en_US.UTF-8'
 
+export SYSTEMD_EDITOR="emacsclient -c"
+export EDITOR="emacsclient -c"
+export SUDO_EDITOR="emacsclient -c"
+export VISUAL="emacsclient -c"
+
+
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -92,6 +98,7 @@ setopt extended_glob
 setopt rc_expand_param
 setopt correct
 setopt interactivecomments
+setopt share_history
 
 # Terminal in emacs do not show nice glyphs :( --workaround
 if [[ -n ${INSIDE_EMACS} ]]; then
@@ -127,35 +134,68 @@ zstyle ':completion:*:(node):*' ignored-patterns 'Gruntfile.js'
 compdef '_files -g "*.jpg(-.)"' gimp
 # }}}
 # {{{ Man in vim
-if [ -z "$SSH_TTY" ]; then
-    man () {
-        tempo=`/usr/bin/man $*`
-        if [[ $? == 0 ]]; then
-            vim -R \
-                -u NONE \
-                -c 'normal! M' \
-                -S =(echo '
-            set ft=man nomod nolist nonumber cpoptions-=<
-            set scrolloff=300 hlsearch ignorecase smartcase
-            set clipboard=unnamed,unnamedplus
-            syntax on
-            nnoremap q :q!<CR>
-            nnoremap <Space> <C-d>
-            nnoremap d <C-d>
-            nnoremap u <C-u>
-            nnoremap a <NOP>
-            nnoremap A <NOP>
-            nnoremap i <NOP>
-            nnoremap I <NOP>
-            nnoremap K :!trans <C-R><C-W><CR>'
-            ) \
-                <(echo $tempo)
-        fi
-    }
-fi
+export MANPAGER="/bin/sh -c \"col -b | vim -u ~/dotfiles/man.vimrc -c 'set nomodified' -\""
 # }}}
 # {{{ Misc
 
+bak () {
+    mv $1 $1.bak
+    echo "Make backup $1.bak"
+}
+
+# fe [FUZZY PATTERN] - Open the selected file with the default editor
+#   - Bypass fuzzy finder if there's only one match (--select-1)
+#   - Exit if there's no match (--exit-0)
+fe() {
+    local file
+    file=$(fzf --query="$1" --select-1 --exit-0)
+    [ -n "$file" ] && ${EDITOR:-vim} "$file"
+}
+
+# Modified version where you can press
+#   - CTRL-O to open with `open` command,
+#   - CTRL-E or Enter key to open with the $EDITOR
+fo() {
+    local out file key
+    out=$(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e)
+    key=$(head -1 <<< "$out")
+    file=$(head -2 <<< "$out" | tail -1)
+    if [ -n "$file" ]; then
+        [ "$key" = ctrl-o ] && open "$file" || ${EDITOR:-vim} "$file"
+    fi
+}
+
+# # fd - cd to selected directory
+# fd() {
+#     local dir
+#     dir=$(find ${1:-*} -path '*/\.*' -prune \
+#                -o -type d -print 2> /dev/null | fzf +m) && cd "$dir"
+# }
+
+# fda - including hidden directories
+fda() {
+    local dir
+    dir=$(find ${1:-.} -type d 2> /dev/null | fzf +m) && cd "$dir"
+}
+
+# cdf - cd into the directory of the selected file
+cdf() {
+    local file
+    local dir
+    file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
+}
+
+fag() {
+   ag --hidden --nobreak --nonumbers --noheading --depth 5 . | fzf
+}
+
+mkdircd() {
+    mkdir -p $1 && cd $1
+}
+
+writecmd() {
+    perl -e '$TIOCSTI = 0x5412; $l = <STDIN>; $lc = $ARGV[0] eq "-run" ? "\n" : ""; $l =~ s/\s*$/$lc/; map { ioctl STDOUT, $TIOCSTI, $_; } split "", $l;' -- $1
+}
 
 # Allow multi-selections from menu using Ctrl+o
 bindkey -M menuselect '\C-o' accept-and-menu-complete
@@ -184,8 +224,13 @@ if [[ -f /etc/profile.d/fzf.zsh ]] ; then
     source /etc/profile.d/fzf.zsh
 fi
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export FZF_DEFAULT_OPTS=--extended-exact
+
 if [[ -f ~/.zshrc_local ]] ; then
     source ~/.zshrc_local
 fi
+
 
 # }}}
