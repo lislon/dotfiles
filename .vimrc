@@ -1,5 +1,5 @@
 source ~/.vim/.vundle_init
-" Basic stuff {{{
+" {{{ Basic stuff
 
 set shiftwidth=4
 set tabstop=4
@@ -105,7 +105,7 @@ nnoremap U :syntax sync fromstart<cr>:redraw!<cr>
 
 " }}} End of basic stuff
 
-" System stuff {{{
+" {{{ System stuff
 if has("win32unix")
     " This stuff is reset iminsert mode
     set keymap=russian-jcukenwin
@@ -173,7 +173,7 @@ set guioptions-=r  "remove right-hand scroll bar
 set guioptions-=L  "remove left-hand scroll bar
 " }}} End of system stuff
 
-" Quit commands {{{
+" {{{ Quit commands
 fun! QuitPrompt()
    " Close nerd tree
    let nr = s:GetNerdTreeWinNr()
@@ -210,7 +210,7 @@ endif
 
 " }}}
 
-" Force to learning new commands {{{
+" {{{ Force to learning new commands
 
 noremap <left> <nop>
 noremap <right> <nop>
@@ -219,14 +219,14 @@ noremap <down> <nop>
 
 " }}}
 
-" Window switching {{{
+" {{{ Window switching
 "map <C-h> <C-w>h
 "map <C-j> <C-w>j
 "map <C-k> <C-w>k
 "map <C-l> <C-w>l
 " }}}
 
-" Reset cursor position when loading old file {{{
+" {{{ Reset cursor position when loading old file
 function! ResCur()
   if line("'\"") <= line("$")
       silent! normal! g`"
@@ -264,7 +264,7 @@ augroup END
 
 " }}}
 
-" General bindigs {{{
+" {{{ General bindigs
 
 " Built-in and custom snippets
 nnoremap <localleader>s :exe "tab sview ~/.vim/bundle/vim-snippets/UltiSnips/" . &ft . ".snippets"<CR>
@@ -274,7 +274,7 @@ nnoremap <localleader>S :exe "tabe ~/.vim/UltiSnips/" . &ft . ".snippets"<CR>
 nnoremap <Leader>`` :qa!<cr>
 
 " :PI For plugin installation
-command! PI :update | PluginInstall
+command! PI :update | PlugInstall
 "copy
 ":vnoremap <C-Insert> "+y
 ""paste (Insert like = p, Shift+Insrt like P)
@@ -441,7 +441,7 @@ vnoremap [f [{j
 
 " }}}
 
-" Misc stuff {{{1
+" {{{ Misc stuff1
 
 " {{{ Extra whitespace
 " listchar=trail is not as flexible, use the below to highlight trailing
@@ -455,7 +455,8 @@ match ExtraWhitespace /\s\+$/
     autocmd BufWinLeave * if &modifiable && &ft!='unite' | call clearmatches() | endif
 augroup END
 " }}}
-" Indent block {{{
+
+" {{{ Indent block
 function! SelectIndent()
   let cur_line = line(".")
   let cur_ind = indent(cur_line)
@@ -524,7 +525,7 @@ highlight! MatchParen cterm=NONE ctermbg=gray ctermfg=white
 "highlight! link MatchParen StatusLine
 
 
-" Delete line but not copy blank {{{
+" {{{ Delete line but not copy blank
 "function! DeleteLine()
     "if v:count < 1 && match(getline(line('.')), '^\s*$') >= 0
         "normal! "_dd
@@ -552,7 +553,7 @@ highlight TrailingSpace guibg=Green
 nnoremap <leader>w :match TrailingSpace /\v\a@<=\s+$/<CR>
 " Clear match
 nnoremap <leader>W :match clear<CR>
-" List navigation {{{
+" {{{ List navigation
 
 nnoremap <left>  :cprev<cr>zvzz
 nnoremap <right> :cnext<cr>zvzz
@@ -598,7 +599,7 @@ nmap <silent> <f3> :ErrorsToggle<cr>
 nmap <silent> <f4> :QFixToggle<cr>
 nnoremap <silent> <leader>f :call FoldColumnToggle()<cr>
 
-" Status line {{{
+" {{{ Status line
 
 "hi User1 guifg=#eea040 guibg=#222222
 "hi User2 guifg=#dd3333 guibg=#222222
@@ -630,7 +631,7 @@ vnoremap gr :<C-U>
   \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
   \gv"ky:%s/<C-R>k//<left><left>
 
-" Automatically detect filetype for new files {{{
+" {{{ Automatically detect filetype for new files
 function! CheckFileType()
     if exists('b:countCheck') == 0
         let b:countCheck = 0
@@ -651,7 +652,7 @@ augroup END
 
 "let g:last_f5_run_cmd = ''
 
-" F5 for running current file {{{
+" {{{ F5 for running current file
 function! RunCmd(cmd, bufCommand)
     let chunks = split(a:cmd, " ")
     " Expand %
@@ -697,7 +698,7 @@ nnoremap <silent><F5> :call RunMake()<CR>
 nnoremap <silent><S-F5> :call RunMake()<CR>
 " }}}
 
-" Figutive git bindings {{{
+" {{{ Figutive git bindings
 nnoremap <leader>gas :Git add . \| Gstatus<CR><CR>
 nnoremap <leader>gs :update \| Gstatus<CR>
 nnoremap <leader>gc :Gcommit -v -q<CR>
@@ -716,7 +717,7 @@ nnoremap <leader>gpl :Dispatch! git pull<CR>
 nnoremap <leader>grh :!git reset --hard FETCH_HEAD
 " }}}
 
-" LaTeX settings {{{
+" {{{ LaTeX settings
 let g:tex_flavor='latex'
 
 let g:Tex_DefaultTargetFormat='pdf'
@@ -736,7 +737,7 @@ let g:Tex_BibtexFlavor = 'bibtex'
 let g:Tex_GotoError=0
 " }}}
 
-"  Navigate in camelCase words {{{
+" {{{  Navigate in camelCase words
 " Use one of the following to define the camel characters.
 " Stop on capital letters.
 let g:camelchar = "A-Z"
@@ -754,7 +755,7 @@ vnoremap <silent><C-Right> <Esc>`>:<C-U>call search('\C\<\<Bar>\%(^\<Bar>[^'.g:c
 
 " }}}
 
-" Autocmnds for FileTypes {{{
+" {{{ Autocmnds for FileTypes
 augroup mygroup
     autocmd!
     autocmd BufWritePost *.tex silent call Tex_RunLaTeX()
@@ -766,11 +767,11 @@ augroup mygroup
 augroup END
 " }}}
 
-" Opeator pending maps {{{
+" {{{ Opeator pending maps
 onoremap p i(
 " }}}
 
-" Block change next/prev parenthesis {{{
+" {{{ Block change next/prev parenthesis
 
 " print foo(bar)
 "  ^
@@ -780,7 +781,7 @@ onoremap p i(
 :onoremap il( :<c-u>normal! F)vi(<cr>
 " }}}
 
-" redir_messages.vim {{{
+" {{{ redir_messages.vim
 "
 " Inspired by the TabMessage function/command combo found
 " at <http://www.jukie.net/~bart/conf/vimrc>.
@@ -855,7 +856,8 @@ command! -nargs=+ -complete=command BufMessage call RedirMessages(<q-args>, ''  
 command! -nargs=+ -complete=command WinMessage call RedirMessages(<q-args>, 'new'    )
 command! -nargs=+ -complete=command TabMessage call RedirMessages(<q-args>, 'tabnew' )
 
-" end redir_messages.vim" }}}
+" end redir_messages.vim
+" }}}
 
 
 fun! s:ShowArgs(line1, line2, args)
@@ -867,7 +869,7 @@ command! -range=% -bar -nargs=1 Test2 call s:ShowArgs(<line1>, <line2>, <q-args>
 
 
 
-" CoffeeScript {{{
+" {{{ CoffeeScript
 
 fun! CoffeeRange() range
     echo a:firstline
@@ -896,9 +898,9 @@ augroup CoffeeScript
     " this one is which you're most likely to use?
     autocmd FileType coffee call InitFtCoffee()
 augroup end
-    " }}}
+" }}}
 
-" Prevent to modify compiled files {{{
+" {{{ Prevent to modify compiled files
 augroup JavascriptBoywer
    au!
    " this one is which you're most likely to use?
@@ -936,9 +938,9 @@ nnoremap ><lt> V`]>
 nnoremap =- V`]=
 " }}}
 
-" FileTypes {{{
+" {{{ FileTypes
 
-" FileType: php {{{
+" {{{ FileType: php
 augroup php
     au!
     autocmd FileType php nnoremap <buffer> <localleader>d :call pdv#DocumentCurrentLine()<CR>
@@ -952,7 +954,7 @@ augroup nginx
     autocmd BufReadPost /etc/nginx/*/*.conf set ft=nginx
 augroup end
 " }}}
-" FileType: gitcommit {{{
+" {{{ FileType: gitcommit
 augroup gitcommit
     au!
     autocmd FileType gitcommit :nnoremap <silent><buffer> <c-l>
@@ -964,7 +966,7 @@ augroup gitcommit
                 \ :echo "Last commit: ".b:last_commit[:-2]<CR>
     autocmd BufReadPost,FileReadPost .git/COMMIT_EDITMSG 1,2s/Please/No Please/
 " }}}
-" FileType: quickfix {{{
+" {{{ FileType: quickfix
 augroup quickfix
     au!
     " Exit from grep
@@ -973,7 +975,7 @@ augroup quickfix
     autocmd FileType qf :nnoremap <silent> <buffer> <F5> <C-w><C-p>
 augroup end
 " }}}
-" FileType: nerdtree {{{
+" {{{ FileType: nerdtree
 augroup nerdtree
     au!
     " Space to open/close folders
@@ -984,7 +986,7 @@ augroup nerdtree
     autocmd FileType nerdtree :nnoremap <buffer><s-q> <C-w>p
 augroup end
 " }}}
-" FileType: vim {{{
+" {{{ FileType: vim
 augroup vim
     au!
     autocmd FileType vim setlocal foldcolumn=3
@@ -993,34 +995,34 @@ augroup vim
     autocmd FileType vim nnoremap <buffer><silent> <F7> :BreakPts<CR>
     "autocmd FileType vim iabbrev <buffer> "} " }}<C-R>=string(})<CR>
 augroup end
-    " }}}
-" FileType: zsh {{{
+" }}}
+" {{{ FileType: zsh
 augroup zsh
     au!
     autocmd FileType zsh setlocal foldcolumn=3
     autocmd FileType zsh setlocal foldmethod=marker
 augroup end
 " }}}
-" FileType: awesome rc.lua {{{
+" {{{ FileType: awesome rc.lua
 augroup awesomerclua
     au!
     autocmd FileType lua setlocal foldcolumn=3 | setlocal foldmethod=marker
 augroup end
-    " }}}
-" FileType: html {{{
+" }}}
+" {{{ FileType: html
 augroup html
     au!
     autocmd FileType html setlocal nowrap
     autocmd FileType html noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 augroup end
 " }}}
-" FileType: css {{{
+" {{{ FileType: css
 augroup css
     au!
     autocmd FileType css noremap <buffer> <c-f> :call HtmlBeautify()<cr>
 augroup end
 " }}}
-" FileType: sh {{{
+" {{{ FileType: sh
 
 fun! Chmodsh(file)
     if exists('b:sh_new_file') |
@@ -1038,19 +1040,20 @@ augroup sh
    autocmd FileType sh call BindRunCommand("F5", "sh %:p", "")
 augroup end
 " }}}
-" FileType: help {{{
+" {{{ FileType: help
 augroup helpfiletype
     au!
     " this one is which you're most likely to use?
     autocmd FileType help nnoremap M <c-]><CR>
 augroup end
 " }}}
-" FileType: javascript {{{
+" {{{ FileType: javascript
 
 " Splits [1, 2, 3, 4, 5] to multi lines
 fun! ArrSp()
     normal! vi[
-    :s/,\s*/,/
+    :s/,\s*/,
+/
     :exe "normal! o\ei\<CR>\evi[=vi[\ea\<CR>\e"
 endfun
 
@@ -1088,35 +1091,35 @@ augroup end
 
 
 " }}} FileTypes
-" FileType: python {{{
+" {{{ FileType: python
 augroup python
     " this one is which you're most likely to use?
     autocmd FileType python call BindRunCommand("F5", "python %", '')
 augroup end
 " }}}
-" FileType: git {{{
+" {{{ FileType: git
 augroup git
     au!
     " this one is which you're most likely to use?
     autocmd FileType git set foldlevel=9
 augroup end
 " }}}
-" FileType: unite {{{
+" {{{ FileType: unite
 augroup unite
     au!
     "autocmd FileType unite nnoremap <buffer> <silent> <c-k> :<C-u>UniteClose<CR>
     "autocmd FileType unite inoremap <buffer> <silent> <c-k> <Esc>:<C-u>UniteClose<CR>
 augroup end
 " }}}
-" FileType: jade {{{
+" {{{ FileType: jade
 augroup jade
     au!
 augroup end
-    " }}}
+" }}}
 
 " }}} FileTypes
 
-" Plugin settings {{{
+" {{{ Plugin settings
 " {{{ Plugin:Surround vim
 " use char2nr to obtain number
 let g:surround_40 = "(\r)"
@@ -1138,7 +1141,7 @@ let g:delimitMate_expand_cr = 1
 let g:ack_default_options =
             \ " -s -H --nocolor --nogroup --column --smart-case --follow"
 " }}}
-" Plugin:Syntastic {{{
+" {{{ Plugin:Syntastic
 let g:syntastic_javascript_checkers = ['jshint']
 let g:syntastic_debug_file = $HOME.'/syntastic.log'
 " }}}
@@ -1475,14 +1478,14 @@ let g:unite_source_everything_cmd_path = substitute($HOME, "\\", "/", "g")."/dot
 " {{{ Plugin:unite-codesearch
 let g:unite_source_codesearch_command = $HOME."/.go/bin/csearch"
 " }}}
-" Plugin:Browserify {{{
+" {{{ Plugin:Browserify
 augroup css
     au!
     autocmd InsertLeave *.css :BLReloadCSS
 augroup end
 let g:bl_pagefiletypes = ['html', 'javascript', 'php', 'jade']
 " }}}
-" Plugin:vim-translate {{{
+" {{{ Plugin:vim-translate
 " Shift +K https://github.com/soimort/translate-shell/wiki/Text-Editor-Integration
 nnoremap K :!trans <C-R><C-W><CR>
 " }}}
@@ -1503,4 +1506,3 @@ command! SwCommon NERDTree rdpromo-common
 command! SwSite   NERDTree rdpromo-site
 command! SwMarkup NERDTree rdpromo-markup
 " }}}
-

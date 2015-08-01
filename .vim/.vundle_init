@@ -1,4 +1,4 @@
-" {{{ Vundle
+" {{{ Plug init
 
 set nocompatible              " be iMproved, required
 filetype off                  " required
@@ -10,13 +10,7 @@ else
     let &rtp=g:original_rtp
 endif
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-"Plugin 'Rykka/riv.vim'
-
-
-Plugin 'gmarik/Vundle.vim'
+call plug#begin()
 
 " }}}
 
@@ -24,168 +18,172 @@ Plugin 'gmarik/Vundle.vim'
 
 
 " Smart closing quotes
-Plugin 'Raimondi/delimitMate'
+Plug 'Raimondi/delimitMate'
 " Russian keyboard fixes
 
-Plugin 'Lokaltog/vim-easymotion'
-Plugin 'lyokha/vim-xkbswitch'
-Plugin 'tpope/vim-surround'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'lyokha/vim-xkbswitch'
+Plug 'tpope/vim-surround'
 
 " Share to gist :Gist
-Plugin 'mattn/webapi-vim'
-Plugin 'mattn/gist-vim'
+Plug 'mattn/webapi-vim'
+Plug 'mattn/gist-vim'
 
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'Yggdroot/indentLine'
-Plugin 'terryma/vim-multiple-cursors'
+Plug 'scrooloose/nerdcommenter'
+Plug 'Yggdroot/indentLine'
+Plug 'terryma/vim-multiple-cursors'
 
 " Undo visualize
-Plugin 'sjl/gundo.vim'
+Plug 'sjl/gundo.vim'
 
 " Syntax checking
 
-Plugin 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
 " Bracket [n and ]n to jump between SCM conflict markers, [<Space> to insert
 " spaces
-Plugin 'tpope/vim-unimpaired'
+Plug 'tpope/vim-unimpaired'
 
-Plugin 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 
 
 " }}}
 
 " {{{ File navigation
 
-Plugin 'scrooloose/nerdtree'
-Plugin 'NERD_Tree-and-ack'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'NERD_Tree-and-ack', { 'on':  'NERDTreeToggle' }
 
-Plugin 'Shougo/vimproc.vim'
+Plug 'Shougo/vimproc.vim', { 'do' : 'make' }
 if version >= 704
-    Plugin 'Shougo/unite.vim'
+    Plug 'Shougo/unite.vim'
 endif
-Plugin 'Shougo/neomru.vim'
-Plugin 'Shougo/unite-session'
-Plugin 'tsukkee/unite-help'
-"Plugin 'ujihisa/unite-colorscheme'
+Plug 'Shougo/neomru.vim'
+Plug 'Shougo/unite-session'
+Plug 'tsukkee/unite-help'
+"Plug 'ujihisa/unite-colorscheme'
 if has('win32')
-    Plugin 'sgur/unite-everything'
+    Plug 'sgur/unite-everything'
 else
-    Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
+    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 endif
 
 " }}}
 
 " {{{ HTML/XML/Templates
 
-Plugin 'KabbAmine/vCoolor.vim'
-Plugin 'othree/xml.vim'
-Plugin 'jaxbot/browserlink.vim'
+Plug 'KabbAmine/vCoolor.vim'
+Plug 'othree/xml.vim', { 'for' : ['html','xml'] }
+Plug 'jaxbot/browserlink.vim'
 " % Jump tags
-Plugin 'tmhedberg/matchit'
-Plugin 'digitaltoad/vim-jade'
-Plugin 'mustache/vim-mustache-handlebars'
+Plug 'tmhedberg/matchit'
+Plug 'digitaltoad/vim-jade'
+Plug 'mustache/vim-mustache-handlebars', { 'for': ['js', 'html'] }
 
 " }}}
 
 " {{{ PHP
 
-Plugin 'tobyS/vmustache'
-Plugin 'tobyS/pdv'
-Plugin 'tobyS/skeletons.vim'
-Plugin 'shawncplus/phpcomplete.vim'
-Plugin 'junkblocker/unite-codesearch'
+Plug 'tobyS/vmustache'
+Plug 'tobyS/pdv'
+Plug 'tobyS/skeletons.vim'
+Plug 'shawncplus/phpcomplete.vim', { 'for': 'php' }
+Plug 'junkblocker/unite-codesearch'
 
 " }}}
 
 " {{{ Javascript/Coffescript
 
-Plugin 'heavenshell/vim-jsdoc'
-Plugin 'maksimr/vim-jsbeautify'
-Plugin 'vim-coffee-script'
-Plugin 'einars/js-beautify'
-Plugin 'pangloss/vim-javascript'
+Plug 'heavenshell/vim-jsdoc', { 'for' : 'js' }
+Plug 'maksimr/vim-jsbeautify', { 'for' : 'js' }
+Plug 'vim-coffee-script', { 'for' : 'coffee' }
+Plug 'einars/js-beautify', { 'for' : 'js' }
+Plug 'pangloss/vim-javascript', { 'for' : 'js' }
 " Colon/Semicolon
-"Plugin 'lfilho/cosco.vim'
+"Plug 'lfilho/cosco.vim'
 
 " }}}
 
 " {{{ Utility Editing
 
 " . repeats plugins
-Plugin 'tpope/vim-repeat'
-Plugin 'svermeulen/vim-easyclip'
+Plug 'tpope/vim-repeat'
+Plug 'svermeulen/vim-easyclip'
 
 " }}}
 
 " {{{ File Types
 
-Plugin 'Matt-Deacalion/vim-systemd-syntax'
+Plug 'Matt-Deacalion/vim-systemd-syntax', { 'for' : 'systemd' }
+Plug 'jez/vim-superman'
 
 " }}}
 
 " {{{ Autocomplete
 
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
 if version >= 704
-    Plugin 'SirVer/ultisnips'
-    Plugin 'honza/vim-snippets'
+    Plug 'SirVer/ultisnips'
+    Plug 'honza/vim-snippets'
 endif
 
 " }}}
 
 " {{{ Color themes & statusbars
 
-Plugin 'bling/vim-airline'
-Plugin 'altercation/vim-colors-solarized'
-" Plugin 'tomasr/molokai'
-" Plugin 'Lokaltog/vim-distinguished'
-" Plugin 'chriskempson/base16-vim'
-" Plugin 'tpope/vim-vividchalk'
-Plugin 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
-" Plugin 'rainux/vim-desert-warm-256'
-" Plugin 'nanotech/jellybeans.vim'
-" Plugin 'junegunn/seoul256.vim'
-" Plugin 'vim-scripts/wombat256.vim'
+Plug 'bling/vim-airline'
+Plug 'altercation/vim-colors-solarized'
+" Plug 'tomasr/molokai'
+" Plug 'Lokaltog/vim-distinguished'
+" Plug 'chriskempson/base16-vim'
+" Plug 'tpope/vim-vividchalk'
+Plug 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
+" Plug 'rainux/vim-desert-warm-256'
+" Plug 'nanotech/jellybeans.vim'
+" Plug 'junegunn/seoul256.vim'
+" Plug 'vim-scripts/wombat256.vim'
 
 " }}}
 
 " {{{ Debugging vim
 
-Plugin 'vim-scripts/genutils'
-Plugin 'vim-scripts/BreakPts'
-Plugin 'Colortest'
+Plug 'vim-scripts/genutils'
+Plug 'vim-scripts/BreakPts'
+Plug 'Colortest'
 
 " }}}
 
-Plugin 'xolox/vim-misc'
-Plugin 'tabmerge'
-Plugin 'rosenfeld/conque-term'
-Plugin 'mileszs/ack.vim'
-"Plugin 'JazzCore/ctrlp-cmatcher'
+" {{{ Unsorted
+Plug 'xolox/vim-misc'
+Plug 'tabmerge'
+Plug 'rosenfeld/conque-term'
+Plug 'mileszs/ack.vim'
+"Plug 'JazzCore/ctrlp-cmatcher'
+" }}}
 
 
 
-"Plugin 'terryma/vim-smooth-scroll' " Irritates me when I want to have a brief
+"Plug 'terryma/vim-smooth-scroll' " Irritates me when I want to have a brief
 " view on project
-"Plugin 'marijnh/tern_for_vim' " Not works in gvim in my env (Cannot start server)
-"Plugin 'int3/vim-taglist-plus'
+"Plug 'marijnh/tern_for_vim' " Not works in gvim in my env (Cannot start server)
+"Plug 'int3/vim-taglist-plus'
 
-"Plugin 'ervandew/supertab'
+"Plug 'ervandew/supertab'
 " Not hels with js
-"Plugin 'Valloric/YouCompleteMe'
-"Plugin 'vim-scripts/indenthtml.vim'
+"Plug 'Valloric/YouCompleteMe'
+"Plug 'vim-scripts/indenthtml.vim'
 
 
-"Plugin 'L9'
+"Plug 'L9'
 " Autocomplete typing - conflicts with ultisnip
-" Plugin 'othree/vim-autocomplpop'
+" Plug 'othree/vim-autocomplpop'
 
 " }}}
 
-" {{{ Vundle finalizer
+" {{{ Plug finalizer
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
+"call vundle#end()            " required
+call plug#end()
 
 filetype plugin indent on    " required
 set rtp+=~/.vim/bundle/vim-colors-solarized
@@ -193,9 +191,9 @@ set rtp+=~/.vim/bundle/vim-colors-solarized
 "set rtp+=~/.vim/bundle/vim-ycm-windows
 "set g:js_indent=~/.vim/bundle/web-indent/indent/javascript.vim
 
-augroup VundleInit
+augroup PlugInit
     au!
     " this one is which you're most likely to use?
-    autocmd FileWritePost ~/.vim/.vundle_init :PluginInstall
+    autocmd FileWritePost ~/.vim/.vundle_init :PlugInstall
 augroup end
 " }}}

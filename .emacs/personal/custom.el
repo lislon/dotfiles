@@ -57,8 +57,10 @@
 (prelude-require-package 'goto-last-change)
 (prelude-require-package 'google-translate)
 (prelude-require-package 'multi-term)
+(prelude-require-package 'vimrc-mode)
+;;  Fold vim comments {{{ }}}
+(prelude-require-package 'folding)
 (yas-global-mode 1)
-
 
 ;; C-x C-\ Go to last change
 (global-set-key "\C-x\C-\\" 'goto-last-change)
@@ -104,8 +106,9 @@
 ;; Open file - Caps Lock + j, Caps Lock + f
 ;; (keyboard-translate ?\C-j ?\C-x)
 ;; (keyboard-translate ?\C-x ?\C-j)
-(define-key key-translation-map [?\C-j] [?\C-x])
-(define-key key-translation-map [?\C-x] [?\C-j])
+(define-key key-translation-map (kbd "C-j") (kbd "C-x"))
+(define-key key-translation-map (kbd "C-x") (kbd "C-j"))
+
 
 (setq w32-pass-lwindow-to-system nil)
 (setq w32-lwindow-modifier 'super) ; Left Windows key
@@ -782,16 +785,63 @@ as the default task."
 (setq-local default-directory "~/.emacs.d/var/autosave")
 (setq-default auto-save-default t)
 
+(prefer-coding-system 'utf-8)
+
+(defun emacs-keys ()
+  (interactive)
+  (split-window-below)
+  (find-file "~/org/todo.org")
+  ;; (org-match-sparse-tree "+emacs+todo")
+  (let ((todo-only nil))
+    (org-scan-tags
+     (lambda () (message "hi"))
+     (cdr (org-make-tags-matcher "emacs"))
+     nil
+     ))
+  )
+
+(setq org-agenda-custom-commands
+      '(("f" occur-tree "emacs+todo")))
 
 ;; Ctrl+= didn't worked in urxvt
 ;; Put in ~/.Xresources URxvt.keysym.Control-0x3d: string:\033[73;5~
 (define-key local-function-key-map "\033[73;5~" [(control =)])
 
-(load xsel-yank)
+(setq x-select-enable-primary t)
+
+;; (load xsel-yank)
 
 ;;;; Hook for showing colors in Conf[Xdefaults]
 
 (add-hook 'conf-xdefaults-mode-hook 'rainbow-mode)
+
+;; Allow to change ace-window action midway
+;; (setq aw-dispatch-always t)
+
+;; Fast navigating in org-mode
+(setq org-use-speed-commands t)
+
+;;;; Folding stuff
+(autoload 'folding-mode          "folding" "Folding mode" t)
+(autoload 'turn-off-folding-mode "folding" "Folding mode" t)
+(autoload 'turn-on-folding-mode  "folding" "Folding mode" t)
+
+
+(add-hook 'lua-mode-hook 'folding-mode)
+(add-hook 'vimrc-mode-hook 'folding-mode)
+(add-hook 'vimrc-mode-hook (lambda ()
+                             (folding-mode)
+                             (message "Hi")))
+(setq folding-load-hook 'my-folding-load-hook)
+;; (add-to-list 'auto-mode-alist
+;;              '("\\.vimrc\\'" . (lambda ()
+;;                                  (folding-mode))))
+
+(defun my-folding-load-hook ()
+  (folding-install)
+  (setq folding-mode-prefix-key "\C-c")
+  (folding-add-to-marks-list 'vimrc-mode "\" {{{" "\" }}}")
+  )
 
 ;;;; Make windows load faster
 (server-start)
