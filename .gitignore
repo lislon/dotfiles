@@ -1,4 +1,5 @@
 .oh-my-zsh
 .vim/bundle/
+.vim/plugged/
 .vim/.netrwhist
 

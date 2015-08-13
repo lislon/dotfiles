@@ -83,17 +83,20 @@ install_vim () {
             mkdir -p ~/.vimtmp/swp
         fi
 
-        if [[ ! -d $bundledir/Vundle.vim ]]; then
-            git clone https://github.com/gmarik/Vundle.vim.git $bundledir/Vundle.vim
-        fi
-        if [[ ! -d $bundledir/nerdtree ]]; then
-            git clone https://github.com/scrooloose/nerdtree.git $bundledir/nerdtree
-        fi
-        if [[ ! -d $bundledir/nerdcommenter ]]; then
-            git clone https://github.com/scrooloose/nerdcommenter.git $bundledir/nerdcommenter
-        fi
+        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+        #if [[ ! -d $bundledir/Vundle.vim ]]; then
+            #git clone https://github.com/gmarik/Vundle.vim.git $bundledir/Vundle.vim
+        #fi
+        #if [[ ! -d $bundledir/nerdtree ]]; then
+            #git clone https://github.com/scrooloose/nerdtree.git $bundledir/nerdtree
+        #fi
+        #if [[ ! -d $bundledir/nerdcommenter ]]; then
+            #git clone https://github.com/scrooloose/nerdcommenter.git $bundledir/nerdcommenter
+        #fi
         echo "Plugin installation..."
-        vim +PluginInstall +qall
+        vim +PlugInstall +qall
         echo "Make vimproc..."
         cd ~/dotfiles/.vim/bundle/vimproc.vim/autoload/
         make >/dev/null

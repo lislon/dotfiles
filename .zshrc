@@ -99,6 +99,7 @@ setopt rc_expand_param
 setopt correct
 setopt interactivecomments
 setopt share_history
+setopt no_beep
 
 # Terminal in emacs do not show nice glyphs :( --workaround
 if [[ -n ${INSIDE_EMACS} ]]; then
@@ -123,7 +124,7 @@ zstyle ':completion:*:approximate:*' max-errors \
 # autocomplete one way readme -> README, but not README -> readme
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # Ignore same arguments twice
-zstyle ':completion:*:(rm|vi|vim|mv|cp):*' ignore-line true
+zstyle ':completion:*:(rm|vi|vim):*' ignore-line true
 zstyle ':completion::*' ignore-parents parent pwd
 zstyle ':completion:*:(vi|vim):*' ignored-patterns '*.(pdf|ps|dvi|aux)'
 zstyle ':completion:*:(node):*' file-patterns '*.js'

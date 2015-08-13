@@ -14,3 +14,4 @@ set history-size 10000
 #bold=$(tput bold)
 #reset=$(tput sgr0)
 #PS1='\[$cyan$bold\][\u@\h \W] $ \[$reset\]'
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

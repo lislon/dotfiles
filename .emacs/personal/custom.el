@@ -62,6 +62,8 @@
 (prelude-require-package 'folding)
 (yas-global-mode 1)
 
+(setq default-directory "~/")
+
 ;; C-x C-\ Go to last change
 (global-set-key "\C-x\C-\\" 'goto-last-change)
 
@@ -814,6 +816,7 @@ as the default task."
 ;;;; Hook for showing colors in Conf[Xdefaults]
 
 (add-hook 'conf-xdefaults-mode-hook 'rainbow-mode)
+(add-hook 'org-mode-hook 'org-indent-mode)
 
 ;; Allow to change ace-window action midway
 ;; (setq aw-dispatch-always t)
@@ -827,21 +830,38 @@ as the default task."
 (autoload 'turn-on-folding-mode  "folding" "Folding mode" t)
 
 
-(add-hook 'lua-mode-hook 'folding-mode)
-(add-hook 'vimrc-mode-hook 'folding-mode)
-(add-hook 'vimrc-mode-hook (lambda ()
-                             (folding-mode)
-                             (message "Hi")))
+;; (add-hook 'lua-mode-hook 'folding-mode)
+;; (add-hook 'vimrc-mode-hook 'folding-mode)
+;; (add-hook 'vimrc-mode-hook (lambda ()
+                             ;; (folding-mode)
+                             ;; (message "Hi")))
+
 (setq folding-load-hook 'my-folding-load-hook)
-;; (add-to-list 'auto-mode-alist
-;;              '("\\.vimrc\\'" . (lambda ()
-;;                                  (folding-mode))))
+(setq folding-mode-prefix-key "\C-c")
 
 (defun my-folding-load-hook ()
-  (folding-install)
-  (setq folding-mode-prefix-key "\C-c")
   (folding-add-to-marks-list 'vimrc-mode "\" {{{" "\" }}}")
-  )
+  (folding-add-to-marks-list 'lua-mode "-- {{{" "-- }}}")
+  (folding-install))
+
+;;;; M-! echo % shows current filename
+(defun my-shell-command (command &optional output-buffer error-buffer)
+  "Run a shell command with the current file (or marked dired files).
+In the shell command, the file(s) will be substituted wherever a '%' is."
+  (interactive (list (read-from-minibuffer "Shell command: "
+                                           nil nil nil 'shell-command-history)
+                     current-prefix-arg
+                     shell-command-default-error-buffer))
+  (cond ((buffer-file-name)
+         (setq command (replace-regexp-in-string "%" (buffer-file-name) command nil t)))
+        ((and (equal major-mode 'dired-mode) (save-excursion (dired-move-to-filename)))
+         (setq command (replace-regexp-in-string "%" (mapconcat 'identity (dired-get-marked-files) " ") command nil t))))
+  (shell-command command output-buffer error-buffer))
+
+(global-set-key (kbd "M-!") 'my-shell-command)
+
+;; Do not wrap lines
+(toggle-truncate-lines t)
 
 ;;;; Make windows load faster
 (server-start)
