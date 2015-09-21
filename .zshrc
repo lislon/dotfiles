@@ -57,6 +57,8 @@ alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle" -option ctrl
 alias help='man'
 alias cal='cal -m'
 alias ll='ls -hla'
+alias bb='sudo shutdown now'
+alias bbr='sudo shutdown -r now'
 alias svim='sudo -E vim'
 alias -s pdf='xdg-open'
 alias recent='find . -maxdepth 1 -type f -atime -1'             # show recent files
@@ -65,6 +67,12 @@ alias e="emacsclient -c"
 #alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
 #alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
 alias sc-cat='systemctl cat'
+
+# play bell sound (at the end of long commands)
+bell () {
+        (notify-send "Command complete" &
+        cvlc --no-loop --play-and-exit ~/bin/ding.wav 2>/dev/null &)
+}
 
 # OS-depend aliases
 if `which pacman &>/dev/null`; then
