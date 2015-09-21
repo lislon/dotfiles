@@ -69,6 +69,7 @@ inoremap kj <Esc>
 inoremap jk <Esc>
 " Emacs style
 inoremap fd <Esc>
+inoremap <C-y> <Esc>p
 
 "Uppercase current word
 inoremap <C-u> <Esc>mdgUiw`da
@@ -1116,6 +1117,12 @@ augroup jade
     au!
 augroup end
 " }}}
+" {{{ FileType: elisp
+augroup elisp
+    au!
+    autocmd BufReadPost .spacemacs set ft=lisp
+augroup end
+    " }}}
 
 " }}} FileTypes
 
