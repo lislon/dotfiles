@@ -1,0 +1,23 @@
+(defun calendar-of-life ()
+  (interactive)
+  "Shows how many weeks I live"
+  (let* ((weeks-in-year 52)
+     (total-years 65)
+     (birthday (date-to-time "1988-07-09 00:00:00 +0300"))
+     (counter 0)
+     (weeks-i-live (/ (time-to-number-of-days (time-since birthday)) 7)))
+    (erase-buffer)
+    (while (< counter (* total-years weeks-in-year))
+       (when (eq 0 (% counter weeks-in-year))
+         (when (> counter 0)
+           (insert "\n"))
+         (insert (format "%2d" (+ 0 (/ counter weeks-in-year)))))
+       (if (< counter weeks-i-live)
+           (insert " x")
+        (insert " -"))
+       (setq counter (1+ counter))
+      )
+    ))
+
+
+(evil-leader/set-key "ol" 'calendar-of-life)
