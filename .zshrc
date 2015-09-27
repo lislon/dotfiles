@@ -36,6 +36,11 @@ fi
 #plugins=(git composer fasd gitfast)
 
 source $ZSH/oh-my-zsh.sh
+if [[ -f /etc/profile.d/fzf.zsh ]] ; then
+    source /etc/profile.d/fzf.zsh
+fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # }}}
 # {{{ Aliases
@@ -206,6 +211,23 @@ writecmd() {
     perl -e '$TIOCSTI = 0x5412; $l = <STDIN>; $lc = $ARGV[0] eq "-run" ? "\n" : ""; $l =~ s/\s*$/$lc/; map { ioctl STDOUT, $TIOCSTI, $_; } split "", $l;' -- $1
 }
 
+fzf-locate() { locate "*" | fzf -e }
+fzf-playonlinux() { playonlinux --run '$(ls ~/.PlayOnLinux/shortcuts | fzf -e)' ;}
+
+# Transponse two command arguments before cursor.
+widget-transponse-args() {
+    # z flag is for split string as shell parsing to find words
+    array=${(z)LBUFFER}
+    count=${#array}
+    if [[ $count > 1 ]] ; then
+        LBUFFER="${array[@]:0:$(($count - 2))} ${array[$count]} ${array[$(($count - 1))@]}"
+    fi
+}
+
+zle -N widget-transponse-args
+
+bindkey '^T' widget-transponse-args
+
 # Allow multi-selections from menu using Ctrl+o
 bindkey -M menuselect '\C-o' accept-and-menu-complete
 bindkey '\C-i' complete-word
@@ -222,18 +244,13 @@ bindkey '\C-xu' universal-argument
 insert_sudo () { zle beginning-of-line; zle -U "sudo " }
 zle -N insert-sudo insert_sudo
 bindkey "^[s" insert-sudo
+# bindkey "^T" fzf-locate
 
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 #export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 #export XDG_CONFIG_HOME=~/.config
-
-if [[ -f /etc/profile.d/fzf.zsh ]] ; then
-    source /etc/profile.d/fzf.zsh
-fi
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 export FZF_DEFAULT_OPTS=--extended-exact
 
