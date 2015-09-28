@@ -20,13 +20,16 @@
      auto-completion
      better-defaults
      emacs-lisp
-     browser-edit
+     ;; browser-edit
+     chrome
      private-org
      lua
      shell-scripts
      git
+     playground
+     colors
      ;; markdown
-     ;; org
+     org
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -54,7 +57,7 @@ before layers configuration."
   (setq-default
    ;; Either `vim' or `emacs'. Evil is always enabled but if the variable
    ;; is `emacs' then the `holy-mode' is enabled at startup.
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'hybrid
    ;; If non nil output loading progress in `*Messages*' buffer.
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -66,7 +69,7 @@ before layers configuration."
    dotspacemacs-startup-banner 'official
    ;; List of items to show in the startup buffer. If nil it is disabled.
    ;; Possible values are: `recents' `bookmarks' `projects'."
-   dotspacemacs-startup-lists '(recents projects)
+   dotspacemacs-startup-lists '(recents bookmarks)
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
@@ -115,14 +118,14 @@ before layers configuration."
    dotspacemacs-use-ido nil
    ;; If non nil the paste micro-state is enabled. When enabled pressing `p`
    ;; several times cycle between the kill ring content.
-   dotspacemacs-enable-paste-micro-state nil
+   dotspacemacs-enable-paste-micro-state t
    ;; Guide-key delay in seconds. The Guide-key is the popup buffer listing
    ;; the commands bound to the current keystrokes.
    dotspacemacs-guide-key-delay 0.4
    ;; If non nil a progress bar is displayed when spacemacs is loading. This
    ;; may increase the boot time on some systems and emacs builds, set it to
    ;; nil ;; to boost the loading time.
-   dotspacemacs-loading-progress-bar t
+   dotspacemacs-loading-progress-bar nil
    ;; If non nil the frame is fullscreen when Emacs starts up.
    ;; (Emacs 24.4+ only)
    dotspacemacs-fullscreen-at-startup nil
@@ -164,6 +167,7 @@ before layers configuration."
    )
   ;; User initialization goes here
   )
+;; ============================================================
 
 (defun dotspacemacs/config ()
   "Configuration function.
@@ -239,7 +243,72 @@ layers configuration."
   ;; (setq delete-auto-save-files nil)
   ;; (auto-save-mode 1)
 
-  (setq-default tab-width 4)
+  ;; Autocompletion
+  ;; ============================================================
+  (setq
+   auto-completion-complete-with-key-sequence "jk"
+   auto-completion-enable-snippets-in-popup t
+   auto-completion-enable-help-tooltip t
+   )
+
+  (setq default-direcotry "~")
+
+  (setq evil-move-beyond-eol nil)
+
+  (define-generic-mode 'vimrc-generic-mode
+    '()
+    '()
+    '(("^[\t ]*:?\\(!\\|ab\\|map\\|unmap\\)[^\r\n\"]*\"[^\r\n\"]*\\(\"[^\r\n\"]*\"[^\r\n\"]*\\)*$"
+       (0 font-lock-warning-face))
+      ("\\(^\\|[\t ]\\)\\(\".*\\)$"
+       (2 font-lock-comment-face))
+      ("\"\\([^\n\r\"\\]\\|\\.\\)*\""
+       (0 font-lock-string-face)))
+    '("/vimrc\\'" "\\.vim\\(rc\\)?\\'")
+    '((lambda ()
+        (modify-syntax-entry ?\" ".")))
+    "Generic mode for Vim configuration files.")
+
+  ;; (find-file "~/org/todo.org")
+  ;; Disable hello file, because it hangs
+  (global-unset-key (kbd "C-h h"))
+
+  (defun my/keys-help-sheet (args)
+    "Shows cheatsheet with hotkeys from todo.org"
+    (interactive "P")
+    (split-window-right-and-focus)
+    (unless (get-buffer "Keys")
+        (find-file "~/org/todo.org")
+        (let ((buffer (make-indirect-buffer (current-buffer) "Keys")))
+          (switch-to-buffer buffer)
+          (org-mode)
+          (toggle-current-window-dedication)
+        ))
+    (switch-to-buffer (get-buffer "Keys"))
+    (widen)
+    (beginning-of-buffer)
+    (org-tags-sparse-tree nil "keys")
+    (next-match)
+    (org-narrow-to-subtree)
+    (org-cycle 2)
+    )
+
+  (defun my/org-append-row-to-table (args)
+    "Appends a row to the end of table"
+    (interactive "P")
+    (if (not (org-at-table-p))
+        (user-error "Not at a table"))
+    (goto-char (org-table-end))
+    (previous-line)
+    (forward-char)
+    (org-table-insert-row 1)
+    )
+
+  ;; SPC o k - Show cheatsheet with hotkeys
+  (evil-leader/set-key "ok" 'my/keys-help-sheet)
+
+  ;; C-c i - append line to table
+  (bind-key "C-c i" 'my/org-append-row-to-table)
 
   ;; End of private config
 )
@@ -265,8 +334,6 @@ layers configuration."
  '(cua-read-only-cursor-color "#859900")
  '(evil-move-beyond-eol t)
  '(fci-rule-color "#eee8d5" t)
- '(google-translate-default-target-language "ru")
- '(google-translate-default-source-language "en")
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
  '(highlight-symbol-colors
    (--map
