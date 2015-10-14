@@ -1,0 +1,11 @@
+(defun my/org-append-row-to-table (args)
+  "Inserts a row at the end of table"
+  (interactive "P")
+  (if (not (org-at-table-p))
+      (user-error "Not at a table"))
+  (goto-char (org-table-end))
+  (forward-line -1)
+  (forward-char)
+  (org-table-insert-row 1)
+  (evil-insert 1)
+  )

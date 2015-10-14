@@ -1,0 +1,9 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: emacs-comments-separator
+# key: --- 
+# condition: (evil-in-comment-p)
+# binding: direct-keybinding
+# --
+------------------------------------------------------------------------------
+;; $1
+;; ------------------------------------------------------------------------------

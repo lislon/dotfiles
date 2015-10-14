@@ -1,11 +1,13 @@
-(defun calendar-of-life ()
+(defun lsn/calendar-of-life ()
   (interactive)
-  "Shows how many weeks I live"
+  "Shows how many weeks left in my life"
   (let* ((weeks-in-year 52)
      (total-years 65)
-     (birthday (date-to-time "1988-07-09 00:00:00 +0300"))
+     (birthday (date-to-time "1988-07-01 00:00:00 +0300"))
      (counter 0)
-     (weeks-i-live (/ (time-to-number-of-days (time-since birthday)) 7)))
+     (weeks-i-live (/ (time-to-number-of-days (time-since birthday)) 7))
+     (buffer (get-buffer-create "Calendar of life")))
+    (switch-to-buffer buffer)
     (erase-buffer)
     (while (< counter (* total-years weeks-in-year))
        (when (eq 0 (% counter weeks-in-year))
@@ -20,4 +22,4 @@
     ))
 
 
-(evil-leader/set-key "ol" 'calendar-of-life)
+(evil-leader/set-key "ol" 'lsn/calendar-of-life)

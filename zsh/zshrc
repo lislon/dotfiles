@@ -44,7 +44,7 @@ fi
 
 # }}}
 # {{{ Aliases
-alias myzsh="$EDITOR ~/dotfiles/.zshrc && reload"
+alias myzsh="$EDITOR ~/dotfiles/zsh/zshrc && reload"
 alias view=vim -R
 alias reload=". ~/.zshrc"
 alias v='f -e vim' # quick opening files with vim
@@ -148,7 +148,7 @@ zstyle ':completion:*:(node):*' ignored-patterns 'Gruntfile.js'
 compdef '_files -g "*.jpg(-.)"' gimp
 # }}}
 # {{{ Man in vim
-export MANPAGER="/bin/sh -c \"col -b | vim -u ~/dotfiles/man.vimrc -c 'set nomodified' -\""
+export MANPAGER="/bin/sh -c \"col -b | vim -u ~/dotfiles/zsh/man.vimrc -c 'set nomodified' -\""
 # }}}
 # {{{ Misc
 

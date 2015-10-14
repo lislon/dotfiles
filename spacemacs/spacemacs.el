@@ -1,3 +1,4 @@
+;;; .spacemacs --- My personal configuration file for spacemacs
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
@@ -22,19 +23,30 @@
      emacs-lisp
      ;; browser-edit
      chrome
-     private-org
+     html
      lua
      shell-scripts
      git
+     github
      playground
      colors
+     java
+     javascript
+     ;; eyebrowse
+     semantic
+     erc
+     emoji
+     xkcd
      ;; markdown
      org
+     private-org
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
-     ;; syntax-checking
+     syntax-checking
      version-control
+     csharp
+     ;; spell-checking
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -47,6 +59,60 @@
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'
    dotspacemacs-delete-orphan-packages t))
+
+(defun dotspacemacs/user-init ()
+  (setq-default
+
+   ;; basic
+   vc-follow-symlinks t
+   default-direcotry "~"
+   evil-move-beyond-eol nil
+   evil-escape-unordered-key-sequence t
+   spaceline-org-clock-p t
+
+   ;; backup
+   make-backup-files t
+   keep-new-versions 10
+   keep-old-versions 2
+   backup-by-copying t
+   delete-old-versions t
+   version-control t       ;; Always use version numbers in filenames
+   backup-directory-alist '(("" . "~/ . emacs.d/.cache/backup-per-save"))
+
+   ;; workaround: neotree is painfully slow
+   neo-vc-integration nil
+
+   ;; Autocompletion
+   auto-completion-complete-with-key-sequence "jk"
+   auto-completion-enable-snippets-in-popup t
+   auto-completion-enable-help-tooltip t
+
+   ;; Misc
+   google-translate-default-source-language "en"
+   google-translate-default-target-language "ru"
+
+   ;; IRC
+   erc-autojoin-channels-alist
+   '(("1\\.0\\.0" "#syl20bnr/spacemacs") ; Gitter
+     ("freenode\\.net" "#emacs"))
+   erc-timestamp-format-left "\n%A %B %e, %Y\n\n"
+   erc-timestamp-format-right "%H:%M"
+   erc-timestamp-right-column 80
+   erc-prompt-foc-nickserv-password nil
+   erc-image-inline-rescale 300
+   erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
+   erc-foolish-content
+   '("\\[Github\\].* starred"
+     "\\[Github\\].* forked"
+     "\\[Github\\].* synchronize a Pull Request"
+     "\\[Github\\].* labeled an issue in"
+     "\\[Github\\].* unlabeled an issue in")
+
+   ;; )
+
+   ;; org-mode timestamps in english
+   system-time-locale "C"
+  ))
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -135,7 +201,7 @@ before layers configuration."
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup nil
+   dotspacemacs-maximized-at-startup t
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'.
@@ -153,7 +219,7 @@ before layers configuration."
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    dotspacemacs-smartparens-strict-mode nil
    ;; Select a scope to highlight delimiters. Possible value is `all',
-   ;; `current' or `nil'. Default is `all'
+   ;; `current' or `nil' or `any`''. Default is `all'
    dotspacemacs-highlight-delimiters 'all
    ;; If non nil advises quit functions to keep server open when quitting.
    dotspacemacs-persistent-server nil
@@ -169,42 +235,40 @@ before layers configuration."
   )
 ;; ============================================================
 
-(defun dotspacemacs/config ()
+(defun dotspacemacs/user-config ()
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
   ;; Swap C-j and C-x
-  ;; (global-key-binding (kbd "C-j q") (lambda () ((message "Hi"))))
   (define-key key-translation-map (kbd "C-j") (kbd "C-x"))
   (define-key key-translation-map (kbd "C-x") (kbd "C-j"))
-  
+  ;; (setq spaceline-org-clock-p t)
+
+  (setq  spaceline-org-clock-p t)
   ;; Persistent undo
   (setq undo-tree-auto-save-history t
         undo-tree-history-directory-alist
         `(("." . ,(concat spacemacs-cache-directory "undo"))))
   (unless (file-exists-p (concat spacemacs-cache-directory "undo"))
     (make-directory (concat spacemacs-cache-directory "undo")))
-  
-  ;; Nicer status bar
-  (setq powerline-default-separator 'arrow)
 
-  ;; NERD-commenter
-  (define-key evil-normal-state-map ",s" 'evilnc-comment-or-uncomment-lines)
-  (define-key evil-visual-state-map ",s" 'evilnc-comment-or-uncomment-lines)
-
-  ;; Emacs end-of-line
-  (define-key evil-normal-state-map "\C-e" 'move-end-of-line)
+  ;; M-\ to escape
+  (define-key evil-hybrid-state-map (kbd "M-\\") 'evil-escape)
 
   ;; Vim move right or left
-  ;; I want learn C-a and C-e
-  ;; (define-key evil-normal-state-map "L" 'evil-end-of-line)
-  ;; (define-key evil-normal-state-map "H" 'spacemacs/smart-move-beginning-of-line)
+  (define-key evil-normal-state-map "L" 'evil-end-of-line)
+  (define-key evil-normal-state-map "H" 'spacemacs/smart-move-beginning-of-line)
 
   ;; Emacs yank C-y in insert mode
-  (define-key evil-insert-state-map "\C-y" 'yank)
 
-  ;; Use tab in help mode for next button
+  ;; (define-key evil-hybrid-state-map "\C-y" 'yank)
+
+  ;; ;; Use tab in help mode for next button
   (define-key help-mode-map (kbd "<Tab>") 'forward-button)
+
+  ;; (with-eval-after-load 'eww-mode
+  ;;   (define-key eww-mode-map (kbd "<Tab>") 'forward-button))
+  (add-hook 'eww-mode 'evil-insert-state)
 
   ;; Fixed russian keyboard with proper numbers keys
   (quail-define-package
@@ -228,32 +292,9 @@ layers configuration."
 
   (setq default-input-method "cyrillic-jcuken")
 
-  ;; Custom bookmakrs path
-  (setq bookmark-default-file "~/.emacs.d/private/bookmarks.el")
+  ;; ;; Custom bookmakrs path
+  ;; (setq bookmark-default-file "~/.emacs.d/private/bookmarks.el")
 
-  ;; Backups
-  ;; ============================================================
-  (setq make-backup-files t
-        keep-new-versions 10
-        keep-old-versions 2
-        backup-by-copying t
-        delete-old-versions t
-        version-control t       ;; Always use version numbers in filenames
-        backup-directory-alist '(("" . "~/.emacs.d/.cache/backup-per-save")))
-  ;; (setq delete-auto-save-files nil)
-  ;; (auto-save-mode 1)
-
-  ;; Autocompletion
-  ;; ============================================================
-  (setq
-   auto-completion-complete-with-key-sequence "jk"
-   auto-completion-enable-snippets-in-popup t
-   auto-completion-enable-help-tooltip t
-   )
-
-  (setq default-direcotry "~")
-
-  (setq evil-move-beyond-eol nil)
 
   (define-generic-mode 'vimrc-generic-mode
     '()
@@ -269,8 +310,7 @@ layers configuration."
         (modify-syntax-entry ?\" ".")))
     "Generic mode for Vim configuration files.")
 
-  ;; (find-file "~/org/todo.org")
-  ;; Disable hello file, because it hangs
+   ;; Disable hello file, because it hangs
   (global-unset-key (kbd "C-h h"))
 
   (defun my/keys-help-sheet (args)
@@ -282,36 +322,252 @@ layers configuration."
         (let ((buffer (make-indirect-buffer (current-buffer) "Keys")))
           (switch-to-buffer buffer)
           (org-mode)
-          (toggle-current-window-dedication)
+          (spacemacs/toggle-current-window-dedication)
         ))
     (switch-to-buffer (get-buffer "Keys"))
     (widen)
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (org-tags-sparse-tree nil "keys")
     (next-match)
     (org-narrow-to-subtree)
     (org-cycle 2)
     )
 
-  (defun my/org-append-row-to-table (args)
-    "Appends a row to the end of table"
-    (interactive "P")
-    (if (not (org-at-table-p))
-        (user-error "Not at a table"))
-    (goto-char (org-table-end))
-    (previous-line)
-    (forward-char)
-    (org-table-insert-row 1)
-    )
 
+  ;; Fix tab key
+  (evil-define-key 'motion help-mode-map (kbd "<tab>") 'forward-button)
+
+  ;; IRC
+  (add-hook 'erc-insert-pre-hook
+            (defun bb/erc-foolish-filter (msg)
+              "Ignores messages matching `erc-foolish-content'."
+              (when (erc-list-match erc-foolish-content msg)
+                (setq erc-insert-this nil))))
+
+  (defun bb/erc-github-filter ()
+    "Shortens messages from gitter."
+    (interactive)
+    (when (and (< 18 (- (point-max) (point-min)))
+               (string= (buffer-substring (point-min)
+                                          (+ (point-min) 18))
+                        "<gitter> [Github] "))
+      (dolist (regexp '(" \\[Github\\]"
+                        " \\(?:in\\|to\\) [^ /]+/[^ /:]+"))
+        (goto-char (point-min))
+        (when (re-search-forward regexp (point-max) t)
+          (replace-match "")))
+      (goto-char (point-min))
+      (when (re-search-forward
+             "https?://github\\.com/[^/]+/[^/]+/[^/]+/\\([[:digit:]]+\\)\\([^[:space:]]*\\)?"
+             (point-max) t)
+        (let* ((url (match-string 0))
+               (number (match-string 1))
+               (start (+ 1 (match-beginning 0)))
+               (end (+ 1 (length number) start)))
+          (replace-match (format "(#%s)" (match-string 1)))
+          (erc-button-add-button start end 'browse-url nil (list url)))
+        )))
+
+  (with-eval-after-load 'erc
+    (setq erc-insert-modify-hook
+          '(erc-controls-highlight
+            erc-button-add-buttons
+            bb/erc-github-filter
+            erc-fill
+            erc-match-message
+            erc-add-timestamp
+            erc-hl-nicks)))
+
+  (add-hook 'erc-mode-hook 'emoji-cheat-sheet-plus-display-mode)
+  
+  (with-eval-after-load 'erc
+    (erc-track-mode -1))
+
+  (evil-leader/set-key
+    "aiq" 'erc-quit-server
+    "aid" (defun bb/gitter-debug ()
+            (interactive)
+            (erc :server "localhost"
+                 :port 6667
+                 :nick "lislon"
+                 :password lsn/gitter-pwd
+                 :full-name "lislon"))
+    "aig" (defun bb/gitter ()
+            (interactive)
+            (erc-tls :server "irc.gitter.im"
+                     :port 6667
+                     :nick "lislon"
+                     :password lsn/gitter-pwd
+                     :full-name "lislon"))
+    "aif" (defun bb/freenode ()
+            (interactive)
+            (erc :server "irc.freenode.net"
+                 :port "6667"
+                 :nick "lislon"
+                 :full-name "lislon")))
+
+  (defvar my-org-mobile-sync-timer nil)
+
+  (defvar my-org-mobile-sync-secs (* 60 20))
+
+  (defun my-org-mobile-sync-pull-and-push ()
+    (require 'org)
+    (org-mobile-pull)
+    (org-mobile-push)
+    (when (fboundp 'sauron-add-event)
+      (sauron-add-event 'my 3 "Called org-mobile-pull and org-mobile-push")))
+
+  (defun my-org-mobile-sync-start ()
+    "Start automated `org-mobile-push'"
+    (interactive)
+    (setq my-org-mobile-sync-timer
+          (run-with-idle-timer my-org-mobile-sync-secs t
+                               'my-org-mobile-sync-pull-and-push)))
+
+  (defun my-org-mobile-sync-stop ()
+    "Stop automated `org-mobile-push'"
+    (interactive)
+    (cancel-timer my-org-mobile-sync-timer))
+
+  (my-org-mobile-sync-start)
+
+
+  ;; Google translate interactive
+  (define-derived-mode google-translate-interactive-mode
+    text-mode "Google Translate"
+    (defun translate-word-and-new-line ()
+      "Shows translation of current work in help buffer and inserts
+new line after it"
+      (interactive)
+      (let ((buffer (current-buffer)) )
+          (move-beginning-of-line nil)
+          (set-mark-command nil)
+          (move-end-of-line nil)
+          (google-translate-at-point)
+        (switch-to-buffer buffer)
+        (evil-insert-newline-below)
+        ))
+
+    (use-local-map (make-sparse-keymap))
+    (local-set-key (kbd "RET") 'translate-word-and-new-line)
+    (define-key evil-normal-state-map (kbd "RET") 'google-translate-at-point))
+
+    (defun my/google-translate-repl ()
+      (interactive)
+      (let ((buffer (get-buffer-create "Google Translate REPL")))
+        (switch-to-buffer buffer)
+        (google-translate-interactive-mode)
+        (evil-insert-state)
+        (goto-char (buffer-end 1))
+        ))
+
+    (defun lsn-insert-line-and-paste (count)
+      "Moves to new line and paste text"
+        (interactive "P")
+        (move-end-of-line nil)
+        (newline)
+        (evil-paste-after count))
+
+  (evil-leader/set-key "x g i" 'my/google-translate-repl)
   ;; SPC o k - Show cheatsheet with hotkeys
   (evil-leader/set-key "ok" 'my/keys-help-sheet)
+  (evil-leader/set-key "os" 'yas-visit-snippet-file)
+  (evil-leader/set-key "oS" 'yas-new-snippet)
+  (define-key evil-normal-state-map (kbd "gp") 'lsn-insert-line-and-paste)
+  
+  ;; (add-hook 'evil-hybrid-state-entry-hook
+  ;;           (lambda () (literal-insert-mode 1)))
+  ;; (add-hook 'evil-hybrid-state-exit-hook
+  ;;           (lambda () (literal-insert-mode -1)))
 
-  ;; C-c i - append line to table
-  (bind-key "C-c i" 'my/org-append-row-to-table)
+  ;; keep navigation when russian keyboard is active
+  (defun translate-keystrokes-ru-en ()
+    "Make emacs output english characters, regardless whether
+the OS keyboard is english or russian"
+    (flet ((make-key-stroke (prefix char)
+                            (eval `(kbd ,(if (and (string-match "^C-" prefix)
+                                                  (string-match "[A-Z]" (string char)))
+                                             (concat "S-" prefix (string (downcase char)))
+                                           (concat prefix (string char)))))))
+      (let ((case-fold-search nil)
+            (keys-pairs (mapcar* 'cons
+                                 "йцукенгшщзхъфывапролджэячсмитьбюЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖ\ЭЯЧСМИТЬБЮ№"
+                                 "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"))
+            (prefixes '(""    "s-"    "M-"    "M-s-"
+                        "C-"  "C-s-"  "C-M-"  "C-M-s-")))
+        (mapc (lambda (prefix)
+                (mapc (lambda (pair)
+                        (define-key key-translation-map
+                          (make-key-stroke prefix (car pair))
+                          (make-key-stroke prefix (cdr pair))))
+                      keys-pairs))
+              prefixes))))
 
-  ;; End of private config
+  ;; (translate-keystrokes-ru-en)
+  (defun literal-insert ()
+    (interactive)
+    (insert-char last-input-event 1))
+
+
+  (define-minor-mode literal-insert-mode
+    "Make emacs output characters corresponging to the OS keyboard,
+ ignoring the key-translation-map"
+    :keymap (let ((new-map (make-sparse-keymap))
+                  (english-chars "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"))
+              (mapc (lambda (char)
+                      (define-key new-map (string char)
+                        'literal-insert))
+                    english-chars)
+              new-map))
+
+  (server-start)
+
+  ; Auto set lisp-interaction-mode in *scratch*
+  (defun my/scratch-interactive-mode ()
+    (when (equal "*scratch*" (buffer-name))
+      (lisp-interaction-mode)
+      (remove-hook 'window-configuration-change-hook 'my/scratch-interactive-mode))
+    )
+  (add-hook 'window-configuration-change-hook 'my/scratch-interactive-mode)
+
+    (defmacro google-translate-redef-google-translate--request (url-or-qparams)
+    "Redefine `google-translate--request' from URL-OR-QPARAMS.
+    If you use qparams, query parameters not including \"tl\", \"sl\" and \"q\" is needed."
+    (let ((g-query-params (cl-gensym "query-params"))
+            (g-url-or-qparams (cl-gensym "url-or-qparams")))
+        `(defun google-translate--request (source-language
+                                        target-language
+                                        text
+                                        &optional for-test-purposes)
+        (let* ((,g-url-or-qparams ,url-or-qparams)
+                (,g-query-params
+                (cl-delete-if
+                    (lambda (ls) (member (car ls) '("tl" "sl" "q")))
+                    (if (stringp ,g-url-or-qparams)
+                        (mapcar (lambda (str) (cl-destructuring-bind
+                                            (n v)
+                                            (split-string str "=")
+                                            (cons n v)))
+                                (split-string (cadr (split-string ,g-url-or-qparams "?")) "&"))
+                    ,g-url-or-qparams))))
+            (google-translate--http-response-body
+            (google-translate--format-request-url
+            `(("sl" . ,source-language)
+                ("tl" . ,target-language)
+                ("q"  . ,text)
+                ,@,g-query-params))
+            for-test-purposes)))))
+
+    (google-translate-redef-google-translate--request
+    ;; This url was copied at Network Monitor of Firefox.
+     "https://translate.google.com/translate_a/single?client=t&sl=en&tl=ru&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&source=bh&ssel=0&tsel=0&otf=1&kc=4&tk=973064|575153&q=%D0%B5%D1%83%D1%8B%D0%B5")
+
+    ;; End of private config
 )
+
+;; Load local
+(when (file-exists-p "~/local.el")
+  (load "~/local.el"))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -320,77 +576,7 @@ layers configuration."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ahs-case-fold-search nil)
- '(ahs-default-range (quote ahs-range-whole-buffer))
- '(ahs-idle-interval 0.25)
- '(ahs-idle-timer 0 t)
- '(ahs-inhibit-face-list nil)
- '(ansi-color-names-vector
-   ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
- '(compilation-message-face (quote default))
- '(cua-global-mark-cursor-color "#2aa198")
- '(cua-normal-cursor-color "#657b83")
- '(cua-overwrite-cursor-color "#b58900")
- '(cua-read-only-cursor-color "#859900")
- '(evil-move-beyond-eol t)
- '(fci-rule-color "#eee8d5" t)
- '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
- '(highlight-symbol-colors
-   (--map
-    (solarized-color-blend it "#fdf6e3" 0.25)
-    (quote
-     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
- '(highlight-symbol-foreground-color "#586e75")
- '(highlight-tail-colors
-   (quote
-    (("#eee8d5" . 0)
-     ("#B4C342" . 20)
-     ("#69CABF" . 30)
-     ("#69B7F0" . 50)
-     ("#DEB542" . 60)
-     ("#F2804F" . 70)
-     ("#F771AC" . 85)
-     ("#eee8d5" . 100))))
- '(hl-bg-colors
-   (quote
-    ("#DEB542" "#F2804F" "#FF6E64" "#F771AC" "#9EA0E5" "#69B7F0" "#69CABF" "#B4C342")))
- '(hl-fg-colors
-   (quote
-    ("#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3")))
- '(magit-diff-use-overlays nil)
- '(pos-tip-background-color "#eee8d5")
- '(pos-tip-foreground-color "#586e75")
- '(ring-bell-function (quote ignore) t)
- '(safe-local-variable-values (quote ((encoding . utf-8))))
- '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
- '(term-default-bg-color "#fdf6e3")
- '(term-default-fg-color "#657b83")
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#dc322f")
-     (40 . "#c85d17")
-     (60 . "#be730b")
-     (80 . "#b58900")
-     (100 . "#a58e00")
-     (120 . "#9d9100")
-     (140 . "#959300")
-     (160 . "#8d9600")
-     (180 . "#859900")
-     (200 . "#669b32")
-     (220 . "#579d4c")
-     (240 . "#489e65")
-     (260 . "#399f7e")
-     (280 . "#2aa198")
-     (300 . "#2898af")
-     (320 . "#2793ba")
-     (340 . "#268fc6")
-     (360 . "#268bd2"))))
- '(vc-annotate-very-old-color nil)
- '(vc-follow-symlinks t)
- '(weechat-color-list
-   (quote
-    (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496"))))
+ '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
