@@ -39,7 +39,7 @@
      xkcd
      ;; markdown
      org
-     private-org
+     my-org
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -562,6 +562,13 @@ the OS keyboard is english or russian"
     ;; This url was copied at Network Monitor of Firefox.
      "https://translate.google.com/translate_a/single?client=t&sl=en&tl=ru&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&source=bh&ssel=0&tsel=0&otf=1&kc=4&tk=973064|575153&q=%D0%B5%D1%83%D1%8B%D0%B5")
 
+    ;; Using chrome as default browser
+    (if (eq system-type 'gnu/linux)
+        (setq browse-url-browser-function 'browse-url-generic
+              browse-url-generic-program "chromium"))
+
+    ;; Auto github favore mode when editing markdown
+    (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
     ;; End of private config
 )
 

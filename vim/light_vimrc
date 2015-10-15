@@ -1,0 +1,256 @@
+" {{{ Basic stuff
+
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set autoindent
+set incsearch
+" Annoying post highlight after search
+set nohlsearch
+set wildmode=full
+set noshowmode
+set gdefault
+set ignorecase
+" For /seARCH
+set smartcase
+set nu
+set laststatus=2 " Vim airline even when 1 file opened
+set encoding=utf-8
+set infercase
+set autoread
+set autowrite
+set splitright
+set splitbelow
+set ff=unix
+set hidden
+" Remove transperent background when running over ssh
+set t_ut=
+if has('gui_running')
+    set spell spelllang=ru_ru,en_us
+endif
+set dictionary+=/usr/share/dict/words
+set clipboard=unnamed,unnamedplus " Use + and * registers when deleting
+" > flag for inserting new line when appening in register ("Ayy)
+set cpoptions=ABceFs>
+set isfname=@,48-57,/,.,-,_,+,$,%,~
+" Turn off sound
+"set vb
+"set t_vb=
+
+
+" Allow backspace after append
+set backspace=indent,eol,start
+" Prevent open same files twice
+set switchbuf=useopen
+
+:syntax on
+filetype plugin indent on
+" Keep 10 lines below and above the cursor
+set scrolloff=10
+
+" Lower the delay of escaping out of other modes
+" set timeout timeoutlen=1000 ttimeoutlen=1
+set timeout timeoutlen=500 ttimeoutlen=1
+
+set foldcolumn=0
+"set autochdir
+let mapleader=","
+let maplocalleader="\\"
+iabbrev lenght length
+iabbrev lenth length
+set isfname-=, " Allow to gf work in rtp
+
+" Man page
+nnoremap M K
+nnoremap K <nop>
+"inoremap <Esc> <nop>
+inoremap kj <Esc>
+inoremap jk <Esc>
+" Emacs style
+inoremap fd <Esc>
+inoremap <C-y> <Esc>p
+
+"Uppercase current word
+inoremap <C-u> <Esc>mdgUiw`da
+
+" Script names
+nnoremap <leader>wsn :WinMessage scriptnames<CR>
+
+" rtp
+nnoremap <leader>wrt :WinMessage set rtp?<CR>
+
+" Linux buffers
+"if has('unix')
+"noremap  Y "+Y
+"noremap  p "+p
+"noremap  P "+P
+"vnoremap y "+y
+"vnoremap Y "+Y
+"vnoremap p "+p
+"vnoremap P "+P
+"endif
+
+" Suck-in line below to newborn if body
+" if () {
+"   |
+" }
+" line goes to if body
+inoremap <A-u> <Esc>ddjddkP>>
+nnoremap <A-u> jjddkP>>
+
+nnoremap <S-F2> :w !sudo tee %
+
+" Unfuck my screen
+nnoremap U :syntax sync fromstart<cr>:redraw!<cr>
+
+" Very left & Very Right
+:noremap H ^
+:noremap L $
+
+" Ctrl+I not works with that :(
+":noremap <Tab> %
+
+" Delete till end"
+:noremap D d$
+
+" Split line
+:noremap S i<cr><Esc>
+
+:inoremap <C-a> <Esc>I
+:inoremap <C-e> <Esc>A
+
+:nnoremap <F1> :help
+:nnoremap <F12> :tabe ~/dotfiles/vim/vimrc<CR>
+:nnoremap <F11> :tabe ~/.vim/.vundle_init<CR>
+
+":nnoremap <leader>ev :vsplit ~/.vim/.vundle_init<CR>
+:nnoremap <silent> <F2> :w<CR>
+:inoremap <silent> <F2> <Esc>:w<CR>
+:vnoremap <silent> <F2> <C-C>:w<CR>
+:cnoremap <silent> <F2> <C-C>:w<CR>
+:nnoremap <F6> :set paste!<CR>
+
+
+" Ctrl+N switch options !! Confclits with TextMate
+":imap <Tab> <C-P>
+
+" Insert new line without insert mode
+nnoremap <Enter> o<Esc>
+" Remove line above
+nnoremap <C-S-Enter> mZkdd`Z
+
+" Allow regex without escape
+nnoremap / /\v
+nnoremap ? ?\v
+
+nnoremap <silent> <leader><space> :let @/ = ''<cr>
+
+" Keep search matches in the middle of the window.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" j = Move by screenline, gj move by real line
+nnoremap j gj
+nnoremap k gk
+nnoremap gj j
+nnoremap gk k
+
+" <Alt_D> Digraph insertion :h digraph
+inoremap <a-d> <c-k>
+
+"Space to toggle folds
+nnoremap <space> zazz
+vnoremap <space> zazz
+
+inoremap <c-j> <c-o>j
+inoremap <c-k> <c-o>k
+
+" <Leader> + increase window width by 1/3
+nnoremap <silent><leader>+ :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
+nnoremap <silent><leader>= :execute "vertical resize " . (winwidth(0) * 3/2)<CR>
+nnoremap <silent><leader>- :execute "vertical resize " . (winwidth(0) * 2/3)<CR>
+
+" CTRL-Tab is Next window
+noremap <C-Tab> <C-W>w
+inoremap <C-Tab> <C-O><C-W>w
+cnoremap <C-Tab> <C-C><C-W>w
+onoremap <C-Tab> <C-C><C-W>w
+
+"noremap 1 gT
+"noremap 2 gt
+inoremap <C-Tab> <C-O><C-W>w
+cnoremap <C-Tab> <C-C><C-W>w
+onoremap <C-Tab> <C-C><C-W>w
+
+
+"nnoremap <c-k> :wq<CR>
+
+" Select all
+nnoremap vaa ggVGg_
+
+" relative number lines
+nnoremap <leader>N :set relativenumber!<CR>
+
+" Toggle line numbers
+nnoremap <leader>n :setlocal number!<cr>
+" nomap Insert
+:nnoremap <Insert> "+p
+:cnoremap <S-Insert> <c-r>+
+:inoremap <Insert> <c-o>"+]P<Esc>==
+:inoremap <S-Insert> <c-o>"+]P<Esc>==
+
+" Jump to function end
+nnoremap ]f ]}k
+nnoremap [f [{j
+vnoremap ]f ]}k
+vnoremap [f [{j
+
+" Prevent corrupting of delete buffer by using single deletion
+nnoremap x "_x
+
+
+" }}} End of basic stuff
+" {{{ File and system stuff
+
+if has("win32unix")
+    " This stuff is reset iminsert mode
+    set keymap=russian-jcukenwin
+endif
+
+" Dont use mapping when going to insert mode
+set iminsert=0
+set imsearch=0
+" Tell vim to remember certain things when we exit
+" "  '10  :  marks will be remembered for up to 10 previously edited files
+" "  "100 :  will save up to 100 lines for each register
+" "  :100  :  up to 100 lines of command-line history will be remembered
+" "  %    :  saves and restores the buffer list
+" "  n... :  where to save the viminfo files
+set viminfo='10,\"100,:100,%,n~/.viminfo
+if has('persistent_undo')
+    set undofile
+    set undodir=~/.vimtmp/undo
+endif
+" Move swap files
+set backupdir=~/.vimtmp/swp
+set directory=~/.vimtmp/swp
+:highlight lCursor guifg=NONE guibg=Cyan
+
+" Support color highlight in putty
+if has('unix')
+    set t_Co=256
+endif
+
+if has('unix')
+    language messages C
+else
+    language messages en
+endif
+" Prevent gvim to resize by itself
+" default is egmrLtT
+set guioptions=gmrtT
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set guioptions-=L  "remove left-hand scroll bar
+"}}}
