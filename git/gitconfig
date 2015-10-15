@@ -15,7 +15,7 @@
     vhr = !git fetch && git reset --hard FETCH_HEAD
 [user]
 	email = elephant@lislon.ru
-	name = Boris Avdeev
+	name = Igor Avdeev
 [core]
 	autocrlf = false
 	excludesfiles = ~/dotfiles/git/gitignore_global
