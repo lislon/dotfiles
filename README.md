@@ -1,1 +1,6 @@
-I am a bit crazy about having coolest editor.
+# My dotfiles #
+
+Things I use a lot:
+
+ * [Spacemacs](https://github.com/syl20bnr/spacemacs)
+ * [OhMyZsh](https://github.com/robbyrussell/oh-my-zsh)
