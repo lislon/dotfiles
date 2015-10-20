@@ -3,7 +3,7 @@
 SOURCE=~/dotfiles/zsh/zshrc
 TARGET=~/.zshrc
 
-[[ -d ~/.oh-my-zsh ]] || sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || exit -1
+[[ -d ~/.oh-my-zsh ]] || sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 if [[ -f $TARGET && ! -L $TARGET ]] ; then
     mv $TARGET "${TARGET}.bak"
