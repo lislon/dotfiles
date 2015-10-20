@@ -1,4 +1,5 @@
 " {{{ Vundle init
+
 " {{{ Plug init
 
 set nocompatible              " be iMproved, required
@@ -22,13 +23,13 @@ call plug#begin()
 Plug 'Raimondi/delimitMate'
 " Russian keyboard fixes
 
-Plug 'Lokaltog/vim-easymotion'
+" <boost loading> Plug 'Lokaltog/vim-easymotion'
 Plug 'lyokha/vim-xkbswitch'
 Plug 'tpope/vim-surround'
 
 " Share to gist :Gist
-Plug 'mattn/webapi-vim'
-Plug 'mattn/gist-vim'
+" <boost loading> Plug 'mattn/webapi-vim'
+" <boost loading> Plug 'mattn/gist-vim'
 
 Plug 'scrooloose/nerdcommenter'
 Plug 'Yggdroot/indentLine'
@@ -44,15 +45,15 @@ Plug 'scrooloose/syntastic'
 " spaces
 Plug 'tpope/vim-unimpaired'
 
-Plug 'tpope/vim-fugitive'
+" <boost loading> Plug 'tpope/vim-fugitive'
 
 
 " }}}
 
 " {{{ File navigation
 
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'NERD_Tree-and-ack', { 'on':  'NERDTreeToggle' }
+" <boost loading> Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+" <boost loading> Plug 'NERD_Tree-and-ack', { 'on':  'NERDTreeToggle' }
 
 Plug 'Shougo/vimproc.vim', { 'do' : 'make' }
 if version >= 704
@@ -72,23 +73,25 @@ endif
 
 " {{{ HTML/XML/Templates
 
-Plug 'KabbAmine/vCoolor.vim'
-Plug 'othree/xml.vim', { 'for' : ['html','xml'] }
-Plug 'jaxbot/browserlink.vim'
-" % Jump tags
-Plug 'tmhedberg/matchit'
-Plug 'digitaltoad/vim-jade'
-Plug 'mustache/vim-mustache-handlebars', { 'for': ['js', 'html'] }
+" <increase boot time>
+"Plug 'KabbAmine/vCoolor.vim'
+"Plug 'othree/xml.vim', { 'for' : ['html','xml'] }
+"Plug 'jaxbot/browserlink.vim'
+"" % Jump tags
+"Plug 'tmhedberg/matchit'
+"Plug 'digitaltoad/vim-jade'
+"Plug 'mustache/vim-mustache-handlebars', { 'for': ['js', 'html'] }
+" </increase boot time>
 
 " }}}
 
 " {{{ PHP
 
-Plug 'tobyS/vmustache'
-Plug 'tobyS/pdv'
-Plug 'tobyS/skeletons.vim'
-Plug 'shawncplus/phpcomplete.vim', { 'for': 'php' }
-Plug 'junkblocker/unite-codesearch'
+" <boost loading> Plug 'tobyS/vmustache'
+" <boost loading> Plug 'tobyS/pdv'
+" <boost loading> Plug 'tobyS/skeletons.vim'
+" <boost loading> Plug 'shawncplus/phpcomplete.vim', { 'for': 'php' }
+" <boost loading> Plug 'junkblocker/unite-codesearch'
 
 " }}}
 
@@ -108,7 +111,7 @@ Plug 'pangloss/vim-javascript', { 'for' : 'js' }
 
 " . repeats plugins
 Plug 'tpope/vim-repeat'
-Plug 'svermeulen/vim-easyclip'
+" <boost loading> Plug 'svermeulen/vim-easyclip'
 
 " }}}
 
@@ -121,12 +124,12 @@ Plug 'jez/vim-superman'
 
 " {{{ Autocomplete
 
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-if version >= 704
-    Plug 'SirVer/ultisnips'
-    Plug 'honza/vim-snippets'
-endif
+" <boost loading> Plug 'MarcWeber/vim-addon-mw-utils'
+" <boost loading> Plug 'tomtom/tlib_vim'
+" <boost loading> if version >= 704
+    " <boost loading> Plug 'SirVer/ultisnips'
+    " <boost loading> Plug 'honza/vim-snippets'
+" <boost loading> endif
 
 " }}}
 
@@ -151,7 +154,6 @@ Plug 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
 Plug 'vim-scripts/genutils'
 Plug 'vim-scripts/BreakPts'
 Plug 'Colortest'
-
 " }}}
 
 " {{{ Unsorted
@@ -212,20 +214,20 @@ Plug 'sjl/gundo.vim'
 
 " Syntax checking
 
-Plug 'scrooloose/syntastic'
+" <boost loading> Plug 'scrooloose/syntastic'
 " Bracket [n and ]n to jump between SCM conflict markers, [<Space> to insert
 " spaces
 Plug 'tpope/vim-unimpaired'
 
-Plug 'tpope/vim-fugitive'
+" <boost loading> Plug 'tpope/vim-fugitive'
 
 
 " }}}
 
 " {{{ File navigation
 
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'NERD_Tree-and-ack', { 'on':  'NERDTreeToggle' }
+" <boost loading> Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+" <boost loading> Plug 'NERD_Tree-and-ack', { 'on':  'NERDTreeToggle' }
 
 Plug 'Shougo/vimproc.vim', { 'do' : 'make' }
 if version >= 704
@@ -245,23 +247,25 @@ endif
 
 " {{{ HTML/XML/Templates
 
-Plug 'KabbAmine/vCoolor.vim'
-Plug 'othree/xml.vim', { 'for' : ['html','xml'] }
-Plug 'jaxbot/browserlink.vim'
-" % Jump tags
-Plug 'tmhedberg/matchit'
-Plug 'digitaltoad/vim-jade'
-Plug 'mustache/vim-mustache-handlebars', { 'for': ['js', 'html'] }
+" <increase boot time>
+"Plug 'KabbAmine/vCoolor.vim'
+"Plug 'othree/xml.vim', { 'for' : ['html','xml'] }
+"Plug 'jaxbot/browserlink.vim'
+"" % Jump tags
+"Plug 'tmhedberg/matchit'
+"Plug 'digitaltoad/vim-jade'
+"Plug 'mustache/vim-mustache-handlebars', { 'for': ['js', 'html'] }
+" </increase boot time>
 
 " }}}
 
 " {{{ PHP
 
-Plug 'tobyS/vmustache'
-Plug 'tobyS/pdv'
-Plug 'tobyS/skeletons.vim'
-Plug 'shawncplus/phpcomplete.vim', { 'for': 'php' }
-Plug 'junkblocker/unite-codesearch'
+" <boost loading> Plug 'tobyS/vmustache'
+" <boost loading> Plug 'tobyS/pdv'
+" <boost loading> Plug 'tobyS/skeletons.vim'
+" <boost loading> Plug 'shawncplus/phpcomplete.vim', { 'for': 'php' }
+" <boost loading> Plug 'junkblocker/unite-codesearch'
 
 " }}}
 
@@ -269,7 +273,7 @@ Plug 'junkblocker/unite-codesearch'
 
 Plug 'heavenshell/vim-jsdoc', { 'for' : 'js' }
 Plug 'maksimr/vim-jsbeautify', { 'for' : 'js' }
-Plug 'vim-coffee-script', { 'for' : 'coffee' }
+" <boost loading> Plug 'vim-coffee-script', { 'for' : 'coffee' }
 Plug 'einars/js-beautify', { 'for' : 'js' }
 Plug 'pangloss/vim-javascript', { 'for' : 'js' }
 " Colon/Semicolon
@@ -281,7 +285,7 @@ Plug 'pangloss/vim-javascript', { 'for' : 'js' }
 
 " . repeats plugins
 Plug 'tpope/vim-repeat'
-Plug 'svermeulen/vim-easyclip'
+" <boost loading> Plug 'svermeulen/vim-easyclip'
 
 " }}}
 
@@ -305,13 +309,13 @@ endif
 
 " {{{ Color themes & statusbars
 
-Plug 'bling/vim-airline'
+" <boost loading> Plug 'bling/vim-airline'
 Plug 'altercation/vim-colors-solarized'
 " Plug 'tomasr/molokai'
 " Plug 'Lokaltog/vim-distinguished'
 " Plug 'chriskempson/base16-vim'
 " Plug 'tpope/vim-vividchalk'
-Plug 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
+" <boost loading> Plug 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
 " Plug 'rainux/vim-desert-warm-256'
 " Plug 'nanotech/jellybeans.vim'
 " Plug 'junegunn/seoul256.vim'
@@ -321,9 +325,9 @@ Plug 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
 
 " {{{ Debugging vim
 
-Plug 'vim-scripts/genutils'
-Plug 'vim-scripts/BreakPts'
-Plug 'Colortest'
+" <boost loading> Plug 'vim-scripts/genutils'
+" <boost loading> Plug 'vim-scripts/BreakPts'
+" <boost loading> Plug 'Colortest'
 
 " }}}
 
@@ -379,15 +383,18 @@ if filereadable('../.vimrc_local')
     source ../.vimrc_local
 end
 
-if has('gui_running') || has('unix')
-    set background=dark
-    if stridx(&rtp, 'solarized') != -1
-        :colorscheme Tomorrow-Night-Bright
-    endif
-else
-    set background=dark
-    :colorscheme skittles_dark
-endif
+
+"if has('gui_running') || has('unix')
+    "set background=dark
+    "if stridx(&rtp, 'solarized') != -1
+        ":colorscheme Tomorrow-Night-Bright
+    "endif
+"else
+    "set background=dark
+    ":colorscheme skittles_dark
+"endif
+set background=dark
+:colorscheme skittles_dark
 
 if has ('win32')
     set guifont=Powerline_Consolas:h11:cRUSSIAN
@@ -564,7 +571,7 @@ nnoremap <bar> :vsp<cr>
 
 " }}}
 
-" {{{ Misc stuff1
+" {{{ Misc stuff
 
 " {{{ Extra whitespace
 " listchar=trail is not as flexible, use the below to highlight trailing
@@ -1614,20 +1621,4 @@ let g:bl_pagefiletypes = ['html', 'javascript', 'php', 'jade']
 " Shift +K https://github.com/soimort/translate-shell/wiki/Text-Editor-Integration
 nnoremap K :!trans <C-R><C-W><CR>
 " }}}
-" }}}
-
-" {{{ Test
-
-fun! Sorder(list)
-    let new_list = deepcopy(a:list)
-    call sort(new_list)
-    return new_list
-endf
-" }}}
-
-" {{{ Project navigation
-
-command! SwCommon NERDTree rdpromo-common
-command! SwSite   NERDTree rdpromo-site
-command! SwMarkup NERDTree rdpromo-markup
 " }}}
