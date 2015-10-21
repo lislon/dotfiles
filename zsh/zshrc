@@ -1,3 +1,4 @@
+# -*- mode: sh -*-
 # {{{ Oh My Zsh
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
@@ -75,6 +76,10 @@ alias e="emacsclient -c"
 #alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
 alias sc-cat='systemctl cat'
 
+# Run emacs with sudo
+function se {
+    emacsclient -c /sudo::$*
+}
 # play bell sound (at the end of long commands)
 bell () {
         (notify-send "Command complete" &
