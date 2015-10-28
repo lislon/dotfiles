@@ -9,7 +9,7 @@ augroup Man
     autocmd FileType man :nnoremap <buffer> u <C-u>
 augroup end
 
-set nocompatible
+set nocompatible noswapfile
 set nomod nolist nonumber cpoptions-=<
 set scrolloff=300 hlsearch ignorecase smartcase
 set clipboard=unnamed,unnamedplus nomodifiable
