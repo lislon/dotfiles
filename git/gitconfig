@@ -43,7 +43,7 @@
 	default = simple
 [diff]
 	tool = vimdiff
-[github]
-	user = lislon
 [mergetool "fugitive"]
 	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
+[include]
+  path = ~/.gitconfig_local
