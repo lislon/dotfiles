@@ -8,7 +8,7 @@
   (setq-default
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '()
+   dotspacemacs-configuration-layer-path '("~/dotfiles/spacemacs/private")
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
@@ -21,6 +21,7 @@
      auto-completion
      better-defaults
      emacs-lisp
+     common-lisp
      ;; browser-edit
      chrome
      html
@@ -46,7 +47,8 @@
      syntax-checking
      version-control
      csharp
-     ;; spell-checking
+     spell-checking
+     gtags
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -87,10 +89,6 @@
    auto-completion-enable-snippets-in-popup t
    auto-completion-enable-help-tooltip t
 
-   ;; Misc
-   google-translate-default-source-language "en"
-   google-translate-default-target-language "ru"
-
    ;; IRC
    erc-autojoin-channels-alist
    '(("1\\.0\\.0" "#syl20bnr/spacemacs") ; Gitter
@@ -108,11 +106,17 @@
      "\\[Github\\].* labeled an issue in"
      "\\[Github\\].* unlabeled an issue in")
 
-   ;; )
+   ;; Misc
+   google-translate-default-source-language "en"
+   google-translate-default-target-language "ru"
 
    ;; org-mode timestamps in english
    system-time-locale "C"
-  ))
+
+   ;; ANSI Lisp
+   inferior-lisp-program "clisp"
+  )
+  )
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -252,7 +256,7 @@ layers configuration."
   (unless (file-exists-p (concat spacemacs-cache-directory "undo"))
     (make-directory (concat spacemacs-cache-directory "undo")))
 
-  ;; M-\ to escape
+  ;; M-\ to escape from insert mode (from russian language)
   (define-key evil-hybrid-state-map (kbd "M-\\") 'evil-escape)
 
   ;; Vim move right or left
@@ -288,7 +292,8 @@ layers configuration."
    ("Q" ?Й) ("W" ?Ц) ("E" ?У) ("R" ?К) ("T" ?Е) ("Y" ?Н) ("U" ?Г) ("I" ?Ш)
    ("O" ?Щ) ("P" ?З) ("{" ?Х) ("}" ?Ъ) ("A" ?Ф) ("S" ?Ы) ("D" ?В) ("F" ?А)
    ("G" ?П) ("H" ?Р) ("J" ?О) ("K" ?Л) ("L" ?Д) (":" ?Ж) ("\"" ?Э) ("|" ?/)
-   ("Z" ?Я) ("X" ?Ч) ("C" ?С) ("V" ?М) ("B" ?И) ("N" ?Т) ("M" ?Ь) ("<" ?Б))
+   ("Z" ?Я) ("X" ?Ч) ("C" ?С) ("V" ?М) ("B" ?И) ("N" ?Т) ("M" ?Ь) ("<" ?Б)
+   (">" ?Ю))
 
   (setq default-input-method "cyrillic-jcuken")
 
@@ -296,9 +301,7 @@ layers configuration."
   ;; (setq bookmark-default-file "~/.emacs.d/private/bookmarks.el")
 
 
-  (define-generic-mode 'vimrc-generic-mode
-    '()
-    '()
+  (define-generic-mode 'vimrc-generic-mode nil nil
     '(("^[\t ]*:?\\(!\\|ab\\|map\\|unmap\\)[^\r\n\"]*\"[^\r\n\"]*\\(\"[^\r\n\"]*\"[^\r\n\"]*\\)*$"
        (0 font-lock-warning-face))
       ("\\(^\\|[\t ]\\)\\(\".*\\)$"
@@ -379,7 +382,7 @@ layers configuration."
             erc-hl-nicks)))
 
   (add-hook 'erc-mode-hook 'emoji-cheat-sheet-plus-display-mode)
-  
+
   (with-eval-after-load 'erc
     (erc-track-mode -1))
 
@@ -406,60 +409,93 @@ layers configuration."
                  :nick "lislon"
                  :full-name "lislon")))
 
-  (defvar my-org-mobile-sync-timer nil)
+  (defvar my/org-mobile-sync-timer nil)
 
-  (defvar my-org-mobile-sync-secs (* 60 20))
+  (defvar my/org-mobile-sync-secs (* 60 20))
 
-  (defun my-org-mobile-sync-pull-and-push ()
+  (defun my/org-mobile-sync-pull-and-push ()
     (require 'org)
     (org-mobile-pull)
     (org-mobile-push)
     (when (fboundp 'sauron-add-event)
       (sauron-add-event 'my 3 "Called org-mobile-pull and org-mobile-push")))
 
-  (defun my-org-mobile-sync-start ()
+  (defun my/org-mobile-sync-start ()
     "Start automated `org-mobile-push'"
     (interactive)
-    (setq my-org-mobile-sync-timer
-          (run-with-idle-timer my-org-mobile-sync-secs t
-                               'my-org-mobile-sync-pull-and-push)))
+    (setq my/org-mobile-sync-timer
+          (run-with-idle-timer my/org-mobile-sync-secs t
+                               'my/org-mobile-sync-pull-and-push)))
 
-  (defun my-org-mobile-sync-stop ()
+  (defun my/org-mobile-sync-stop ()
     "Stop automated `org-mobile-push'"
     (interactive)
-    (cancel-timer my-org-mobile-sync-timer))
+    (cancel-timer my/org-mobile-sync-timer))
 
-  (my-org-mobile-sync-start)
+  (my/org-mobile-sync-start)
+
+  (defun my/org-mobile-fix-index-bug ()
+    "Fixes MobileOrg's index.org after push to workaround bug in Android.
+That function deletes \"#+ALLPRIORITIES\" line from index.org file"
+    (interactive)
+    (let ((file (concat org-mobile-directory "/index.org")))
+      (save-excursion
+        (with-temp-buffer
+          (insert-file-contents file)
+          (beginning-of-buffer)
+          (when (search-forward "#+ALLPRIORITIES" nil t)
+            ;; Avoid polluting kill-ring by not calling (kill-line)
+            (let ((beg (progn (forward-line 0)
+                              (point))))
+              (forward-line 1)
+              (delete-region beg (point))))
+          (write-region nil nil file)
+          )
+        )))
+  (advice-add 'org-mobile-push :after 'my/org-mobile-fix-index-bug)
 
 
-  ;; Google translate interactive
-  (define-derived-mode google-translate-interactive-mode
-    text-mode "Google Translate"
-    (defun translate-word-and-new-line ()
-      "Shows translation of current work in help buffer and inserts
-new line after it"
-      (interactive)
-      (let ((buffer (current-buffer)) )
-          (move-beginning-of-line nil)
-          (set-mark-command nil)
-          (move-end-of-line nil)
-          (google-translate-at-point)
-        (switch-to-buffer buffer)
-        (evil-insert-newline-below)
-        ))
+  ;; Google translate interactive mode
+  (use-package google-translate
+    :commands (my/google-translate-repl)
+    :config
+      (define-derived-mode google-translate-interactive-mode
+          text-mode "Google Translate"
+          (defun my/next-line-empty-p ()
+          "Check if next line empty"
+          (save-excursion
+              (beginning-of-line 2)
+              (save-match-data
+              (looking-at "[ \t]*$"))
+              ))
+          (defun my/translate-word-and-next-line ()
+          "Shows translation of current line in help buffer and inserts
+          new line after it"
+          (interactive)
+          (let ((buffer (current-buffer)) )
+              (move-beginning-of-line nil)
+              (set-mark-command nil)
+              (move-end-of-line nil)
+              (google-translate-at-point)
+              (switch-to-buffer buffer)
+              (if (eq (point) (point-max))
+                  (newline-and-indent)
+              (end-of-line 2))
+              ))
 
-    (use-local-map (make-sparse-keymap))
-    (local-set-key (kbd "RET") 'translate-word-and-new-line)
-    (define-key evil-normal-state-map (kbd "RET") 'google-translate-at-point))
+          (use-local-map (make-sparse-keymap))
+          (local-set-key (kbd "RET") 'my/translate-word-and-next-line)
+          (define-key evil-normal-state-map (kbd "RET") 'my/translate-word-and-next-line))
 
-    (defun my/google-translate-repl ()
-      (interactive)
-      (let ((buffer (get-buffer-create "Google Translate REPL")))
-        (switch-to-buffer buffer)
-        (google-translate-interactive-mode)
-        (evil-insert-state)
-        (goto-char (buffer-end 1))
-        ))
+       (defun my/google-translate-repl ()
+          (interactive)
+          (let ((buffer (get-buffer-create "Google Translate REPL")))
+              (switch-to-buffer buffer)
+              (google-translate-interactive-mode)
+              (evil-insert-state)
+              (goto-char (buffer-end 1))
+              ))
+    )
 
     (defun lsn-insert-line-and-paste (count)
       "Moves to new line and paste text"
@@ -474,6 +510,8 @@ new line after it"
   (evil-leader/set-key "os" 'yas-visit-snippet-file)
   (evil-leader/set-key "oS" 'yas-new-snippet)
   (define-key evil-normal-state-map (kbd "gp") 'lsn-insert-line-and-paste)
+  (global-set-key (kbd "M-%") 'anzu-query-replace)
+  (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
   
   ;; (add-hook 'evil-hybrid-state-entry-hook
   ;;           (lambda () (literal-insert-mode 1)))
@@ -519,8 +557,8 @@ the OS keyboard is english or russian"
                         'literal-insert))
                     english-chars)
               new-map))
-
-  (server-start)
+  ;; on Linux emacs daemon it complains on error
+  ;; (server-start)
 
   ; Auto set lisp-interaction-mode in *scratch*
   (defun my/scratch-interactive-mode ()
@@ -529,52 +567,25 @@ the OS keyboard is english or russian"
       (remove-hook 'window-configuration-change-hook 'my/scratch-interactive-mode))
     )
   (add-hook 'window-configuration-change-hook 'my/scratch-interactive-mode)
-
-    (defmacro google-translate-redef-google-translate--request (url-or-qparams)
-    "Redefine `google-translate--request' from URL-OR-QPARAMS.
-    If you use qparams, query parameters not including \"tl\", \"sl\" and \"q\" is needed."
-    (let ((g-query-params (cl-gensym "query-params"))
-            (g-url-or-qparams (cl-gensym "url-or-qparams")))
-        `(defun google-translate--request (source-language
-                                        target-language
-                                        text
-                                        &optional for-test-purposes)
-        (let* ((,g-url-or-qparams ,url-or-qparams)
-                (,g-query-params
-                (cl-delete-if
-                    (lambda (ls) (member (car ls) '("tl" "sl" "q")))
-                    (if (stringp ,g-url-or-qparams)
-                        (mapcar (lambda (str) (cl-destructuring-bind
-                                            (n v)
-                                            (split-string str "=")
-                                            (cons n v)))
-                                (split-string (cadr (split-string ,g-url-or-qparams "?")) "&"))
-                    ,g-url-or-qparams))))
-            (google-translate--http-response-body
-            (google-translate--format-request-url
-            `(("sl" . ,source-language)
-                ("tl" . ,target-language)
-                ("q"  . ,text)
-                ,@,g-query-params))
-            for-test-purposes)))))
-
-    (google-translate-redef-google-translate--request
-    ;; This url was copied at Network Monitor of Firefox.
-     "https://translate.google.com/translate_a/single?client=t&sl=en&tl=ru&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&source=bh&ssel=0&tsel=0&otf=1&kc=4&tk=973064|575153&q=%D0%B5%D1%83%D1%8B%D0%B5")
+  ;; Beyond eol makes ~SPC m e e~ usable
+  (add-hook 'lisp-mode-hook ((lambda () (setq-local evil-move-beyond-eol t))))
 
     ;; Using chrome as default browser
-    (if (eq system-type 'gnu/linux)
+  (if (eq system-type 'gnu/linux)
         (setq browse-url-browser-function 'browse-url-generic
               browse-url-generic-program "chromium"))
 
     ;; Auto github favore mode when editing markdown
     (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
-    ;; End of private config
-)
 
-;; Load local
-(when (file-exists-p "~/local.el")
-  (load "~/local.el"))
+    ;; Load local
+    (when (file-exists-p "~/local.el")
+      (load "~/local.el"))
+
+    (require 'org)
+    ;; End of private config
+    )
+
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -591,3 +602,4 @@ the OS keyboard is english or russian"
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+
