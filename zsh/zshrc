@@ -20,6 +20,7 @@ ZSH_THEME="bira"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="true"
+DISABLE_AUTO_UPDATE=true
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -64,9 +65,11 @@ alias luarc="$EDITOR ~/.config/awesome/rc.lua"
 alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle" -option ctrl:nocaps'
 alias help='man'
 alias cal='cal -m'
+alias dmesgl='dmesg --color=always | less -R'
 alias ll='ls -hla'
 alias bb='sudo /usr/bin/shutdown now'
 alias bbr='sudo /usr/bin/shutdown -r now'
+alias bbh='systemctl suspend'
 alias svim='sudo -E vim'
 alias -s pdf='xdg-open'
 alias recent='find . -maxdepth 1 -type f -atime -1'             # show recent files
@@ -75,6 +78,11 @@ alias e="emacsclient -c"
 #alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
 #alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
 alias sc-cat='systemctl cat'
+
+# find
+function ff {
+    echo find $2 -iname "$1" 2>/dev/null
+}
 
 # Run emacs with sudo
 function se {
@@ -90,6 +98,9 @@ bell () {
 if `which pacman &>/dev/null`; then
     alias i="sudo pacman -S"
     alias is="pacman -Ss"
+    alias ir="sudo pacman -Rsu"
+    alias ya="yaourt -S"
+    alias yas="yaourt -Ss"
 elif `which apt-get &>/dev/null`; then
     alias i="sudo apt-get install"
     alias is="sudo apt-get search"
@@ -137,8 +148,6 @@ then
     unsetopt zle
     unsetopt prompt_cr
     unsetopt prompt_subst
-    unfunction precmd
-    unfunction preexec
     PS1='$ '
 fi
 
@@ -168,9 +177,8 @@ export MANPAGER="/bin/sh -c \"col -b | vim -u ~/dotfiles/zsh/man.vimrc -c 'set n
 # }}}
 # {{{ Misc
 
-bak () {
-    mv $1 $1.bak
-    echo "Make backup $1.bak"
+bakup () {
+    cp "$1" "$1.bak" && echo "Made backup $1.bak"
 }
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
@@ -264,9 +272,6 @@ bindkey "^[s" insert-sudo
 
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-
-#export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-#export XDG_CONFIG_HOME=~/.config
 
 export FZF_DEFAULT_OPTS=--extended-exact
 

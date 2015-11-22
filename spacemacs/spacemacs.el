@@ -1,4 +1,4 @@
-;;; .spacemacs --- My personal configuration file for spacemacs
+;; .spacemacs --- My personal configuration file for spacemacs
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
@@ -33,6 +33,7 @@
      colors
      java
      javascript
+     ;; python
      ;; eyebrowse
      semantic
      erc
@@ -54,7 +55,7 @@
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(quickrun systemd tea-time)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -71,6 +72,7 @@
    evil-move-beyond-eol nil
    evil-escape-unordered-key-sequence t
    spaceline-org-clock-p t
+   x-select-enable-primary t            ; copy/paste from emacs to urxvt
 
    ;; backup
    make-backup-files t
@@ -113,8 +115,12 @@
    ;; org-mode timestamps in english
    system-time-locale "C"
 
-   ;; ANSI Lisp
-   inferior-lisp-program "clisp"
+   ;; Git fullscreen
+   git-magit-status-fullscreen t
+
+   ;; Tea time sound
+   tea-time-sound "~/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
+   tea-time-sound-command "aplay %s"
   )
   )
 
@@ -234,6 +240,8 @@ before layers configuration."
    ;; specified with an installed package.
    ;; Not used for now.
    dotspacemacs-default-package-repository nil
+
+   dotspacemacs-remap-Y-to-y$ t
    )
   ;; User initialization goes here
   )
@@ -247,6 +255,7 @@ layers configuration."
   (define-key key-translation-map (kbd "C-j") (kbd "C-x"))
   (define-key key-translation-map (kbd "C-x") (kbd "C-j"))
   ;; (setq spaceline-org-clock-p t)
+  ;; (setq initial-buffer-choice '(lambda () (get-buffer org-agenda-buffer-name)))
 
   (setq  spaceline-org-clock-p t)
   ;; Persistent undo
@@ -288,12 +297,12 @@ layers configuration."
    ("k" ?л) ("l" ?д) (";" ?ж) ("'" ?э) ("\\" ?\\) ("z" ?я) ("x" ?ч) ("c" ?с)
    ("v" ?м) ("b" ?и) ("n" ?т) ("m" ?ь) ("," ?б) ("." ?ю) ("/" ?.) ("!" ?!)
    ("@" ?\") ("#" ?#) ("$" ?\;) ("%" ?%) ("^" ?:) ("&" ??) ("*" ?*) ("(" ?()
-   (")" ?)) ("_" ?_) ("+" ?+) ("~" ?Ё) ("?" ?,)
-   ("Q" ?Й) ("W" ?Ц) ("E" ?У) ("R" ?К) ("T" ?Е) ("Y" ?Н) ("U" ?Г) ("I" ?Ш)
-   ("O" ?Щ) ("P" ?З) ("{" ?Х) ("}" ?Ъ) ("A" ?Ф) ("S" ?Ы) ("D" ?В) ("F" ?А)
-   ("G" ?П) ("H" ?Р) ("J" ?О) ("K" ?Л) ("L" ?Д) (":" ?Ж) ("\"" ?Э) ("|" ?/)
-   ("Z" ?Я) ("X" ?Ч) ("C" ?С) ("V" ?М) ("B" ?И) ("N" ?Т) ("M" ?Ь) ("<" ?Б)
-   (">" ?Ю))
+                                                                     (")" ?)) ("_" ?_) ("+" ?+) ("~" ?Ё) ("?" ?,)
+                                                                     ("Q" ?Й) ("W" ?Ц) ("E" ?У) ("R" ?К) ("T" ?Е) ("Y" ?Н) ("U" ?Г) ("I" ?Ш)
+                                                                     ("O" ?Щ) ("P" ?З) ("{" ?Х) ("}" ?Ъ) ("A" ?Ф) ("S" ?Ы) ("D" ?В) ("F" ?А)
+                                                                     ("G" ?П) ("H" ?Р) ("J" ?О) ("K" ?Л) ("L" ?Д) (":" ?Ж) ("\"" ?Э) ("|" ?/)
+                                                                     ("Z" ?Я) ("X" ?Ч) ("C" ?С) ("V" ?М) ("B" ?И) ("N" ?Т) ("M" ?Ь) ("<" ?Б)
+                                                                     (">" ?Ю))
 
   (setq default-input-method "cyrillic-jcuken")
 
@@ -302,18 +311,18 @@ layers configuration."
 
 
   (define-generic-mode 'vimrc-generic-mode nil nil
-    '(("^[\t ]*:?\\(!\\|ab\\|map\\|unmap\\)[^\r\n\"]*\"[^\r\n\"]*\\(\"[^\r\n\"]*\"[^\r\n\"]*\\)*$"
-       (0 font-lock-warning-face))
-      ("\\(^\\|[\t ]\\)\\(\".*\\)$"
-       (2 font-lock-comment-face))
-      ("\"\\([^\n\r\"\\]\\|\\.\\)*\""
-       (0 font-lock-string-face)))
-    '("/vimrc\\'" "\\.vim\\(rc\\)?\\'")
-    '((lambda ()
-        (modify-syntax-entry ?\" ".")))
-    "Generic mode for Vim configuration files.")
+                       '(("^[\t ]*:?\\(!\\|ab\\|map\\|unmap\\)[^\r\n\"]*\"[^\r\n\"]*\\(\"[^\r\n\"]*\"[^\r\n\"]*\\)*$"
+                          (0 font-lock-warning-face))
+                         ("\\(^\\|[\t ]\\)\\(\".*\\)$"
+                          (2 font-lock-comment-face))
+                         ("\"\\([^\n\r\"\\]\\|\\.\\)*\""
+                          (0 font-lock-string-face)))
+                       '("/vimrc\\'" "\\.vim\\(rc\\)?\\'")
+                       '((lambda ()
+                           (modify-syntax-entry ?\" ".")))
+                       "Generic mode for Vim configuration files.")
 
-   ;; Disable hello file, because it hangs
+  ;; Disable hello file, because it hangs
   (global-unset-key (kbd "C-h h"))
 
   (defun my/keys-help-sheet (args)
@@ -321,11 +330,11 @@ layers configuration."
     (interactive "P")
     (split-window-right-and-focus)
     (unless (get-buffer "Keys")
-        (find-file "~/org/todo.org")
-        (let ((buffer (make-indirect-buffer (current-buffer) "Keys")))
-          (switch-to-buffer buffer)
-          (org-mode)
-          (spacemacs/toggle-current-window-dedication)
+      (find-file "~/org/todo.org")
+      (let ((buffer (make-indirect-buffer (current-buffer) "Keys")))
+        (switch-to-buffer buffer)
+        (org-mode)
+        (spacemacs/toggle-current-window-dedication)
         ))
     (switch-to-buffer (get-buffer "Keys"))
     (widen)
@@ -386,6 +395,8 @@ layers configuration."
   (with-eval-after-load 'erc
     (erc-track-mode -1))
 
+  (defvar lsn/gitter-pwd "" "Password in local.el")
+
   (evil-leader/set-key
     "aiq" 'erc-quit-server
     "aid" (defun bb/gitter-debug ()
@@ -410,7 +421,6 @@ layers configuration."
                  :full-name "lislon")))
 
   (defvar my/org-mobile-sync-timer nil)
-
   (defvar my/org-mobile-sync-secs (* 60 20))
 
   (defun my/org-mobile-sync-pull-and-push ()
@@ -432,7 +442,7 @@ layers configuration."
     (interactive)
     (cancel-timer my/org-mobile-sync-timer))
 
-  (my/org-mobile-sync-start)
+  ;; (my/org-mobile-sync-start)
 
   (defun my/org-mobile-fix-index-bug ()
     "Fixes MobileOrg's index.org after push to workaround bug in Android.
@@ -442,7 +452,7 @@ That function deletes \"#+ALLPRIORITIES\" line from index.org file"
       (save-excursion
         (with-temp-buffer
           (insert-file-contents file)
-          (beginning-of-buffer)
+          (goto-char (point-min))
           (when (search-forward "#+ALLPRIORITIES" nil t)
             ;; Avoid polluting kill-ring by not calling (kill-line)
             (let ((beg (progn (forward-line 0)
@@ -459,60 +469,75 @@ That function deletes \"#+ALLPRIORITIES\" line from index.org file"
   (use-package google-translate
     :commands (my/google-translate-repl)
     :config
-      (define-derived-mode google-translate-interactive-mode
-          text-mode "Google Translate"
-          (defun my/next-line-empty-p ()
-          "Check if next line empty"
-          (save-excursion
-              (beginning-of-line 2)
-              (save-match-data
-              (looking-at "[ \t]*$"))
-              ))
-          (defun my/translate-word-and-next-line ()
-          "Shows translation of current line in help buffer and inserts
+    (define-derived-mode google-translate-interactive-mode
+      text-mode "Google Translate"
+      (defun my/next-line-empty-p ()
+        "Check if next line empty"
+        (save-excursion
+          (beginning-of-line 2)
+          (save-match-data
+            (looking-at "[ \t]*$"))
+          ))
+      (defun my/translate-word-and-next-line ()
+        "Shows translation of current line in help buffer and inserts
           new line after it"
-          (interactive)
-          (let ((buffer (current-buffer)) )
-              (move-beginning-of-line nil)
-              (set-mark-command nil)
-              (move-end-of-line nil)
-              (google-translate-at-point)
-              (switch-to-buffer buffer)
-              (if (eq (point) (point-max))
-                  (newline-and-indent)
-              (end-of-line 2))
-              ))
+        (interactive)
+        (let ((buffer (current-buffer)) )
+          (move-beginning-of-line nil)
+          (set-mark-command nil)
+          (move-end-of-line nil)
+          (google-translate-at-point)
+          (switch-to-buffer buffer)
+          (if (eq (point) (point-max))
+              (newline-and-indent)
+            (end-of-line 2))
+          ))
 
-          (use-local-map (make-sparse-keymap))
-          (local-set-key (kbd "RET") 'my/translate-word-and-next-line)
-          (define-key evil-normal-state-map (kbd "RET") 'my/translate-word-and-next-line))
+      (use-local-map (make-sparse-keymap))
+      (local-set-key (kbd "RET") 'my/translate-word-and-next-line)
+      (define-key evil-normal-state-map (kbd "RET") 'my/translate-word-and-next-line))
 
-       (defun my/google-translate-repl ()
-          (interactive)
-          (let ((buffer (get-buffer-create "Google Translate REPL")))
-              (switch-to-buffer buffer)
-              (google-translate-interactive-mode)
-              (evil-insert-state)
-              (goto-char (buffer-end 1))
-              ))
+    (defun my/google-translate-repl ()
+      (interactive)
+      (let ((buffer (get-buffer-create "Google Translate REPL")))
+        (switch-to-buffer buffer)
+        (google-translate-interactive-mode)
+        (evil-insert-state)
+        (goto-char (buffer-end 1))
+        ))
     )
 
-    (defun lsn-insert-line-and-paste (count)
-      "Moves to new line and paste text"
-        (interactive "P")
-        (move-end-of-line nil)
-        (newline)
-        (evil-paste-after count))
+  (defun lsn-insert-line-and-paste (count)
+    "Moves to new line and paste text"
+    (interactive "P")
+    (move-end-of-line nil)
+    (newline)
+    (evil-paste-after count))
 
   (evil-leader/set-key "x g i" 'my/google-translate-repl)
   ;; SPC o k - Show cheatsheet with hotkeys
   (evil-leader/set-key "ok" 'my/keys-help-sheet)
   (evil-leader/set-key "os" 'yas-visit-snippet-file)
   (evil-leader/set-key "oS" 'yas-new-snippet)
+  (evil-leader/set-key "az" 'shell)
   (define-key evil-normal-state-map (kbd "gp") 'lsn-insert-line-and-paste)
+
+  ;; I used to C-v for scroll down, not sure about visual block
+  (define-key evil-normal-state-map (kbd "C-v") 'evil-scroll-down)
+  (define-key evil-motion-state-map (kbd "C-v") 'evil-scroll-down)
+  (define-key evil-normal-state-map (kbd "C-S-v") 'evil-visual-block)
+
   (global-set-key (kbd "M-%") 'anzu-query-replace)
   (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
-  
+  (global-set-key (kbd "C-c t") 'tea-time)
+  (global-set-key (kbd "C-c T") 'tea-show-remaining-time)
+
+  (global-set-key (kbd "<f8>") 'quickrun)
+  (setq quickrun-focus-p t)
+
+  ;; recent-f sort minor mode
+  (helm-adaptive-mode)
+
   ;; (add-hook 'evil-hybrid-state-entry-hook
   ;;           (lambda () (literal-insert-mode 1)))
   ;; (add-hook 'evil-hybrid-state-exit-hook
@@ -560,7 +585,7 @@ the OS keyboard is english or russian"
   ;; on Linux emacs daemon it complains on error
   ;; (server-start)
 
-  ; Auto set lisp-interaction-mode in *scratch*
+                                        ; Auto set lisp-interaction-mode in *scratch*
   (defun my/scratch-interactive-mode ()
     (when (equal "*scratch*" (buffer-name))
       (lisp-interaction-mode)
@@ -570,21 +595,49 @@ the OS keyboard is english or russian"
   ;; Beyond eol makes ~SPC m e e~ usable
   (add-hook 'lisp-mode-hook ((lambda () (setq-local evil-move-beyond-eol t))))
 
-    ;; Using chrome as default browser
+  ;; Using chrome as default browser
   (if (eq system-type 'gnu/linux)
-        (setq browse-url-browser-function 'browse-url-generic
-              browse-url-generic-program "chromium"))
+      (setq browse-url-browser-function 'browse-url-generic
+            browse-url-generic-program "chromium"))
 
-    ;; Auto github favore mode when editing markdown
-    (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
+  ;; Auto github favore mode when editing markdown
+  (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
 
-    ;; Load local
-    (when (file-exists-p "~/local.el")
-      (load "~/local.el"))
+  ;; Automode for awesomewm files like rc.lua.blackburg, rc.lua_test
+  (add-to-list 'auto-mode-alist '("\\.lua.+" . lua-mode))
 
-    (require 'org)
-    ;; End of private config
-    )
+  ;; Add ~/dotfiles/spacemacs/private/snippets directory
+  (eval-after-load "yasnippet"
+    '(setq yas-snippet-dirs
+           (cons 
+            (expand-file-name (concat
+                               (car dotspacemacs-configuration-layer-path)
+                               "/snippets"))
+            (cdr yas-snippet-dirs))))
+
+  ;; Remove ~/.emacs.d/melpa from ignore list
+  (eval-after-load "recentf"
+    '(delete (expand-file-name package-user-dir) recentf-exclude))
+
+  (defun my/spacemacs-maybe-kill-emacs ()
+    "If emacs server is running, kills frame instead of server"
+    (interactive)
+    (if (server-running-p)
+        (spacemacs/frame-killer)
+      (spacemacs/kill-emacs)))
+
+  ;; I don't want close emacs daemon by SPC q q
+  (evil-leader/set-key "qq" 'my/spacemacs-maybe-kill-emacs)
+
+  ;; Load local
+  (when (file-exists-p "~/local.el")
+    (load "~/local.el"))
+
+  ;; Preload org to resume clock in time
+  (require 'org)
+
+  ;; End of private config
+  )
 
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -594,6 +647,9 @@ the OS keyboard is english or russian"
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (avy smartparens pcache markdown-mode projectile helm helm-core yasnippet js2-mode magit csharp-mode auto-complete flycheck evil persp-mode help-fns+ evil-indent-plus bind-map tea-time zenburn-theme xkcd ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe use-package toc-org tagedit systemd stickyfunc-enhance srefactor spray spacemacs-theme spaceline solarized-theme smooth-scrolling smeargle slime slim-mode scss-mode sass-mode restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters quickrun quelpa popwin pcre2el paradox page-break-lines org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omnisharp noflet neotree move-text monokai-theme magit-gitflow magit-gh-pulls macrostep lua-mode lorem-ipsum linum-relative leuven-theme less-css-mode json-mode js2-refactor js-doc jade-mode info+ indent-guide ido-vertical-mode hungry-delete htmlize highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flyspell helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist ggtags flycheck-pos-tip flx-ido fish-mode fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-jumper evil-indent-textobject evil-iedit-state evil-exchange evil-escape evil-args evil-anzu eval-sexp-fu erc-yt erc-view-log erc-social-graph erc-image erc-hl-nicks emoji-cheat-sheet-plus emmet-mode emacs-eclim elisp-slime-nav edit-server diff-hl define-word company-web company-tern company-statistics company-quickhelp company-emoji coffee-mode clean-aindent-mode buffer-move auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -602,4 +658,3 @@ the OS keyboard is english or russian"
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
-

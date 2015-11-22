@@ -11,14 +11,12 @@ if (!exists("g:original_rtp"))
 else
     let &rtp=g:original_rtp
 endif
-
 call plug#begin()
 
 " }}}
 
 " {{{ General editing plugins
-
-
+Plug 'airblade/vim-gitgutter'
 " Smart closing quotes
 Plug 'Raimondi/delimitMate'
 " Russian keyboard fixes
@@ -45,15 +43,15 @@ Plug 'scrooloose/syntastic'
 " spaces
 Plug 'tpope/vim-unimpaired'
 
-" <boost loading> Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 
 
 " }}}
 
 " {{{ File navigation
 
-" <boost loading> Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-" <boost loading> Plug 'NERD_Tree-and-ack', { 'on':  'NERDTreeToggle' }
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'NERD_Tree-and-ack', { 'on':  'NERDTreeToggle' }
 
 Plug 'Shougo/vimproc.vim', { 'do' : 'make' }
 if version >= 704
@@ -173,172 +171,6 @@ Plug 'mileszs/ack.vim'
 " Not hels with js
 "Plug 'Valloric/YouCompleteMe'
 "Plug 'vim-scripts/indenthtml.vim'
-
-" {{{ Plug init
-
-set nocompatible              " be iMproved, required
-filetype off                  " required
-
-" Reset rtp for disabling plugin when resource vimrc
-if (!exists("g:original_rtp"))
-    let g:original_rtp = &rtp
-else
-    let &rtp=g:original_rtp
-endif
-
-call plug#begin()
-
-" }}}
-
-" {{{ General editing plugins
-
-
-" Smart closing quotes
-Plug 'Raimondi/delimitMate'
-" Russian keyboard fixes
-
-Plug 'Lokaltog/vim-easymotion'
-Plug 'lyokha/vim-xkbswitch'
-Plug 'tpope/vim-surround'
-
-" Share to gist :Gist
-Plug 'mattn/webapi-vim'
-Plug 'mattn/gist-vim'
-
-Plug 'scrooloose/nerdcommenter'
-Plug 'Yggdroot/indentLine'
-Plug 'terryma/vim-multiple-cursors'
-
-" Undo visualize
-Plug 'sjl/gundo.vim'
-
-" Syntax checking
-
-" <boost loading> Plug 'scrooloose/syntastic'
-" Bracket [n and ]n to jump between SCM conflict markers, [<Space> to insert
-" spaces
-Plug 'tpope/vim-unimpaired'
-
-" <boost loading> Plug 'tpope/vim-fugitive'
-
-
-" }}}
-
-" {{{ File navigation
-
-" <boost loading> Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-" <boost loading> Plug 'NERD_Tree-and-ack', { 'on':  'NERDTreeToggle' }
-
-Plug 'Shougo/vimproc.vim', { 'do' : 'make' }
-if version >= 704
-    Plug 'Shougo/unite.vim'
-endif
-Plug 'Shougo/neomru.vim'
-Plug 'Shougo/unite-session'
-Plug 'tsukkee/unite-help'
-"Plug 'ujihisa/unite-colorscheme'
-if has('win32')
-    Plug 'sgur/unite-everything'
-else
-    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-endif
-
-" }}}
-
-" {{{ HTML/XML/Templates
-
-" <increase boot time>
-"Plug 'KabbAmine/vCoolor.vim'
-"Plug 'othree/xml.vim', { 'for' : ['html','xml'] }
-"Plug 'jaxbot/browserlink.vim'
-"" % Jump tags
-"Plug 'tmhedberg/matchit'
-"Plug 'digitaltoad/vim-jade'
-"Plug 'mustache/vim-mustache-handlebars', { 'for': ['js', 'html'] }
-" </increase boot time>
-
-" }}}
-
-" {{{ PHP
-
-" <boost loading> Plug 'tobyS/vmustache'
-" <boost loading> Plug 'tobyS/pdv'
-" <boost loading> Plug 'tobyS/skeletons.vim'
-" <boost loading> Plug 'shawncplus/phpcomplete.vim', { 'for': 'php' }
-" <boost loading> Plug 'junkblocker/unite-codesearch'
-
-" }}}
-
-" {{{ Javascript/Coffescript
-
-Plug 'heavenshell/vim-jsdoc', { 'for' : 'js' }
-Plug 'maksimr/vim-jsbeautify', { 'for' : 'js' }
-" <boost loading> Plug 'vim-coffee-script', { 'for' : 'coffee' }
-Plug 'einars/js-beautify', { 'for' : 'js' }
-Plug 'pangloss/vim-javascript', { 'for' : 'js' }
-" Colon/Semicolon
-"Plug 'lfilho/cosco.vim'
-
-" }}}
-
-" {{{ Utility Editing
-
-" . repeats plugins
-Plug 'tpope/vim-repeat'
-" <boost loading> Plug 'svermeulen/vim-easyclip'
-
-" }}}
-
-" {{{ File Types
-
-Plug 'Matt-Deacalion/vim-systemd-syntax', { 'for' : 'systemd' }
-Plug 'jez/vim-superman'
-
-" }}}
-
-" {{{ Autocomplete
-
-Plug 'MarcWeber/vim-addon-mw-utils'
-Plug 'tomtom/tlib_vim'
-if version >= 704
-    Plug 'SirVer/ultisnips'
-    Plug 'honza/vim-snippets'
-endif
-
-" }}}
-
-" {{{ Color themes & statusbars
-
-" <boost loading> Plug 'bling/vim-airline'
-Plug 'altercation/vim-colors-solarized'
-" Plug 'tomasr/molokai'
-" Plug 'Lokaltog/vim-distinguished'
-" Plug 'chriskempson/base16-vim'
-" Plug 'tpope/vim-vividchalk'
-" <boost loading> Plug 'chriskempson/tomorrow-theme', {'rtp': 'vim'}
-" Plug 'rainux/vim-desert-warm-256'
-" Plug 'nanotech/jellybeans.vim'
-" Plug 'junegunn/seoul256.vim'
-" Plug 'vim-scripts/wombat256.vim'
-
-" }}}
-
-" {{{ Debugging vim
-
-" <boost loading> Plug 'vim-scripts/genutils'
-" <boost loading> Plug 'vim-scripts/BreakPts'
-" <boost loading> Plug 'Colortest'
-
-" }}}
-
-" {{{ Unsorted
-Plug 'xolox/vim-misc'
-Plug 'tabmerge'
-Plug 'rosenfeld/conque-term'
-Plug 'mileszs/ack.vim'
-"Plug 'JazzCore/ctrlp-cmatcher'
-" }}}
-
 
 "Plug 'terryma/vim-smooth-scroll' " Irritates me when I want to have a brief
 " view on project
@@ -1293,7 +1125,6 @@ let g:NERDTreeMapOpenInTab='<c-t>'
 let g:NERDTreeMapOpenSplit='<c-i>'
 let g:NERDTreeMapOpenVSplit='<c-v>'
 
-
 " Alt + 1 - NERD Tree
 if has('win32')
     :nnoremap <A-2> :NERDTreeFind<CR>
@@ -1462,19 +1293,19 @@ endif
 
 " }}}
 " GREP in project (,ff)
-nnoremap <silent> <Leader>ff :<C-u>Unite grep:.
- \ -buffer-name=search-buffer -auto-preview<CR>
+"nnoremap <silent> <Leader>ff :<C-u>Unite grep:.
+ "\ -buffer-name=search-buffer -auto-preview<CR>
 " Grep in system Anything
 nnoremap <silent> <Leader>fg :<C-u>Unite everything/async -start-insert<CR>
 " GREP word under cursor (,fw)
 nnoremap <silent> <Leader>fw :<C-u>UniteWithCursorWord grep:.
             \ -buffer-name=search-buffer -auto-preview<CR>
 " Find neary-by file - ,fn
-nnoremap <silent> <Leader>fn :<C-u>UniteWithBufferDir file -start-insert<CR>
+nnoremap <silent> <Leader>ff :<C-u>UniteWithBufferDir file -start-insert<CR>
 " MRU files (,m)
-nnoremap <leader>m :<c-u>Unite file_mru -start-insert<CR>
+nnoremap <leader>fr :<c-u>Unite file_mru -start-insert<CR>
 " Line Search (,l)
-nnoremap <silent> <leader>l :<C-u>Unite line -start-insert -default-action=persist_open<CR>
+nnoremap <silent> <leader>fl :<C-u>Unite line -start-insert -default-action=persist_open<CR>
 " New file in same buffer (use -tab for new buffer)
 nnoremap <silent> <leader>n :<C-u>UniteWithBufferDir file/new
             \ -start-insert -winheight=1 -here<CR>
@@ -1622,3 +1453,10 @@ let g:bl_pagefiletypes = ['html', 'javascript', 'php', 'jade']
 nnoremap K :!trans <C-R><C-W><CR>
 " }}}
 " }}}
+
+" {{{ Test area
+nmap ]h <Plug>GitGutterNextHunk
+nmap [h <Plug>GitGutterPrevHunk
+"nnoremap <silent> <expr> <Plug>GitGutterNextHunk &diff ? ']h' : ":\<C-U>execute v:count1 . 'GitGutterNextHunk'\<CR>"
+"nnoremap <silent> <expr> <Plug>GitGutterPrevHunk &diff ? '[h' : ":\<C-U>execute v:count1 . 'GitGutterPrevHunk'\<CR>"
+"}}}
