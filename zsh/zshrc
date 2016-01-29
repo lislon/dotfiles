@@ -325,7 +325,7 @@ function ff {
 }
 
 # I use my own upgrade in ~/bin
-unset -f upgrade
+type upgrade && unset -f upgrade
 
 if [[ "$TERM" == "dumb" ]]
 then
