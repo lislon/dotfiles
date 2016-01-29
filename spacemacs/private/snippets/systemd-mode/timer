@@ -1,0 +1,15 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: timer
+# key: timer
+# --
+
+[Unit]
+Description=$1
+
+[Timer]
+OnCalendar=${2:1 day}
+AccuracySec=12h
+Persistent=true
+
+[Install]
+WantedBy=default.target

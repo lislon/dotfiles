@@ -27,7 +27,7 @@ DISABLE_AUTO_UPDATE=true
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-plugins=(git composer fasd gitfast autojump bower npm common-aliases wd)
+plugins=(git fasd gitfast common-aliases wd)
 if [ -f "/etc/arch-release" ]; then
     plugins+=(archlinux systemd)
     export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
@@ -57,6 +57,7 @@ alias gl='git --no-pager log --oneline --graph -5'
 alias gpush='git push'
 alias tmux='tmux -2'
 alias s="sudo "
+alias sus="systemctl suspend"
 alias -g G="| grep -i"
 alias -g L="| less -R"
 alias -g H="| ack --passthru "
@@ -66,22 +67,27 @@ alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle" -option ctrl
 alias help='man'
 alias cal='cal -m'
 alias dmesgl='dmesg --color=always | less -R'
-alias ll='ls -hla'
+alias ll='ls -hlAt'
+alias mp='mplayer'
+alias ag='ag --color'
+alias pia='ping ya.ru'
 alias bb='sudo /usr/bin/shutdown now'
 alias bbr='sudo /usr/bin/shutdown -r now'
 alias bbh='systemctl suspend'
 alias svim='sudo -E vim'
+alias cx='chmod +x'
 alias -s pdf='xdg-open'
-alias recent='find . -maxdepth 1 -type f -atime -1'             # show recent files
+alias recent='find . -maxdepth 2 -type f -atime -1'             # show recent files
 alias emax="emacsclient -nw"                      # used to be "emacs -nw"
 alias e="emacsclient -c"
 #alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
 #alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
 alias sc-cat='systemctl cat'
 
-# find
-function ff {
-    echo find $2 -iname "$1" 2>/dev/null
+
+function trash {
+    mkdir -p /tmp/trash
+    mv $1 /tmp/
 }
 
 # Run emacs with sudo
@@ -89,18 +95,23 @@ function se {
     emacsclient -c /sudo::$*
 }
 # play bell sound (at the end of long commands)
-bell () {
-        (notify-send "Command complete" &
-        cvlc --no-loop --play-and-exit ~/bin/ding.wav 2>/dev/null &)
+bell() {
+    (notify-send "Command complete $1" &
+        aplay ~/bin/ding.wav 2>/dev/null &)
 }
+
+alias ding=bell
+alias r=reload
 
 # OS-depend aliases
 if `which pacman &>/dev/null`; then
     alias i="sudo pacman -S"
-    alias is="pacman -Ss"
+    function is { pacman -Ss $1 H $1 }
     alias ir="sudo pacman -Rsu"
     alias ya="yaourt -S"
-    alias yas="yaourt -Ss"
+    alias yac="yaourt --noconfirm -S"
+    function yas { yaourt --color -Ss $1 H $1 }
+    alias yad="yaourt -Rsun"
 elif `which apt-get &>/dev/null`; then
     alias i="sudo apt-get install"
     alias is="sudo apt-get search"
@@ -117,7 +128,7 @@ path=( ~/bin ~/.local/bin $path )
 fpath=(~/dotfiles/.zshfunc $fpath)
 
 export ENV='development'
-export HISTSIZE=100000
+export HISTSIZE=15000
 export HISTFILE="$HOME/.history"
 export SAVEHIST=$HISTSIZE
 #export EDITOR='vim'
@@ -141,14 +152,6 @@ if [[ -n ${INSIDE_EMACS} ]]; then
 else
     #Fix backspace issue when using rxvt + ssh
     export TERM='xterm'
-fi
-
-if [[ "$TERM" == "dumb" ]]
-then
-    unsetopt zle
-    unsetopt prompt_cr
-    unsetopt prompt_subst
-    PS1='$ '
 fi
 
 # Show stats if commands takes longer then 10 sec
@@ -203,6 +206,7 @@ fo() {
     fi
 }
 
+
 # # fd - cd to selected directory
 # fd() {
 #     local dir
@@ -233,6 +237,27 @@ mkdircd() {
 
 writecmd() {
     perl -e '$TIOCSTI = 0x5412; $l = <STDIN>; $lc = $ARGV[0] eq "-run" ? "\n" : ""; $l =~ s/\s*$/$lc/; map { ioctl STDOUT, $TIOCSTI, $_; } split "", $l;' -- $1
+}
+
+make-bin-link() {
+    if [[ -f "~/bin/${1:t}" ]] ; then
+        mv "$1" ~/confiles/linux/bin/
+        ln -s ~/confiles/linux/bin/${1:t} ~/bin/${1:t}
+        echo "link done ~/bin/${1:t} -> ~/confiles/linux/bin/${1:t}"
+    else
+        echo "File already exists"
+    fi
+}
+
+make-systemd-link() {
+    if [[ -f ~/.config/systemd/user/$1 ]] ; then
+        mv ~/.config/systemd/user/$1 ~/confiles/linux/config/systemd/user/
+        ln -s ~/confiles/linux/config/systemd/user/${1:t} ~/.config/systemd/user/${1:t}
+        echo "link done ~/confiles/linux/config/systemd/user/${1:t} -> ~/.config/systemd/user/${1:t}"
+    else
+
+        echo "no such user service ~/.config/systemd/user/$1"
+    fi
 }
 
 fzf-locate() { locate "*" | fzf -e }
@@ -275,9 +300,41 @@ bindkey "^[s" insert-sudo
 
 export FZF_DEFAULT_OPTS=--extended-exact
 
+
+# Auto ls on RET
+function my-lsret {
+    [[ -z $BUFFER ]] && BUFFER='ls'; zle accept-line
+}
+zle -N my-lsret
+bindkey "" my-lsret
+
+# Calculator
+function calc () { echo "$*" | bc -l; }
+
 if [[ -f ~/.zshrc_local ]] ; then
     source ~/.zshrc_local
 fi
 
+# Ctrl+SPC - find mark, Ctrl+K - add mark, Ctrl+T - jump to next field
+MARKER_DATA_HOME=$HOME/confiles/linux/config/marker/marks.txt
+[[ -s "$HOME/.local/share/marker/marker.sh" ]] && source "$HOME/.local/share/marker/marker.sh"
+
+# find
+function ff {
+    echo find ${2} -iname "$1" 2>/dev/null
+}
+
+# I use my own upgrade in ~/bin
+unset -f upgrade
+
+if [[ "$TERM" == "dumb" ]]
+then
+    unsetopt zle
+    unsetopt prompt_cr
+    unsetopt prompt_subst
+    unfunction precmd
+    unfunction preexec
+    PS1='$ '
+fi
 
 # }}}

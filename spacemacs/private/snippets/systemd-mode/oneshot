@@ -1,0 +1,13 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: oneshot
+# key: oneshot
+# --
+[Unit]
+Description=$1
+
+[Service]
+Type=oneshot
+ExecStart=$2
+
+[Install]
+WantedBy=default.target

@@ -105,3 +105,28 @@ the checking happens for all pairs in auto-minor-mode-alist"
     (cond ((equal ta tb) nil)
            ((and ta tb (time-less-p ta tb)) -1)
           (t +1))))
+
+(defun my/lord-lislon-auto-insert-date-heading ()
+  "Automatically adds lislon or lord tags and timestamp when adding new headings"
+  (let ((cur (point)))
+    (insert (concat " :" my/lord-lislon-tag ":"))
+    (newline-and-indent)
+    (org-time-stamp '(16) 'inactive)
+    (goto-char cur))
+  )
+
+(defun djcb-popup (title msg &optional icon sound)
+  "Show a popup if we're on X, or echo it otherwise; TITLE is the title
+of the message, MSG is the context. Optionally, you can provide an ICON and
+a sound to be played"
+
+  (interactive)
+  
+  (if (eq window-system 'x)
+      (shell-command (concat "notify-send "
+                             (if icon (concat "-i " icon) "")
+                             " '" title "' '" msg "'"))
+    ;; text only version
+
+    (message (concat title ": " msg)))
+  (when sound (org-clock-play-sound sound)))

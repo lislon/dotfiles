@@ -1,11 +1,17 @@
-;; .spacemacs --- My personal configuration file for spacemacs
+
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
 (defun dotspacemacs/layers ()
-  "Configuration Layers declaration."
+  "Configuration Layers declaration.
+You should not put any user code in this function besides modifying the variable
+values."
   (setq-default
+   ;; Base distribution to use. This is a layer contained in the directory
+   ;; `+distribution'. For now available distributions are `spacemacs-base'
+   ;; or `spacemacs'. (default 'spacemacs)
+   dotspacemacs-distribution 'spacemacs
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
    dotspacemacs-configuration-layer-path '("~/dotfiles/spacemacs/private")
@@ -18,6 +24,8 @@
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+     ;; spacemacs-helm
+     spacemacs-ivy
      auto-completion
      better-defaults
      emacs-lisp
@@ -26,6 +34,7 @@
      chrome
      html
      lua
+     ;; c-c++
      shell-scripts
      git
      github
@@ -33,7 +42,7 @@
      colors
      java
      javascript
-     ;; python
+     python
      ;; eyebrowse
      semantic
      erc
@@ -55,97 +64,77 @@
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
-   dotspacemacs-additional-packages '(quickrun systemd tea-time)
+   dotspacemacs-additional-packages '(
+                                      quickrun
+                                      ;; todochiku
+                                      systemd
+                                      tea-time
+                                      web-beautify
+                                      xelb
+                                      )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
-   ;; the list `dotspacemacs-configuration-layers'
-   dotspacemacs-delete-orphan-packages t))
+   ;; the list `dotspacemacs-configuration-layers'. (default t)
+   dotspacemacs-delete-orphan-packages nil))
 
 (defun dotspacemacs/user-init ()
-  (setq-default
-
-   ;; basic
-   vc-follow-symlinks t
-   default-direcotry "~"
-   evil-move-beyond-eol nil
-   evil-escape-unordered-key-sequence t
-   spaceline-org-clock-p t
-   x-select-enable-primary t            ; copy/paste from emacs to urxvt
-
-   ;; backup
-   make-backup-files t
-   keep-new-versions 10
-   keep-old-versions 2
-   backup-by-copying t
-   delete-old-versions t
-   version-control t       ;; Always use version numbers in filenames
-   backup-directory-alist '(("" . "~/ . emacs.d/.cache/backup-per-save"))
-
-   ;; workaround: neotree is painfully slow
-   neo-vc-integration nil
-
-   ;; Autocompletion
-   auto-completion-complete-with-key-sequence "jk"
-   auto-completion-enable-snippets-in-popup t
-   auto-completion-enable-help-tooltip t
-
-   ;; IRC
-   erc-autojoin-channels-alist
-   '(("1\\.0\\.0" "#syl20bnr/spacemacs") ; Gitter
-     ("freenode\\.net" "#emacs"))
-   erc-timestamp-format-left "\n%A %B %e, %Y\n\n"
-   erc-timestamp-format-right "%H:%M"
-   erc-timestamp-right-column 80
-   erc-prompt-foc-nickserv-password nil
-   erc-image-inline-rescale 300
-   erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-   erc-foolish-content
-   '("\\[Github\\].* starred"
-     "\\[Github\\].* forked"
-     "\\[Github\\].* synchronize a Pull Request"
-     "\\[Github\\].* labeled an issue in"
-     "\\[Github\\].* unlabeled an issue in")
-
-   ;; Misc
-   google-translate-default-source-language "en"
-   google-translate-default-target-language "ru"
-
-   ;; org-mode timestamps in english
-   system-time-locale "C"
-
-   ;; Git fullscreen
-   git-magit-status-fullscreen t
-
-   ;; Tea time sound
-   tea-time-sound "~/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
-   tea-time-sound-command "aplay %s"
-  )
+  
+  ;; Shared undo of org files between computers
+  (when (eq system-type 'gnu/linux)
+      (setq shared-dir (expand-file-name "~/Dropbox/emacs-bookmarks/cache/undo"))
+      (setq-default
+       undo-tree-history-directory-alist `(
+                                           (,(expand-file-name "~/org") . ,shared-dir)
+                                           (,(expand-file-name "~/dotfiles") . ,shared-dir)
+                                           ("." . ,(expand-file-name "~/.emacs.d/.cache/undo"))
+                                           ))
+      )
   )
 
 (defun dotspacemacs/init ()
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
-before layers configuration."
+before layers configuration.
+You should not put any user code in there besides modifying the variable
+values."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
-   ;; Either `vim' or `emacs'. Evil is always enabled but if the variable
-   ;; is `emacs' then the `holy-mode' is enabled at startup.
+   ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
+   ;; possible. Set it to nil if you have no way to use HTTPS in your
+   ;; environment, otherwise it is strongly recommended to let it set to t.
+   ;; This variable has no effect if Emacs is launched with the parameter
+   ;; `--insecure' which forces the value of this variable to nil.
+   ;; (default t)
+   dotspacemacs-elpa-https t
+   ;; Maximum allowed time in seconds to contact an ELPA repository.
+   dotspacemacs-elpa-timeout 5
+   ;; If non nil then spacemacs will check for updates at startup
+   ;; when the current branch is not `develop'. (default t)
+   dotspacemacs-check-for-update t
+   ;; If non nil activate the TLS certificates verification.
+   dotspacemacs-elpa-tls-verification t
+   ;; One of `vim', `emacs' or `hybrid'. Evil is always enabled but if the
+   ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
+   ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
+   ;; unchanged. (default 'vim)
    dotspacemacs-editing-style 'hybrid
-   ;; If non nil output loading progress in `*Messages*' buffer.
+   ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
    ;; the official spacemacs logo. An integer value is the index of text
    ;; banner, `random' chooses a random text banner in `core/banners'
    ;; directory. A string value must be a path to an image format supported
    ;; by your Emacs build.
-   ;; If the value is nil then no banner is displayed.
+   ;; If the value is nil then no banner is displayed. (default 'official)
    dotspacemacs-startup-banner 'official
    ;; List of items to show in the startup buffer. If nil it is disabled.
    ;; Possible values are: `recents' `bookmarks' `projects'."
    dotspacemacs-startup-lists '(recents bookmarks)
+   ;; Default major mode of the scratch buffer (default `text-mode')
+   dotspacemacs-scratch-mode 'lisp-interaction-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
@@ -252,16 +241,80 @@ before layers configuration."
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
   ;; Swap C-j and C-x
-  (define-key key-translation-map (kbd "C-j") (kbd "C-x"))
-  (define-key key-translation-map (kbd "C-x") (kbd "C-j"))
+  ;; (define-key key-translation-map (kbd "C-j") (kbd "C-x"))
+  ;; (define-key key-translation-map (kbd "C-x") (kbd "C-j"))
   ;; (setq spaceline-org-clock-p t)
   ;; (setq initial-buffer-choice '(lambda () (get-buffer org-agenda-buffer-name)))
+  (setq
 
-  (setq  spaceline-org-clock-p t)
-  ;; Persistent undo
-  (setq undo-tree-auto-save-history t
-        undo-tree-history-directory-alist
-        `(("." . ,(concat spacemacs-cache-directory "undo"))))
+   ;; basic
+   vc-follow-symlinks t
+   default-direcotry "~"
+   evil-move-beyond-eol nil
+   evil-escape-unordered-key-sequence t
+   spaceline-org-clock-p t
+   x-select-enable-primary t            ; copy/paste from emacs to urxvt
+   helm-locate-fuzzy-match nil
+   message-kill-buffer-query nil        ; do not ask confirmation of killing buffer
+   ffap-newfile-prompt t                ; gf can create new files
+
+   ;; backup
+   make-backup-files t
+   keep-new-versions 10
+   keep-old-versions 2
+   backup-by-copying t
+   delete-old-versions t
+   version-control t       ;; Always use version numbers in filenames
+   backup-directory-alist '(("" . "~/.emacs.d/.cache/backup-per-save"))
+
+   ;; workaround: neotree is painfully slow
+   neo-vc-integration nil
+
+   ;; Autocompletion
+   auto-completion-complete-with-key-sequence "jk"
+   auto-completion-enable-snippets-in-popup t
+   auto-completion-enable-help-tooltip t
+
+   ;; IRC
+   erc-autojoin-channels-alist
+   '(("1\\.0\\.0" "#syl20bnr/spacemacs") ; Gitter
+     ("freenode\\.net" "#emacs"))
+   erc-timestamp-format-left "\n%A %B %e, %Y\n\n"
+   erc-timestamp-format-right "%H:%M"
+   erc-timestamp-right-column 80
+   erc-prompt-foc-nickserv-password nil
+   erc-image-inline-rescale 300
+   erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
+   erc-foolish-content
+   '("\\[Github\\].* starred"
+     "\\[Github\\].* forked"
+     "\\[Github\\].* synchronize a Pull Request"
+     "\\[Github\\].* labeled an issue in"
+     "\\[Github\\].* unlabeled an issue in")
+
+   ;; Misc
+   google-translate-default-source-language "en"
+   google-translate-default-target-language "ru"
+
+   ;; org-mode timestamps in english
+   system-time-locale "C"
+
+   ;; Git fullscreen
+   git-magit-status-fullscreen t
+
+   ;; Tea time sound
+   tea-time-sound "~/Dropbox/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
+   ;; Persistent undo
+   undo-tree-auto-save-history t
+   undo-tree-history-directory-alist
+        `(("." . ,(concat spacemacs-cache-directory "undo")))
+
+   spaceline-org-clock-p t
+   )
+
+  (if (eq system-type 'gnu/linux)
+      (setq  tea-time-sound-command "aplay %s"))
+
   (unless (file-exists-p (concat spacemacs-cache-directory "undo"))
     (make-directory (concat spacemacs-cache-directory "undo")))
 
@@ -307,20 +360,8 @@ layers configuration."
   (setq default-input-method "cyrillic-jcuken")
 
   ;; ;; Custom bookmakrs path
-  ;; (setq bookmark-default-file "~/.emacs.d/private/bookmarks.el")
+  (setq bookmark-default-file (concat "~/Dropbox/emacs-bookmarks/" system-name "-bookmarks.el"))
 
-
-  (define-generic-mode 'vimrc-generic-mode nil nil
-                       '(("^[\t ]*:?\\(!\\|ab\\|map\\|unmap\\)[^\r\n\"]*\"[^\r\n\"]*\\(\"[^\r\n\"]*\"[^\r\n\"]*\\)*$"
-                          (0 font-lock-warning-face))
-                         ("\\(^\\|[\t ]\\)\\(\".*\\)$"
-                          (2 font-lock-comment-face))
-                         ("\"\\([^\n\r\"\\]\\|\\.\\)*\""
-                          (0 font-lock-string-face)))
-                       '("/vimrc\\'" "\\.vim\\(rc\\)?\\'")
-                       '((lambda ()
-                           (modify-syntax-entry ?\" ".")))
-                       "Generic mode for Vim configuration files.")
 
   ;; Disable hello file, because it hangs
   (global-unset-key (kbd "C-h h"))
@@ -348,6 +389,9 @@ layers configuration."
 
   ;; Fix tab key
   (evil-define-key 'motion help-mode-map (kbd "<tab>") 'forward-button)
+
+  ;; Fix RET key in profiler (not works)
+  ;; (evil-define-key 'normal profiler-report-mode-map (kbd "j") 'profiler-report-toggle-entry)
 
   ;; IRC
   (add-hook 'erc-insert-pre-hook
@@ -466,46 +510,45 @@ That function deletes \"#+ALLPRIORITIES\" line from index.org file"
 
 
   ;; Google translate interactive mode
-  (use-package google-translate
-    :commands (my/google-translate-repl)
-    :config
-    (define-derived-mode google-translate-interactive-mode
-      text-mode "Google Translate"
-      (defun my/next-line-empty-p ()
-        "Check if next line empty"
-        (save-excursion
-          (beginning-of-line 2)
-          (save-match-data
-            (looking-at "[ \t]*$"))
-          ))
-      (defun my/translate-word-and-next-line ()
-        "Shows translation of current line in help buffer and inserts
-          new line after it"
-        (interactive)
-        (let ((buffer (current-buffer)) )
-          (move-beginning-of-line nil)
-          (set-mark-command nil)
-          (move-end-of-line nil)
-          (google-translate-at-point)
-          (switch-to-buffer buffer)
-          (if (eq (point) (point-max))
-              (newline-and-indent)
-            (end-of-line 2))
-          ))
-
-      (use-local-map (make-sparse-keymap))
-      (local-set-key (kbd "RET") 'my/translate-word-and-next-line)
-      (define-key evil-normal-state-map (kbd "RET") 'my/translate-word-and-next-line))
-
-    (defun my/google-translate-repl ()
-      (interactive)
-      (let ((buffer (get-buffer-create "Google Translate REPL")))
-        (switch-to-buffer buffer)
-        (google-translate-interactive-mode)
-        (evil-insert-state)
-        (goto-char (buffer-end 1))
+  
+  
+  (define-derived-mode google-translate-interactive-mode
+    text-mode "Google Translate"
+    (defun my/next-line-empty-p ()
+      "Check if next line empty"
+      (save-excursion
+        (beginning-of-line 2)
+        (save-match-data
+          (looking-at "[ \t]*$"))
         ))
-    )
+    (defun my/translate-word-and-next-line ()
+      "Shows translation of current line in help buffer and inserts
+          new line after it"
+      (interactive)
+      (let ((buffer (current-buffer)) )
+        (move-beginning-of-line nil)
+        (set-mark-command nil)
+        (move-end-of-line nil)
+        (google-translate-at-point)
+        (switch-to-buffer buffer)
+        (if (eq (point) (point-max))
+            (newline-and-indent)
+          (end-of-line 2))
+        ))
+
+    (use-local-map (make-sparse-keymap))
+    (local-set-key (kbd "RET") 'my/translate-word-and-next-line)
+    (define-key evil-normal-state-map (kbd "RET") 'my/translate-word-and-next-line))
+
+  (defun my/google-translate-repl ()
+    (interactive)
+    (require 'google-translate-default-ui)
+    (let ((buffer (get-buffer-create "Google Translate REPL")))
+      (switch-to-buffer buffer)
+      (google-translate-interactive-mode)
+      (evil-insert-state)
+      (goto-char (buffer-end 1))
+      ))
 
   (defun lsn-insert-line-and-paste (count)
     "Moves to new line and paste text"
@@ -521,6 +564,37 @@ That function deletes \"#+ALLPRIORITIES\" line from index.org file"
   (evil-leader/set-key "oS" 'yas-new-snippet)
   (evil-leader/set-key "az" 'shell)
   (define-key evil-normal-state-map (kbd "gp") 'lsn-insert-line-and-paste)
+  (add-hook 'dired-mode-hook (lambda ()
+                               (define-key dired-mode-map "e" 'wdired-change-to-wdired-mode)))
+
+  (defun eval-parent-sexp ()
+    "Cause sometimes you just want to eval just the immediate
+form. not the top level, but without going to the closing paren
+and evaling there."
+    (interactive)
+    (save-excursion
+      ;; get out of string if in it
+      (dotimes (c (if (in-string-p) 2 1))
+        (up-list+))
+      (let ((cmd (key-binding (kbd "C-x C-e"))))
+        (if (eq cmd 'slime-eval-last-expression)
+            (funcall cmd)
+          (funcall cmd '())))))
+
+  (global-set-key (kbd "C-M-S-x") 'eval-parent-sexp)
+  (global-set-key (kbd "M-a") 'helm-mini)
+  (global-set-key (kbd "M-k") 'kill-buffer)
+  ;; I tried global-set-key, but it breaks occur in ctrl-s
+  ;; (global-set-key (kbd "M-s") 'save-buffer)
+  (define-key evil-normal-state-map (kbd "M-s") 'save-buffer)
+  (define-key evil-insert-state-map (kbd "M-s") 'save-buffer)
+
+  (global-set-key (kbd "C-0") 'delete-window)
+  (global-set-key (kbd "C-1") 'delete-other-windows)
+  (global-set-key (kbd "C-2") 'split-window-vertically)
+  (global-set-key (kbd "C-3") 'split-window-horizontally)
+  (global-set-key (kbd "C-5") 'make-frame-command)
+
 
   ;; I used to C-v for scroll down, not sure about visual block
   (define-key evil-normal-state-map (kbd "C-v") 'evil-scroll-down)
@@ -529,11 +603,12 @@ That function deletes \"#+ALLPRIORITIES\" line from index.org file"
 
   (global-set-key (kbd "M-%") 'anzu-query-replace)
   (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
+  (require 'tea-time)
   (global-set-key (kbd "C-c t") 'tea-time)
   (global-set-key (kbd "C-c T") 'tea-show-remaining-time)
 
   (global-set-key (kbd "<f8>") 'quickrun)
-  (setq quickrun-focus-p t)
+  (setq quickrun-focus-p nil)
 
   ;; recent-f sort minor mode
   (helm-adaptive-mode)
@@ -582,16 +657,16 @@ the OS keyboard is english or russian"
                         'literal-insert))
                     english-chars)
               new-map))
-  ;; on Linux emacs daemon it complains on error
-  ;; (server-start)
 
-                                        ; Auto set lisp-interaction-mode in *scratch*
-  (defun my/scratch-interactive-mode ()
-    (when (equal "*scratch*" (buffer-name))
-      (lisp-interaction-mode)
-      (remove-hook 'window-configuration-change-hook 'my/scratch-interactive-mode))
-    )
-  (add-hook 'window-configuration-change-hook 'my/scratch-interactive-mode)
+  ; Auto set lisp-interaction-mode in *scratch*
+  ;; @deprec Now it is dotspacemacs-scratch-mode 'lisp-interaction-mode
+  ;; (defun my/scratch-interactive-mode ()
+  ;;   (when (equal "*scratch*" (buffer-name))
+  ;;     (lisp-interaction-mode)
+  ;;     (remove-hook 'window-configuration-change-hook 'my/scratch-interactive-mode))
+  ;;   )
+  ;; (add-hook 'window-configuration-change-hook 'my/scratch-interactive-mode)
+
   ;; Beyond eol makes ~SPC m e e~ usable
   (add-hook 'lisp-mode-hook ((lambda () (setq-local evil-move-beyond-eol t))))
 
@@ -615,9 +690,38 @@ the OS keyboard is english or russian"
                                "/snippets"))
             (cdr yas-snippet-dirs))))
 
-  ;; Remove ~/.emacs.d/melpa from ignore list
-  (eval-after-load "recentf"
-    '(delete (expand-file-name package-user-dir) recentf-exclude))
+  (with-eval-after-load "recentf"
+    ;; Remove ~/.emacs.d/melpa from ignore list
+    (delete (expand-file-name package-user-dir) recentf-exclude)
+
+    (defsubst file-was-visible-p (file)
+      "Return non-nil if FILE's buffer exists and has been displayed."
+      (let ((buf (find-buffer-visiting file)))
+        (if buf
+            (let ((display-count (buffer-local-value 'buffer-display-count buf)))
+              (if (> display-count 0) display-count nil)))))
+
+    (let ((r-list recentf-list))
+      (defsubst keep-default-old-and-visible-recentf-p (file)
+        "Decide whether to keep file in recentf-list.
+Return non-nil if recentf would, by default, keep FILE, and
+either FILE name was loaded from recentf file on disk or FILE
+has been displayed in this session."
+        (if (recentf-keep-default-predicate file)
+            (or (member file r-list)
+                (file-was-visible-p file)))))
+
+    ;; And, of course, you now need:
+    (setf recentf-keep '(keep-default-old-and-visible-recentf-p))		    
+    
+    )
+
+  (with-eval-after-load "browse-url"
+    ;; override `browse-url-can-use-xdg-open'; does not work on my awesomewm setup
+    (defun browse-url-can-use-xdg-open ()
+      (and (getenv "DISPLAY") (getenv "XDG_SESSION_ID"))))
+
+
 
   (defun my/spacemacs-maybe-kill-emacs ()
     "If emacs server is running, kills frame instead of server"
@@ -629,12 +733,52 @@ the OS keyboard is english or russian"
   ;; I don't want close emacs daemon by SPC q q
   (evil-leader/set-key "qq" 'my/spacemacs-maybe-kill-emacs)
 
+  (defun my/isearch-other-window ()
+    "Search in other window"
+    (interactive)
+    (save-selected-window
+      (other-window 1)
+      (isearch-forward)))
+
+  (global-set-key (kbd "C-M-S") 'my/isearch-other-window)
+
+  ;; (defun my/evil-visual-restore (func &rest args)
+  ;;   (if (eq last-command evil-paste-after)
+  ;;       )
+  ;;   )
+
+  ;; (advice-add 'evil-visual-restore :around 'my/org-mobile-fix-index-bug)
+
   ;; Load local
   (when (file-exists-p "~/local.el")
     (load "~/local.el"))
 
+  (defun my/compile ()
+    "Compile program. With prefix arg change compile args"
+    (interactive)
+    (setq-local compilation-read-command nil)
+    (call-interactively 'compile)
+    )
+
+  (spacemacs/set-leader-keys "cC" 'my/compile)
+
+  ;; (spacemacs/set-leader-keys "otC" (defun trello-sync-in () (interactive) (org-trello/sync-buffer '(4))))
+  ;; (spacemacs/set-leader-keys "otc" (defun trello-sync-out () (interactive) (org-trello/sync-buffer)))
+
+  (evil-leader/set-key "hl" 'helm-locate-library)
   ;; Preload org to resume clock in time
   (require 'org)
+
+  (setq gnus-select-method '(nntp "news.gmane.org"))
+  (setq gnus-save-killed-list nil)
+
+
+  ;; (with-eval-after-load "Man"
+  ;;   (add-hook 'Man-mode-hook (lambda () (pop-to-buffer (current-buffer))))
+  ;;   ;; (add-hook 'woman-post-format-hook (lambda () (message "Buffer %s" (buffer-name)))))
+  (define-key evil-normal-state-map  (kbd "g r") 'jump-to-register)
+  (define-key evil-normal-state-map  (kbd "g c") 'org-capture)
+  (define-key evil-normal-state-map  (kbd "g a") 'org-agenda-list)
 
   ;; End of private config
   )
@@ -647,10 +791,136 @@ the OS keyboard is english or russian"
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["black" "#d55e00" "#009e73" "#f8ec59" "#0072b2" "#cc79a7" "#56b4e9" "white"])
+ '(compilation-message-face (quote default))
+ '(cua-global-mark-cursor-color "#2aa198")
+ '(cua-normal-cursor-color "#657b83")
+ '(cua-overwrite-cursor-color "#b58900")
+ '(cua-read-only-cursor-color "#859900")
+ '(custom-safe-themes
+   (quote
+    ("6ecd762f08fd5c3aab65585d5aa04f6ae8b44d969df4be669259975dac849687" default)))
+ '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
+ '(highlight-symbol-colors
+   (--map
+    (solarized-color-blend it "#fdf6e3" 0.25)
+    (quote
+     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+ '(highlight-symbol-foreground-color "#586e75")
+ '(highlight-tail-colors
+   (quote
+    (("#49483E" . 0)
+     ("#67930F" . 20)
+     ("#349B8D" . 30)
+     ("#21889B" . 50)
+     ("#968B26" . 60)
+     ("#A45E0A" . 70)
+     ("#A41F99" . 85)
+     ("#49483E" . 100))))
+ '(hl-bg-colors
+   (quote
+    ("#DEB542" "#F2804F" "#FF6E64" "#F771AC" "#9EA0E5" "#69B7F0" "#69CABF" "#B4C342")))
+ '(hl-fg-colors
+   (quote
+    ("#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3")))
+ '(magit-diff-use-overlays nil)
+ '(nrepl-message-colors
+   (quote
+    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (avy smartparens pcache markdown-mode projectile helm helm-core yasnippet js2-mode magit csharp-mode auto-complete flycheck evil persp-mode help-fns+ evil-indent-plus bind-map tea-time zenburn-theme xkcd ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe use-package toc-org tagedit systemd stickyfunc-enhance srefactor spray spacemacs-theme spaceline solarized-theme smooth-scrolling smeargle slime slim-mode scss-mode sass-mode restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters quickrun quelpa popwin pcre2el paradox page-break-lines org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omnisharp noflet neotree move-text monokai-theme magit-gitflow magit-gh-pulls macrostep lua-mode lorem-ipsum linum-relative leuven-theme less-css-mode json-mode js2-refactor js-doc jade-mode info+ indent-guide ido-vertical-mode hungry-delete htmlize highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flyspell helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist ggtags flycheck-pos-tip flx-ido fish-mode fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-jumper evil-indent-textobject evil-iedit-state evil-exchange evil-escape evil-args evil-anzu eval-sexp-fu erc-yt erc-view-log erc-social-graph erc-image erc-hl-nicks emoji-cheat-sheet-plus emmet-mode emacs-eclim elisp-slime-nav edit-server diff-hl define-word company-web company-tern company-statistics company-quickhelp company-emoji coffee-mode clean-aindent-mode buffer-move auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
- '(paradox-github-token t))
+    (hydra org-alert todochiku with-editor s xelb pytest pyenv-mode pip-requirements orgit hy-mode haml-mode gitignore-mode git-gutter-fringe+ git-gutter-fringe git-gutter+ cython-mode helm-pydoc request smex counsel pyvenv company-anaconda company highlight anzu git-gutter popup multiple-cursors json-reformat package-build bind-key dash avy smartparens pcache markdown-mode projectile helm helm-core yasnippet js2-mode magit csharp-mode auto-complete flycheck evil persp-mode help-fns+ evil-indent-plus bind-map tea-time zenburn-theme xkcd ws-butler window-numbering which-key web-mode web-beautify volatile-highlights vi-tilde-fringe use-package toc-org tagedit systemd stickyfunc-enhance srefactor spray spacemacs-theme spaceline solarized-theme smooth-scrolling smeargle slime slim-mode scss-mode sass-mode restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters quickrun quelpa popwin pcre2el paradox page-break-lines org-repo-todo org-present org-pomodoro org-plus-contrib org-bullets open-junk-file omnisharp noflet neotree move-text monokai-theme magit-gitflow magit-gh-pulls macrostep lua-mode lorem-ipsum linum-relative leuven-theme less-css-mode json-mode js2-refactor js-doc jade-mode info+ indent-guide ido-vertical-mode hungry-delete htmlize highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flyspell helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gmail-message-mode github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist ggtags flycheck-pos-tip flx-ido fish-mode fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-jumper evil-indent-textobject evil-iedit-state evil-exchange evil-escape evil-args evil-anzu eval-sexp-fu erc-yt erc-view-log erc-social-graph erc-image erc-hl-nicks emoji-cheat-sheet-plus emmet-mode emacs-eclim elisp-slime-nav edit-server diff-hl define-word company-web company-tern company-statistics company-quickhelp company-emoji coffee-mode clean-aindent-mode buffer-move auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(paradox-github-token t)
+ '(pos-tip-background-color "#eee8d5")
+ '(pos-tip-foreground-color "#586e75")
+ '(safe-local-variable-values
+   (quote
+    ((eval progn
+           (defun my/rc-lua-copy-to-test nil
+             (if
+                 (and
+                  (string= "rc.lua"
+                           (buffer-name))
+                  (file-exists-p "rc.lua.test"))
+                 (copy-file "rc.lua" "rc.lua.test" t)))
+           (add-hook
+            (quote after-save-hook)
+            (function my/rc-lua-copy-to-test)
+            nil t))
+     (eval
+      (progn
+        (defun my/rc-lua-copy-to-test nil
+          (if
+              (and
+               (string= "rc.lua"
+                        (buffer-name))
+               (file-exists-p "rc.lua.test"))
+              (copy-file "rc.lua" "rc.lua.test" t)))
+        (add-hook
+         (quote after-save-hook)
+         (function my/rc-lua-copy-to-test)
+         nil t)))
+     (eval
+      (message "hi lua")
+      (defun my/rc-lua-copy-to-test nil
+        (if
+            (and
+             (string= "rc.lua"
+                      (buffer-name))
+             (file-exists-p "rc.lua.test"))
+            (copy-file "rc.lua" "rc.lua.test" t)))
+      (add-hook
+       (quote after-save-hook)
+       (quote my/rc-lua-copy-to-test)
+       t t))
+     (eval
+      (defun my/rc-lua-copy-to-test nil
+        (if
+            (and
+             (string= "rc.lua"
+                      (buffer-name))
+             (file-exists-p "rc.lua.test"))
+            (copy-file "rc.lua" "rc.lua.test" t)))
+      (add-hook
+       (quote after-save-hook)
+       (quote my/rc-lua-copy-to-test)
+       t t))
+     (company-clang-arguments "-I/usr/include")
+     (company-clang-arguments "-I/home/ele/src/c-demo-project"))))
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
+ '(term-default-bg-color "#fdf6e3")
+ '(term-default-fg-color "#657b83")
+ '(vc-annotate-background "#2B2B2B")
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#BC8383")
+     (40 . "#CC9393")
+     (60 . "#DFAF8F")
+     (80 . "#D0BF8F")
+     (100 . "#E0CF9F")
+     (120 . "#F0DFAF")
+     (140 . "#5F7F5F")
+     (160 . "#7F9F7F")
+     (180 . "#8FB28F")
+     (200 . "#9FC59F")
+     (220 . "#AFD8AF")
+     (240 . "#BFEBBF")
+     (260 . "#93E0E3")
+     (280 . "#6CA0A3")
+     (300 . "#7CB8BB")
+     (320 . "#8CD0D3")
+     (340 . "#94BFF3")
+     (360 . "#DC8CC3"))))
+ '(vc-annotate-very-old-color "#DC8CC3")
+ '(weechat-color-list
+   (unspecified "#272822" "#49483E" "#A20C41" "#F92672" "#67930F" "#A6E22E" "#968B26" "#E6DB74" "#21889B" "#66D9EF" "#A41F99" "#FD5FF0" "#349B8D" "#A1EFE4" "#F8F8F2" "#F8F8F0"))
+ '(xterm-color-names
+   ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"])
+ '(xterm-color-names-bright
+   ["#fdf6e3" "#cb4b16" "#93a1a1" "#839496" "#657b83" "#6c71c4" "#586e75" "#002b36"]))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
