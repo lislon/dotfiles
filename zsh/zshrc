@@ -39,10 +39,13 @@ DISABLE_AUTO_UPDATE=true
 
 plugins=(git fasd gitfast common-aliases wd safe-paste docker)
 if [ -f "/etc/arch-release" ]; then
-    plugins+=(archlinux systemd)
+    plugins+=(archlinux)
     export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
 elif `which ssh-agent &>/dev/null`; then
     plugins+=(ssh-agent)
+fi
+if ! which systemctl >/dev/null 2>&1; then
+    plugins+=(systemd)
 fi
 # Use j <dirspec>
 #plugins=(git composer fasd gitfast)
