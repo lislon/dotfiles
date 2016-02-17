@@ -1,16 +1,26 @@
 # -*- mode: sh -*-
+
+# Emacs tramp
+if [[ "$TERM" == "dumb" ]]
+then
+    unsetopt zle
+    unsetopt prompt_cr
+    unsetopt prompt_subst
+    PS1='$ '
+    return
+fi
+
 # {{{ Oh My Zsh
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 export LC_ALL='en_US.UTF-8'
-
+export ALTERNATE_EDITOR="vim"
 export SYSTEMD_EDITOR="emacsclient -c"
 export EDITOR="emacsclient -c"
 export SUDO_EDITOR="emacsclient -c"
 export VISUAL="emacsclient -c"
 
 
-# Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
@@ -27,7 +37,7 @@ DISABLE_AUTO_UPDATE=true
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-plugins=(git fasd gitfast common-aliases wd)
+plugins=(git fasd gitfast common-aliases wd safe-paste docker)
 if [ -f "/etc/arch-release" ]; then
     plugins+=(archlinux systemd)
     export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
@@ -56,11 +66,13 @@ alias v='f -e vim' # quick opening files with vim
 alias gl='git --no-pager log --oneline --graph -5'
 alias gpush='git push'
 alias tmux='tmux -2'
+alias mk='mkdir -p'
 alias s="sudo "
 alias sus="systemctl suspend"
 alias -g G="| grep -i"
 alias -g L="| less -R"
 alias -g H="| ack --passthru "
+alias -g F="| fpp"
 alias ack="ack --pager='less -RFSX'"
 alias luarc="$EDITOR ~/.config/awesome/rc.lua"
 alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle" -option ctrl:nocaps'
@@ -71,19 +83,37 @@ alias ll='ls -hlAt'
 alias mp='mplayer'
 alias ag='ag --color'
 alias pia='ping ya.ru'
+alias pil='ping lislon.ru'
 alias bb='sudo /usr/bin/shutdown now'
 alias bbr='sudo /usr/bin/shutdown -r now'
 alias bbh='systemctl suspend'
 alias svim='sudo -E vim'
 alias cx='chmod +x'
+alias feh='feh --scale-down'
 alias -s pdf='xdg-open'
-alias recent='find . -maxdepth 2 -type f -atime -1'             # show recent files
 alias emax="emacsclient -nw"                      # used to be "emacs -nw"
 alias e="emacsclient -c"
 #alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
 #alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
 alias sc-cat='systemctl cat'
+alias sc-user-dr='systemctl --user daemon-reload'
 
+alias drm='docker rm'
+alias di='docker inspect'
+alias dps='docker ps'
+
+function git-pr() {
+    git fetch -fu origin refs/pull/$1/head:pr/$1
+    git checkout pr/$1
+}
+function git-prc() {
+    git for-each-ref refs/heads/pr/* --format='%(refname)' | \
+        while read ref; do git branch -D ${ref#refs/heads/}; done
+}
+
+function recent {
+    find . -maxdepth 2 -type f -mtime -${1:-1}
+}
 
 function trash {
     mkdir -p /tmp/trash
@@ -122,10 +152,7 @@ fi
 # }}}
 # {{{ Settings
 
-declare -U path
-path=( ~/bin ~/.local/bin $path )
-
-fpath=(~/dotfiles/.zshfunc $fpath)
+fpath=(~/dotfiles/zsh/functions $fpath)
 
 export ENV='development'
 export HISTSIZE=15000
@@ -142,6 +169,12 @@ setopt correct
 setopt interactivecomments
 setopt share_history
 setopt no_beep
+unsetopt case_glob
+
+autoload -Uz run-help
+autoload run-help-git
+autoload run-help-sudo
+autoload run-help-docker
 
 # Terminal in emacs do not show nice glyphs :( --workaround
 if [[ -n ${INSIDE_EMACS} ]]; then
@@ -183,6 +216,12 @@ export MANPAGER="/bin/sh -c \"col -b | vim -u ~/dotfiles/zsh/man.vimrc -c 'set n
 bakup () {
     cp "$1" "$1.bak" && echo "Made backup $1.bak"
 }
+bak () {
+    mv "$1" "$1.bak" && echo "$1 -> $1.bak"
+}
+# book () {
+#     cp "$1" /media/photos/Elephant/Documents/Books/
+# }
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
@@ -205,6 +244,9 @@ fo() {
         [ "$key" = ctrl-o ] && open "$file" || ${EDITOR:-vim} "$file"
     fi
 }
+
+# Move to last made photos
+alias cd-last-photos="/media/photos/Photos/Everyday/*(oc[1,1])"
 
 
 # # fd - cd to selected directory
@@ -293,6 +335,17 @@ bindkey '\C-xu' universal-argument
 insert_sudo () { zle beginning-of-line; zle -U "sudo " }
 zle -N insert-sudo insert_sudo
 bindkey "^[s" insert-sudo
+
+function dir-up { cd ..; zle reset-prompt }
+zle -N dir-up
+bindkey "^h" dir-up
+
+
+function dir-back { cd -1; zle reset-prompt }
+zle -N dir-back
+bindkey "^l" dir-back
+bindkey "^L" clear-screen
+
 # bindkey "^T" fzf-locate
 
 #export NVM_DIR="$HOME/.nvm"
@@ -309,7 +362,7 @@ zle -N my-lsret
 bindkey "" my-lsret
 
 # Calculator
-function calc () { echo "$*" | bc -l; }
+alias calc=python
 
 if [[ -f ~/.zshrc_local ]] ; then
     source ~/.zshrc_local
@@ -327,14 +380,13 @@ function ff {
 # I use my own upgrade in ~/bin
 type upgrade >/dev/null  && unset -f upgrade
 
-if [[ "$TERM" == "dumb" ]]
-then
-    unsetopt zle
-    unsetopt prompt_cr
-    unsetopt prompt_subst
-    unfunction precmd
-    unfunction preexec
-    PS1='$ '
-fi
 
 # }}}
+
+x-copy-region-as-kill () {
+    zle copy-region-as-kill
+    print -rn $CUTBUFFER | xsel -b -i
+}
+zle -N x-copy-region-as-kill
+bindkey -e '\ew' x-copy-region-as-kill
+bindkey -e '^W' x-copy-region-as-kill

@@ -12,7 +12,7 @@
 	l = "!. ~/dotfiles/git/githelpers && pretty_git_log"
 	la = !git l --all
 	d = difftool
-    vhr = !git fetch && git reset --hard FETCH_HEAD
+	vhr = !git fetch && git reset --hard FETCH_HEAD
 [user]
 	email = elephant@lislon.ru
 	name = Igor Avdeev
@@ -46,4 +46,4 @@
 [mergetool "fugitive"]
 	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
 [include]
-  path = ~/.gitconfig_local
+	path = ~/.gitconfig_local
