@@ -41,10 +41,10 @@ plugins=(git fasd gitfast common-aliases wd safe-paste docker)
 if [ -f "/etc/arch-release" ]; then
     plugins+=(archlinux)
     export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
-elif `which ssh-agent &>/dev/null`; then
-    plugins+=(ssh-agent)
+# elif `which ssh-agent &>/dev/null`; then
+#     plugins+=(ssh-agent)
 fi
-if ! which systemctl >/dev/null 2>&1; then
+if which systemctl >/dev/null 2>&1; then
     plugins+=(systemd)
 fi
 # Use j <dirspec>
@@ -151,6 +151,8 @@ elif `which apt-get &>/dev/null`; then
 elif `which yum &>/dev/null`; then
     alias i="sudo yum install"
     alias is="sudo yum search"
+    alias yac="sudo yum install -y"
+    alias yad="sudo yum remove"
 fi
 # }}}
 # {{{ Settings

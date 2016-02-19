@@ -79,6 +79,9 @@ nnoremap <leader>wsn :WinMessage scriptnames<CR>
 " rtp
 nnoremap <leader>wrt :WinMessage set rtp?<CR>
 
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
+
 " Linux buffers
 "if has('unix')
 "noremap  Y "+Y

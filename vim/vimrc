@@ -128,6 +128,10 @@ Plug 'jez/vim-superman'
     " <boost loading> Plug 'SirVer/ultisnips'
     " <boost loading> Plug 'honza/vim-snippets'
 " <boost loading> endif
+if version >= 704
+    Plug 'SirVer/ultisnips'
+    Plug 'honza/vim-snippets'
+endif
 
 " }}}
 
@@ -178,10 +182,6 @@ Plug 'mileszs/ack.vim'
 "Plug 'int3/vim-taglist-plus'
 
 "Plug 'ervandew/supertab'
-" Not hels with js
-"Plug 'Valloric/YouCompleteMe'
-"Plug 'vim-scripts/indenthtml.vim'
-
 
 "Plug 'L9'
 " Autocomplete typing - conflicts with ultisnip
@@ -1459,4 +1459,9 @@ nmap ]h <Plug>GitGutterNextHunk
 nmap [h <Plug>GitGutterPrevHunk
 "nnoremap <silent> <expr> <Plug>GitGutterNextHunk &diff ? ']h' : ":\<C-U>execute v:count1 . 'GitGutterNextHunk'\<CR>"
 "nnoremap <silent> <expr> <Plug>GitGutterPrevHunk &diff ? '[h' : ":\<C-U>execute v:count1 . 'GitGutterPrevHunk'\<CR>"
+
+" Menu jump like in emacs M-j, M-k
+" :h popupmenu-keys.
+inoremap <expr> j pumvisible() ? "\<A-N>" : "j"
+inoremap <expr> k pumvisible() ? "\<A-P>" : "k"
 "}}}
