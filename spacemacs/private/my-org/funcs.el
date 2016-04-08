@@ -23,16 +23,16 @@ is nil, refile in the current file."
          (date (org-date-to-gregorian datetree-date))
          )
     (save-excursion
-      (with-current-buffer (current-buffer)
+      (save-current-buffer
         (org-cut-subtree)
-        (if file (find-file file))
+        (if file (set-buffer (find-file-noselect file)))
         (org-datetree-find-date-create date)
         (org-narrow-to-subtree)
         (show-subtree)
         (org-end-of-subtree t)
         (newline)
-        (goto-char (point-max))
-        (org-paste-subtree 4)
+        (ignore-errors
+          (org-paste-subtree 4))
         (widen)
         ))
     )
@@ -54,6 +54,12 @@ is nil, refile in the current file."
                (helm-mode 1)
                (spacemacs/frame-killer)))))
   (helm-mode 1)
+  )
+
+(defun my/org-insert-heading-advice (&optional arg invisible-ok top-level)
+  "Always insert new header below on M-RET"
+  (if (and (org-at-heading-p) (eq (line-beginning-position) (point)))
+      (goto-char (+ 1 (point))))
   )
 
 
@@ -130,3 +136,29 @@ a sound to be played"
 
     (message (concat title ": " msg)))
   (when sound (org-clock-play-sound sound)))
+
+(defun my/org-goal-today-after-done ()
+  "Move DONE-ed item to end of file for goal-today.org"
+  (interactive)
+  (when (member (org-get-todo-state) (list "DONE"))
+    (org-cut-subtree)
+    (goto-char (point-max))
+    (org-paste-subtree))
+  )
+
+(defun my/org-goal-today-finish-day ()
+  (interactive)
+  (goto-char (point-min))
+  (org-forward-heading-same-level 1)
+  (beginning-of-line)
+  (let ((beg (point)) end)
+    (end-of-line)
+    (setq end (point))
+
+    (let ((region (buffer-substring-no-properties beg end) ))
+      (org-refile-to-datetree "~/org/diary.org")
+      (insert "* Task stack")
+      (newline-and-indent)
+      (org-time-stamp-inactive '(16))
+      )
+    ))

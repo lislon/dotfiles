@@ -54,7 +54,7 @@ set timeout timeoutlen=500 ttimeoutlen=1
 
 set foldcolumn=0
 "set autochdir
-let mapleader=","
+let mapleader=" "
 let maplocalleader="\\"
 iabbrev lenght length
 iabbrev lenth length
@@ -75,6 +75,9 @@ inoremap <C-u> <Esc>mdgUiw`da
 
 " Script names
 nnoremap <leader>wsn :WinMessage scriptnames<CR>
+
+" folding
+nnoremap <leader>za za
 
 " rtp
 nnoremap <leader>wrt :WinMessage set rtp?<CR>
@@ -161,10 +164,6 @@ nnoremap gk k
 " <Alt_D> Digraph insertion :h digraph
 inoremap <a-d> <c-k>
 
-"Space to toggle folds
-nnoremap <space> zazz
-vnoremap <space> zazz
-
 inoremap <c-j> <c-o>j
 inoremap <c-k> <c-o>k
 
@@ -192,10 +191,16 @@ onoremap <C-Tab> <C-C><C-W>w
 nnoremap vaa ggVGg_
 
 " relative number lines
-nnoremap <leader>N :set relativenumber!<CR>
+nnoremap <leader>tN :set relativenumber!<CR>
 
 " Toggle line numbers
-nnoremap <leader>n :setlocal number!<cr>
+nnoremap <leader>tn :setlocal number!<cr>
+
+nnoremap <silent><leader>fs :update<cr>
+nnoremap <silent><leader>bc :q<cr>
+nnoremap <silent><leader>wc :q<cr>
+
+" lisa
 " nomap Insert
 :nnoremap <Insert> "+p
 :cnoremap <S-Insert> <c-r>+

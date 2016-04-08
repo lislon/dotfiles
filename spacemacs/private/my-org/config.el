@@ -80,6 +80,11 @@
                                ("b" "book" entry (file+headline "~/org/todo.org" "Books")
                                 "* PENDING %^{Book}\n%U\n%?")
 
+                               ("g" "goal" entry (file+headline "~/org/goal-today.org" "Task stack")
+                                "* TODO %^{Title}\n:PROPERTIES:\n:Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}\n:END:\n" :immediate-finish t :prepend t :clock-in t :clock-keep t)
+                               ("G" "goal later" entry (file+headline "~/org/goal-today.org" "Task stack")
+                                "* TODO %^{Title}\n:PROPERTIES:\n:Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}\n:END:\n" :prepent t)
+
                                ("m" "movie" entry (file+headline "~/org/todo.org" "Movies")
                                 "* TODO %?\n%U\n")
 
@@ -315,13 +320,14 @@ SCHEDULED %^T
 
 
 ;; C-C c capture
-(global-set-key "\C-cc" 'org-capture)
+;; (global-set-key "\C-cc" 'org-capture)  ;; Spacemacs by default use C-c c 
 (global-set-key (kbd "<f1>") 'org-agenda)
 
 ;; Make C-c C-x C-i/o work everywhere (with prefix - clock in recent task)
 (global-set-key (kbd "C-c C-x C-i") 'org-clock-in)
 (global-set-key (kbd "C-c C-x C-o") 'org-clock-out)
 (global-set-key (kbd "C-c C-x C-x") 'org-clock-in-last)
+(global-set-key (kbd "C-c C-o") 'org-open-at-point)
 (global-set-key (kbd "<f12>") (defun my/org-clockin-recent-tasks() (interactive)
                                 (org-clock-in '(4))))
 
@@ -366,10 +372,20 @@ SCHEDULED %^T
 ;; SPC o o - todo.org
 ;; SPC o c - config.el
 (evil-leader/set-key "oo" (defun my/jump-to-todo-file() (interactive) (find-file "~/org/todo.org")))
+(evil-leader/set-key "bo" (defun my/make-org-buffer() (interactive)
+                                 (spacemacs/new-empty-buffer)
+                                 (org-mode)
+                                 ))
 (evil-leader/set-key "oc" (defun my/jump-to-org-config-file () (interactive) (find-file "~/dotfiles/spacemacs/private/my-org/config.el")))
+(evil-leader/set-key "ok" (defun my/jump-to-org-keys-file () (interactive) (find-file "~/org/keys.org")))
 (evil-leader/set-key "oe" (defun my/jump-to-org-tasks-file () (interactive) (find-file "~/org/tasks.org")))
+(evil-leader/set-key "or" (defun my/jump-to-org-refile-file () (interactive) (find-file "~/org/refile.org")))
 (evil-leader/set-key "oa" 'org-agenda)
 (evil-leader/set-key "oC" 'org-capture)
+(global-set-key (kbd "<f5>") (lambda () (interactive) (org-capture '() "g")))
+(global-set-key (kbd "S-<f5>") (lambda () (interactive) (org-capture '() "G")))
+(global-set-key (kbd "C-<f5>") 'org-clock-jump-to-current-clock)
+(global-set-key (kbd "M-<f5>") (lambda () (interactive) (find-file "~/org/goal-today.org")))
 
 ;; Resume clocking task when emacs is restarted
 (with-eval-after-load 'org
@@ -389,9 +405,13 @@ SCHEDULED %^T
 
 
 ;; Org capture protocol
-(eval-after-load "org" '(require 'org-protocol))
-(add-hook 'org-capture-mode-hook 'my/org-capture-delete-other-windows)
-(advice-add 'org-protocol-do-capture :around 'my/intercept-make-capture-frame)
+(with-eval-after-load "org"
+  (require 'org-protocol)
+  (add-hook 'org-capture-mode-hook 'my/org-capture-delete-other-windows)
+  (advice-add 'org-protocol-do-capture :around 'my/intercept-make-capture-frame)
+  (advice-add 'org-insert-heading :before 'my/org-insert-heading-advice)
+  )
+
 
 ;; ------------------------------------------------------------------------------
 ;; lord-lislon hooks
@@ -412,6 +432,7 @@ SCHEDULED %^T
    '(
      (sh . t)
      (lisp . t)
+     (emacs-lisp . t)
      ))
   ;; Auto insert when ~TAB` in tables
   (advice-add 'org-table-next-field :after 'evil-insert-state))
@@ -460,8 +481,9 @@ SCHEDULED %^T
 (advice-add 'org-metareturn :around #'my/org-metaleft-or-evil-shift-left-advice)
 
 (with-eval-after-load 'org
-  (require 'org-notify)                 ; Support only deadlines
-  (org-notify-start)
+  ;; emacs 24.4 No such file or directory
+  ;; (require 'org-notify)                 ; Support only deadlines
+  ;; (org-notify-start)
   ;; how deadline worked?
   (appt-activate 1)
 
@@ -485,5 +507,14 @@ SCHEDULED %^T
         (helm-make-source "Recentf" 'helm-recentf-source
           :filtered-candidate-transformer nil
           )))
+
+
+(add-to-list 'auto-mode-alist
+             '("goal-today\\.org\\'" .
+               (lambda ()
+                 (add-hook 'org-after-todo-state-change-hook 'my/org-goal-today-after-done nil t)
+                 (spacemacs/set-leader-keys-for-major-mode 'org-mode
+                   "oD" 'my/org-goal-today-finish-day)
+                 )))
 
 ;; End of org config file

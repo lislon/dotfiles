@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: upload
+# key: upload
+# --
+(defun my/attach-after-save-hook ()
+  (interactive)
+  (add-hook 'after-save-hook
+            (lambda () (interactive)
+              (shell-command "$0")) ) nil t)
