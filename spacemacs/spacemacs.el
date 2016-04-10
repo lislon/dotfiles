@@ -362,11 +362,11 @@ layers configuration."
    helm-locate-command "locate %s -e %s"
    message-kill-buffer-query nil        ; do not ask confirmation of killing buffer
    ffap-newfile-prompt t                ; gf can create new files
-   source-directory "/home/ele/src/emacs/src"
+   source-directory "/home/ele/src-dormant/emacs/src"
    avy-case-fold-search nil             ; avy jump respect case
    spaceline-org-clock-p t
-   spacemacs-paste-transient-state-add-bindings '(("p" evil-paste-pop-next "paste next")
-                                                  ("P" evil-paste-pop "paste previous"))
+   spacemacs-paste-transient-state-add-bindings '(("p" evil-paste-pop "paste next")
+                                                  ("P" evil-paste-pop-next "paste previous"))
    timer-max-repeats 0                  ; Do not repeat timer on suspen
 
 
