@@ -233,7 +233,12 @@ init-complex-aliases() {
         mkdir -p "$@" && eval cd "\"\$$#\"";
     }
 
-    # play bell sound (at the end of long commands)
+    sc-move-to-system() {
+        sudo cp --no-preserve=ownership ~/.config/systemd/user/$1 /etc/systemd/system/ && \
+        echo "File copied to /etc/systemd/system/$1"
+    }
+
+    # PLAY bell sound (at the end of long commands)
     bell() {
         (notify-send "Command complete $1" &
             aplay ~/bin/ding.wav 2>/dev/null &)

@@ -682,7 +682,7 @@ That function deletes \"#+ALLPRIORITIES\" line from index.org file"
 
     (use-local-map (make-sparse-keymap))
     (local-set-key (kbd "RET") 'my/translate-word-and-next-line)
-    (evil-local-set-key 'normal (kbd "RET") 'my/translate-word-and-next-line))
+    (define-key evil-normal-state-map (kbd "RET") 'my/translate-word-and-next-line))
 
   (defun my/google-translate-repl ()
     (interactive)
