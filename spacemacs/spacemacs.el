@@ -1166,15 +1166,22 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
   ;; End of private config
   )
 
-(defun my/systemd-user-timer-create (systemd-name)
-  (interactive "sUnit name: ")
-  (find-file (concat user-home-directory "/.config/systemd/user/" systemd-name ".timer"))
-  (yas-minor-mode)
-  (yas-insert-snippet "timer")
-  ;; (insert "timer")
-  ;; (find-file (concat user-home-directory "/.config/systemd/user/" systemd-name ".service")
-  ;; (insert "service")
-)
+(defun my/systemd-create-unit (filename)
+  "Creates a user systemd file and expands ya-snippet template"
+  (interactive "sUnit file name with extension: ")
+  (unless (string-match-p "\." filename)
+    (setq filename (concat filename ".service")))
+  (find-file (concat user-home-directory "/.config/systemd/user/" filename))
+  (let* ((extension (file-name-extension filename))
+         (templates (yas--all-templates (yas--get-snippet-tables)))
+         (template-data  (some (lambda (template)
+                                 (and (string= extension (yas--template-name template)) template))
+                               templates)))
+    (when template-data
+      (systemd-mode)
+      (yas-minor-mode)
+      (evil-insert-state)
+      (yas-expand-snippet (yas--template-content template-data)))))
 
 (defun my/spacemacs-buffer//lord-lislon ()
   "Returns lord lislon news"
