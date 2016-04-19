@@ -492,6 +492,13 @@ layers configuration."
 
   ;; locate shows bad results on archlinux
   (add-hook 'helm-after-initialize-hook (lambda () (setq helm-locate-fuzzy-match nil)))
+  (add-hook 'after-save-hook (lambda ()
+                               (when (and
+                                      (string-prefix-p (concat user-home-directory "bin") buffer-file-name)
+                                      (eq major-mode 'shell-script-mode)
+                                      (not (file-executable-p buffer-file-name)))
+                                 (set-file-modes buffer-file-name #o755)
+                                 )))
 
   ;; Fixed russian keyboard with proper numbers keys
   (quail-define-package
@@ -577,6 +584,8 @@ layers configuration."
             erc-hl-nicks)))
 
   (add-hook 'erc-mode-hook 'emoji-cheat-sheet-plus-display-mode)
+  ;; auto-save all files on lost focus
+  (add-hook 'focus-out-hook (lambda () (interactive) (save-some-buffers t)))
 
   (with-eval-after-load 'erc
     (erc-track-mode -1))
@@ -868,6 +877,9 @@ the OS keyboard is english or russian"
 
   ;; Automode for awesomewm files like rc.lua.blackburg, rc.lua_test
   (add-to-list 'auto-mode-alist '("\\.lua.+" . lua-mode))
+
+  ;; Shell mode for ~/bin
+  (add-to-list 'auto-mode-alist `(,(concat user-home-directory "bin") . shell-script-mode))
 
   ;; Add ~/dotfiles/spacemacs/private/snippets directory
   (eval-after-load "yasnippet"
