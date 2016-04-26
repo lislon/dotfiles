@@ -26,8 +26,10 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+     ;; (if (s-starts-with-p "minijack" system-name)
+     ;;     'spacemacs-ivy
+     ;;   'spacemacs-helm)
      spacemacs-helm
-     ;; spacemacs-ivy
      auto-completion
      better-defaults
      emacs-lisp
@@ -46,6 +48,7 @@ values."
      javascript
      python
      gnus
+     mu4e
      ;; eyebrowse
      semantic
      erc
@@ -274,61 +277,6 @@ values."
   ;; User initialization goes here
   )
 
-;; ============================================================
-(defun abbreviate-file-name (filename)
-  "Return a version of FILENAME shortened using `directory-abbrev-alist'.
-This also substitutes \"~\" for the user's home directory (unless the
-home directory is a root directory) and removes automounter prefixes
-\(see the variable `automount-dir-prefix')."
-  ;; Get rid of the prefixes added by the automounter.
-  (if (not filename)
-      (debug)
-      )
-  (save-match-data
-    (if (and automount-dir-prefix
-	     (string-match automount-dir-prefix filename)
-	     (file-exists-p (file-name-directory
-			     (substring filename (1- (match-end 0))))))
-	(setq filename (substring filename (1- (match-end 0)))))
-    ;; Avoid treating /home/foo as /home/Foo during `~' substitution.
-    ;; To fix this right, we need a `file-name-case-sensitive-p'
-    ;; function, but we don't have that yet, so just guess.
-    (let ((case-fold-search
-	   (memq system-type '(ms-dos windows-nt darwin cygwin))))
-      ;; If any elt of directory-abbrev-alist matches this name,
-      ;; abbreviate accordingly.
-      (dolist (dir-abbrev directory-abbrev-alist)
-	(if (string-match (car dir-abbrev) filename)
-	    (setq filename
-		  (concat (cdr dir-abbrev)
-			  (substring filename (match-end 0))))))
-      ;; Compute and save the abbreviated homedir name.
-      ;; We defer computing this until the first time it's needed, to
-      ;; give time for directory-abbrev-alist to be set properly.
-      ;; We include a slash at the end, to avoid spurious matches
-      ;; such as `/usr/foobar' when the home dir is `/usr/foo'.
-      (or abbreviated-home-dir
-	  (setq abbreviated-home-dir
-		(let ((abbreviated-home-dir "$foo"))
-		  (concat "\\`" (abbreviate-file-name (expand-file-name "~"))
-			  "\\(/\\|\\'\\)"))))
-
-      ;; If FILENAME starts with the abbreviated homedir,
-      ;; make it start with `~' instead.
-      (if (and (string-match abbreviated-home-dir filename)
-	       ;; If the home dir is just /, don't change it.
-	       (not (and (= (match-end 0) 1)
-			 (= (aref filename 0) ?/)))
-	       ;; MS-DOS root directories can come with a drive letter;
-	       ;; Novell Netware allows drive letters beyond `Z:'.
-	       (not (and (memq system-type '(ms-dos windows-nt cygwin))
-			 (save-match-data
-			   (string-match "^[a-zA-`]:/$" filename)))))
-	  (setq filename
-		(concat "~"
-			(match-string 1 filename)
-			(substring filename (match-end 0)))))
-      filename)))
 
 (defun dotspacemacs/user-init ()
   ;; Shared undo of org files between computers
@@ -368,6 +316,31 @@ layers configuration."
    spacemacs-paste-transient-state-add-bindings '(("p" evil-paste-pop "paste next")
                                                   ("P" evil-paste-pop-next "paste previous"))
    timer-max-repeats 0                  ; Do not repeat timer on suspen
+   delete-by-moving-to-trash t
+
+   ;; mu4e
+   mu4e-maildir                "~/.mail/lislon"
+   mu4e-enable-notifications   t
+   mu4e-enable-mode-line       t
+   mu4e-sent-folder            "/&BB4EQgQ,BEAEMAQyBDsENQQ9BD0ESwQ1-"  ;;  folder      for  sent  messages
+   mu4e-drafts-folder          "/&BCcENQRABD0EPgQyBDgEOgQ4-"          ;;  unfinished  messages
+   mu4e-trash-folder           "/&BBoEPgRABDcEOAQ9BDA-"               ;;  trashed     messages
+   mu4e-refile-folder          "/refile"                              ;;  saved       messages
+   send-mail-function          'sendmail-send-it
+   message-send-mail-function  'message-send-mail-with-sendmail
+   mu4e-get-mail-command       "mbsync lislon"
+   mu4e-attachment-dir         "~/Downloads"
+   mu4e-update-interval        300
+   ;; mu4e-html2text-command "w3m -T text/html"
+   ;; mu4e-update-interval 120
+   ;; mu4e-headers-auto-update t
+
+   ;; Man in same window
+   Man-notify-method 'pushy
+
+   ;; java
+   ;; eclim-eclipse-dirs "/usr/lib/eclipse"
+   ;; eclim-executable "/usr/lib/eclipse/eclim"
 
 
    ;; backup
@@ -450,9 +423,21 @@ layers configuration."
   ;; M-\ to escape from insert mode (from russian language)
   (define-key evil-hybrid-state-map (kbd "M-\\") 'evil-escape)
 
+  ;; q to exit java help
+  (with-eval-after-load "eclim-java"
+    (loop for map in `(,eclim-java-show-documentation-map
+                       ,eclim-problems-mode-map)
+          do
+          (define-key map (kbd "q") 'delete-window)
+          (evil-define-key 'normal map (kbd "q") 'delete-window)))
+
   ;; Vim move right or left
   (define-key evil-normal-state-map "L" 'evil-end-of-line)
   (define-key evil-normal-state-map "H" 'spacemacs/smart-move-beginning-of-line)
+
+
+  (with-eval-after-load "org"
+    (mapcar 'funcall org-store-link-functions))
 
   ;;------------------------------------------------------------------------------
   ;; Google translate
@@ -497,6 +482,7 @@ layers configuration."
                                       (string-prefix-p (concat user-home-directory "bin") buffer-file-name)
                                       (eq major-mode 'shell-script-mode)
                                       (not (file-executable-p buffer-file-name)))
+                                 (message "chmod 755 %s" buffer-file-name)
                                  (set-file-modes buffer-file-name #o755)
                                  )))
 
@@ -549,30 +535,6 @@ layers configuration."
               (when (erc-list-match erc-foolish-content msg)
                 (setq erc-insert-this nil))))
 
-  (defun bb/erc-github-filter ()
-    "Shortens messages from gitter."
-    (interactive)
-    (when (and (< 18 (- (point-max) (point-min)))
-               (string= (buffer-substring (point-min)
-                                          (+ (point-min) 18))
-                        "<gitter> [Github] "))
-      (dolist (regexp '(" \\[Github\\]"
-                        " \\(?:in\\|to\\) [^ /]+/[^ /:]+"))
-        (goto-char (point-min))
-        (when (re-search-forward regexp (point-max) t)
-          (replace-match "")))
-      (goto-char (point-min))
-      (when (re-search-forward
-             "https?://github\\.com/[^/]+/[^/]+/[^/]+/\\([[:digit:]]+\\)\\([^[:space:]]*\\)?"
-             (point-max) t)
-        (let* ((url (match-string 0))
-               (number (match-string 1))
-               (start (+ 1 (match-beginning 0)))
-               (end (+ 1 (length number) start)))
-          (replace-match (format "(#%s)" (match-string 1)))
-          (erc-button-add-button start end 'browse-url nil (list url)))
-        )))
-
   (with-eval-after-load 'erc
     (setq erc-insert-modify-hook
           '(erc-controls-highlight
@@ -619,102 +581,27 @@ layers configuration."
   (evil-leader/set-key
     "fd" 'my/ediff-buffer-with-file)
 
-  (defvar my/org-mobile-sync-timer nil)
-  (defvar my/org-mobile-sync-secs (* 60 60 24))
 
-  (defun my/org-mobile-sync-pull-and-push ()
-    (require 'org)
-    (org-mobile-pull)
-    (org-mobile-push)
-    (when (fboundp 'sauron-add-event)
-      (sauron-add-event 'my 3 "Called org-mobile-pull and org-mobile-push")))
-
-  (defun my/org-mobile-sync-start ()
-    "Start automated `org-mobile-push'"
-    (interactive)
-    (setq my/org-mobile-sync-timer
-          (run-with-timer my/org-mobile-sync-secs my/org-mobile-sync-secs
-                          'my/org-mobile-sync-pull-and-push)))
-
-  (defun my/org-mobile-sync-stop ()
-    "Stop automated `org-mobile-push'"
-    (interactive)
-    (cancel-timer my/org-mobile-sync-timer))
-
-  (my/org-mobile-sync-start)
-
-  (defun my/org-mobile-fix-index-bug ()
-    "Fixes MobileOrg's index.org after push to workaround bug in Android.
-That function deletes \"#+ALLPRIORITIES\" line from index.org file"
-    (interactive)
-    (let ((file (concat org-mobile-directory "/index.org")))
-      (save-excursion
-        (with-temp-buffer
-          (insert-file-contents file)
-          (goto-char (point-min))
-          (when (search-forward "#+ALLPRIORITIES" nil t)
-            ;; Avoid polluting kill-ring by not calling (kill-line)
-            (let ((beg (progn (forward-line 0)
-                              (point))))
-              (forward-line 1)
-              (delete-region beg (point))))
-          (write-region nil nil file)
-          )
-        )))
   (advice-add 'org-mobile-push :after 'my/org-mobile-fix-index-bug)
 
+;; (with-eval-after-load 'mu4e
+;;   (require 'utf7)
 
-  ;; Google translate interactive mode
-  (define-derived-mode google-translate-interactive-mode
-    text-mode "Google Translate"
-    (defun my/next-line-empty-p ()
-      "Check if next line empty"
-      (save-excursion
-        (beginning-of-line 2)
-        (save-match-data
-          (looking-at "[ \t]*$"))
-        ))
-    (defun my/translate-word-and-next-line ()
-      "Shows translation of current line in help buffer and inserts
-          new line after it"
-      (interactive)
-      (let ((buffer (current-buffer)) )
-        (move-beginning-of-line nil)
-        (set-mark-command nil)
-        (move-end-of-line nil)
-        (google-translate-at-point)
-        (switch-to-buffer buffer)
-        (if (eq (point) (point-max))
-            (newline-and-indent)
-          (end-of-line 2))
-        ))
+;;   (defun my/utf7-to-utf8-str-list (utf7-list)
+;;     (let* ((iter utf7-list)
+;;            (decoded)
+;;            (result))
+;;       (while (not (eq nil iter))
+;;         (setq decoded (cons (utf7-decode (car iter) t) decoded)
+;;               iter (cdr iter)))
+;;       (setq result decoded)))
 
-    (use-local-map (make-sparse-keymap))
-    (local-set-key (kbd "RET") 'my/translate-word-and-next-line)
-    (define-key evil-normal-state-map (kbd "RET") 'my/translate-word-and-next-line))
+;;   (advice-add 'mu4e~get-maildirs-1 :around
+;;               (lambda (orig-func &rest args)
+;;                 (my/utf7-to-utf8-str-list (apply orig-func args))
+;;                 ))
+;;   )
 
-  (defun my/google-translate-repl ()
-    (interactive)
-    (require 'google-translate-default-ui)
-    (let ((buffer (get-buffer-create "Google Translate REPL")))
-      (switch-to-buffer buffer)
-      (google-translate-interactive-mode)
-      (evil-insert-state)
-      (goto-char (buffer-end 1))
-      ))
-
-  (defun lsn-insert-line-and-paste (count)
-    "Moves to new line and paste text"
-    (interactive "P")
-    (move-end-of-line nil)
-    (newline)
-    (evil-paste-after count))
-
-  (defun my/keys-help-sheet ()
-    "Move to keys cheat sheet"
-    (interactive)
-    (find-file "~/org/keys.org")
-    )
 
   (evil-leader/set-key "x g i" 'my/google-translate-repl)
   ;; SPC o k - Show cheatsheet with hotkeys
@@ -725,21 +612,6 @@ That function deletes \"#+ALLPRIORITIES\" line from index.org file"
   (define-key evil-normal-state-map (kbd "gp") 'lsn-insert-line-and-paste)
   (add-hook 'dired-mode-hook (lambda ()
                                (define-key dired-mode-map "e" 'wdired-change-to-wdired-mode)))
-
-  (defun eval-parent-sexp ()
-    "Cause sometimes you just want to eval just the immediate
-form. not the top level, but without going to the closing paren
-and evaling there."
-    (interactive)
-    (save-excursion
-      ;; get out of string if in it
-      (dotimes (c (if (in-string-p) 2 1))
-        (up-list+))
-      (let ((cmd (key-binding (kbd "C-x C-e"))))
-        (if (eq cmd 'slime-eval-last-expression)
-            (funcall cmd)
-          (funcall cmd '())))))
-
   (global-set-key (kbd "C-M-S-x") 'eval-parent-sexp)
   (global-set-key (kbd "M-a") 'helm-mini)
   (global-set-key (kbd "M-k") 'kill-buffer)
@@ -764,6 +636,9 @@ and evaling there."
   (global-set-key (kbd "M-%") 'anzu-query-replace)
   (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
 
+  (global-set-key (kbd "<f8>") 'quickrun)
+  (global-set-key (kbd "<f13>") 'toggle-input-method)
+
   (use-package tea-time
     :bind (("C-c t" . my/tea-timer)
            ("C-c T" . tea-show-remaining-time))
@@ -775,17 +650,6 @@ and evaling there."
         (user-error "Sound not exists at '%s'!" tea-time-sound)))
     )
 
-  ;; (global-set-key (kbd "C-c t") (defun my/tea-timer()
-  ;;                                 (interactive)
-  ;;                                 (require 'tea-time)
-  ;;                                 (if (file-exists-p tea-time-sound)
-  ;;                                     (call-interactively 'tea-time)
-  ;;                                   (user-error "Sound not exists at '%s'!" tea-time-sound))))
-  ;; (global-set-key (kbd "C-c T") 'tea-show-remaining-time)
-
-  (global-set-key (kbd "<f8>") 'quickrun)
-  (message "F13 here")
-  (global-set-key (kbd "<f13>") 'toggle-input-method)
   (add-hook 'minibuffer-setup-hook
             (lambda ()
               (local-set-key (kbd "<f13>") 'toggle-input-method)))
@@ -809,52 +673,7 @@ and evaling there."
   ;; recent-f sort minor mode
   (helm-adaptive-mode)
 
-  ;; (add-hook 'evil-hybrid-state-entry-hook
-  ;;           (lambda () (literal-insert-mode 1)))
-  ;; (add-hook 'evil-hybrid-state-exit-hook
-  ;;           (lambda () (literal-insert-mode -1)))
-
-  ;; keep navigation when russian keyboard is active
-  (defun translate-keystrokes-ru-en ()
-    "Make emacs output english characters, regardless whether
-the OS keyboard is english or russian"
-    (flet ((make-key-stroke (prefix char)
-                            (eval `(kbd ,(if (and (string-match "^C-" prefix)
-                                                  (string-match "[A-Z]" (string char)))
-                                             (concat "S-" prefix (string (downcase char)))
-                                           (concat prefix (string char)))))))
-      (let ((case-fold-search nil)
-            (keys-pairs (mapcar* 'cons
-                                 "йцукенгшщзхъфывапролджэячсмитьбюЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖ\ЭЯЧСМИТЬБЮ№"
-                                 "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"))
-            (prefixes '(""    "s-"    "M-"    "M-s-"
-                        "C-"  "C-s-"  "C-M-"  "C-M-s-")))
-        (mapc (lambda (prefix)
-                (mapc (lambda (pair)
-                        (define-key key-translation-map
-                          (make-key-stroke prefix (car pair))
-                          (make-key-stroke prefix (cdr pair))))
-                      keys-pairs))
-              prefixes))))
-
-  ;; (translate-keystrokes-ru-en)
-  (defun literal-insert ()
-    (interactive)
-    (insert-char last-input-event 1))
-
-
-  (define-minor-mode literal-insert-mode
-    "Make emacs output characters corresponging to the OS keyboard,
- ignoring the key-translation-map"
-    :keymap (let ((new-map (make-sparse-keymap))
-                  (english-chars "qwertyuiop[]asdfghjkl;'zxcvbnm,.QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>#"))
-              (mapc (lambda (char)
-                      (define-key new-map (string char)
-                        'literal-insert))
-                    english-chars)
-              new-map))
-
-                                        ; Auto set lisp-interaction-mode in *scratch*
+  ; Auto set lisp-interaction-mode in *scratch*
   ;; @deprec Now it is dotspacemacs-scratch-mode 'lisp-interaction-mode
   ;; (defun my/scratch-interactive-mode ()
   ;;   (when (equal "*scratch*" (buffer-name))
@@ -879,7 +698,8 @@ the OS keyboard is english or russian"
   (add-to-list 'auto-mode-alist '("\\.lua.+" . lua-mode))
 
   ;; Shell mode for ~/bin
-  (add-to-list 'auto-mode-alist `(,(concat user-home-directory "bin") . shell-script-mode))
+  (add-to-list 'auto-mode-alist '("rc\\'" . conf-mode))
+  (add-to-list 'auto-mode-alist `(,(concat user-home-directory "bin//.+") . shell-script-mode))
 
   ;; Add ~/dotfiles/spacemacs/private/snippets directory
   (eval-after-load "yasnippet"
@@ -928,51 +748,6 @@ has been displayed in this session."
     )
 
   (with-eval-after-load "systemd"
-    (defun my/systemd-enable-unit ()
-      (interactive)
-      (shell-command (format  "systemctl --user enable %s" (buffer-name))))
-
-    (defun my/systemd-disable-unit ()
-      (interactive)
-      (shell-command (format  "systemctl --user disable %s" (buffer-name))))
-
-    (defun my/systemd-start-unit ()
-      (interactive)
-      (shell-command (format  "systemctl --user start %s" (buffer-name))))
-
-    (defun my/systemd-switch-timer-service ()
-      "Switch between service/timer files"
-      (interactive)
-      (let* ((base-name (file-name-sans-extension
-                         (buffer-file-name)))
-             (service-name (concat base-name ".service"))
-             (timer-name (concat base-name ".timer")))
-        (cond
-         ((and (string= (buffer-file-name) service-name)
-               (file-exists-p timer-name))
-          (find-file timer-name))
-         ((and (string= (buffer-file-name) timer-name)
-               (file-exists-p service-name))
-          (find-file service-name)))))
-
-    (defun my/systemd-move-to-system ()
-      "Move systemd files to system"
-      (interactive)
-      (let* ((base-name (file-name-sans-extension
-                         (buffer-file-name)))
-             (service-name (concat base-name ".service"))
-             (timer-name (concat base-name ".timer")))
-        (when (s-starts-with-p "/home")
-          ()
-          )
-        (cond
-         ((and (string= (buffer-file-name) service-name)
-               (file-exists-p timer-name))
-          (find-file timer-name))
-         ((and (string= (buffer-file-name) timer-name)
-               (file-exists-p service-name))
-          (find-file service-name))))
-      )
 
     (spacemacs/set-leader-keys-for-major-mode 'systemd-mode
       "e" 'my/systemd-enable-unit
@@ -984,23 +759,8 @@ has been displayed in this session."
     ;; (add-hook systemd-mode-map)
     )
 
-  (defun my/spacemacs-maybe-kill-emacs ()
-    "If emacs server is running, kills frame instead of server"
-    (interactive)
-    (if (server-running-p)
-        (spacemacs/frame-killer)
-      (spacemacs/kill-emacs)))
-
   ;; I don't want close emacs daemon by SPC q q
   (evil-leader/set-key "qq" 'my/spacemacs-maybe-kill-emacs)
-
-  (defun my/isearch-other-window ()
-    "Search in other window"
-    (interactive)
-    (save-selected-window
-      (other-window 1)
-      (isearch-forward)))
-
   (global-set-key (kbd "C-M-S") 'my/isearch-other-window)
 
   ;; (defun my/evil-visual-restore (func &rest args)
@@ -1014,23 +774,13 @@ has been displayed in this session."
   (when (file-exists-p "~/local.el")
     (load "~/local.el"))
 
-  (defun my/compile ()
-    "Compile program. With prefix arg change compile args"
-    (interactive)
-    (setq-local compilation-read-command nil)
-    (call-interactively 'compile)
-    )
-
   (spacemacs/set-leader-keys "cC" 'my/compile)
 
-  ;; (spacemacs/set-leader-keys "otC" (defun trello-sync-in () (interactive) (org-trello/sync-buffer '(4))))
-  ;; (spacemacs/set-leader-keys "otc" (defun trello-sync-out () (interactive) (org-trello/sync-buffer)))
-
   (evil-leader/set-key "hl" 'helm-locate-library)
+
   ;; Preload org to resume clock in time
   ;; speed up
   (require 'org)
-
 
   ;; (with-eval-after-load "Man"
   ;;   (add-hook 'Man-mode-hook (lambda () (pop-to-buffer (current-buffer))))
@@ -1048,7 +798,6 @@ has been displayed in this session."
   (require 'undohist)
   (undohist-initialize)
 
-
   ;; Extract variable to the line above
   ;; (evil-define-operator my/sh-extract-variable-operator (beg end)
   ;;   :keep-visual t
@@ -1065,24 +814,6 @@ has been displayed in this session."
   ;;       (end-of-line)
   ;;       )
   ;;     ))
-
-  (defun my/sh-extract-variable (varname)
-    "Extract WORD under cursor to a variable"
-    (interactive "sExtract variable name: ")
-
-    (let* ((inner-word (evil-inner-WORD))
-           (beg (car inner-word)) ;; inner-word[0]
-           (end (cadr inner-word)) ;; inner-word[1]
-           (region (buffer-substring-no-properties beg end)))
-      (kill-region beg end)
-      (insert "$" varname)
-      (forward-line -1)
-      (newline-and-indent)
-      (insert varname "=" region)
-      (end-of-line)
-      )
-    )
-
 
   (spacemacs/set-leader-keys-for-major-mode 'sh-mode
     "rv" 'my/sh-extract-variable)
@@ -1178,57 +909,16 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
   ;; End of private config
   )
 
-(defun my/systemd-create-unit (filename)
-  "Creates a user systemd file and expands ya-snippet template"
-  (interactive "sUnit file name with extension: ")
-  (unless (string-match-p "\." filename)
-    (setq filename (concat filename ".service")))
-  (find-file (concat user-home-directory "/.config/systemd/user/" filename))
-  (let* ((extension (file-name-extension filename))
-         (templates (yas--all-templates (yas--get-snippet-tables)))
-         (template-data  (some (lambda (template)
-                                 (and (string= extension (yas--template-name template)) template))
-                               templates)))
-    (when template-data
-      (systemd-mode)
-      (yas-minor-mode)
-      (evil-insert-state)
-      (yas-expand-snippet (yas--template-content template-data)))))
 
-(defun my/spacemacs-buffer//lord-lislon ()
-  "Returns lord lislon news"
-  (require 'org-agenda)
-  )
+;; Mu4e desktop notification
+(with-eval-after-load 'mu4e-alert
+  ;; Enable Desktop notifications
+  (mu4e-alert-set-default-style 'notifications))
 
-(defun my/ediff-buffer-with-file (file-B &optional startup-hooks)
-  "Run Ediff on a current buffer and other file"
-  (interactive
-   (list (ediff-read-file-name "File to compare"
-                               (setq dir-B
-                                     (if ediff-use-last-dir
-                                         ediff-last-dir-B
-                                       (file-name-directory buffer-file-name)))
-                               (progn
-                                 (ediff-add-to-history
-                                  'file-name-history
-                                  (ediff-abbreviate-file-name
-                                   (expand-file-name
-                                    (file-name-nondirectory buffer-file-name)
-                                    dir-B)))
-                                 (ediff-get-default-file-name buffer-file-name 1)))
-         ))
-  (ediff-files-internal (if (file-directory-p file-B)
-                            (expand-file-name
-                             (file-name-nondirectory file-A) file-B)
-                          file-B)
-                        buffer-file-name
-                        nil ; file-C
-                        startup-hooks
-                        'ediff-files))
 
 (setq custom-file (expand-file-name "~/Dropbox/dotfiles/spacemacs/emacs-custom.el"))
 (load custom-file)
-
+(load "~/Dropbox/dotfiles/spacemacs/funcs.el")
 
 
 ;; (cancel-timer my/timer)
