@@ -176,6 +176,7 @@ init-simple-aliases() {
     alias dps='docker ps'
     alias ding=bell
     alias r=reload
+    alias fix-null='sudo /bin/sh -c "rm -f /dev/null; mknod -m 666 /dev/null c 1 3"'
     # Move to last made photos
     alias cd-last-photos="/media/photos/Photos/Everyday/*(oc[1,1])"
 
