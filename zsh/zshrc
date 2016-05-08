@@ -24,18 +24,17 @@ init-base-settings() {
     # Show stats if commands takes longer then 10 sec
     REPORTTIME=10
 
-    # C-h not cluttering with sudo
-    autoload -Uz run-help
-    autoload run-help-git
+    # help with cluttering sudo when running help with C-h
+    autoload -U run-help
     autoload run-help-sudo
-    autoload run-help-docker
+    autoload run-help-git
 
     # Vim for tty
     if [[ -n "$SSH_TTY" ]] ; then
         MAINEDITOR="vim"
         alias se=sudoedit
     else
-        MAINEDITOR="emacsclient -c"
+        MAINEDITOR="~/bin/shared/emacs-open-in-client"
         alias se=sudoedit
         # Run emacs with sudo
         # se() {
@@ -154,15 +153,20 @@ init-simple-aliases() {
     alias -s pdf='xdg-open'
     alias -s html='chromium'
     alias emax="emacsclient -nw"                      # used to be "emacs -nw"
-    alias e="emacsclient -c"
+    alias e="$EDITOR"
     #alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
     #alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
     alias sc-cat='systemctl cat'
     alias sc-user-dr='systemctl --user daemon-reload'
-    alias sc-dr='systemctl --user daemon-reload'
-    alias jc='journalctl'
+    alias sc-dr='sudo systemctl daemon-reload'
+    alias jc='sudo journalctl -u'
     alias -g DN=/dev/null
+    alias -g BOTH=2>&1
     alias calc=python
+    alias o=xdg-open
+    alias jl='sudo journalctl -b 0'
+    hash -d scu="$HOME/.config/systemd/user"
+    hash -d scd='/etc/systemd/system/'
 
     user_commands=(
         list-units status list-unit-files list-jobs

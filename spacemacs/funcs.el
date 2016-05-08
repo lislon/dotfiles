@@ -113,9 +113,14 @@
 (defun my/spacemacs-maybe-kill-emacs ()
   "If emacs server is running, kills frame instead of server"
   (interactive)
-  (if (server-running-p)
-      (spacemacs/frame-killer)
-    (spacemacs/kill-emacs)))
+  ;; Check local buffer variable if we editing files from console.
+  (if server-buffer-clients
+      ;; if yes, just kill buffer it to return to console
+      (kill-buffer)
+    ;; Otherwise kill frame
+    (if (server-running-p)
+        (spacemacs/frame-killer)
+      (spacemacs/kill-emacs))))
 
 (defun my/isearch-other-window ()
   "Search in other window"
