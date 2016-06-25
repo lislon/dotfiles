@@ -2,8 +2,12 @@
 # name: socket
 # key: socket
 # --
+[Unit]
+Conflicts=$1.service
+
 [Socket]
-Listen=:$1
+ListenStream=$2
+Accept=yes
 
 [Install]
-WantedBy=default.target
+WantedBy=sockets.target

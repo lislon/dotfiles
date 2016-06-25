@@ -1,20 +1,32 @@
 
+(defun my/make-temp-java-sandbox ()
+  "Generates a temporarty java file with boilerplate hello world example"
+  (interactive)
+  (let ((dir (make-temp-file "sandbox-java" t)))
+    (find-file (concat dir "/Sandbox.java"))
+    (eclim-mode nil)
+    (my/insert-yasnippet "sandbox")
+    ;; (quickrun-autorun-mode)
+    ))
+
+(defun my/insert-yasnippet (name)
+  "Inserts snippet with given name into current buffer"
+  (let* ((templates (yas--all-templates (yas--get-snippet-tables)))
+         (template-data  (some (lambda (template)
+                                 (and (string= name (yas--template-name template)) template))
+                               templates)))
+    (when template-data
+      (evil-insert-state)
+      (yas-expand-snippet (yas--template-content template-data)))))
+
 (defun my/systemd-create-unit (filename)
   "Creates a user systemd file and expands ya-snippet template"
-  (interactive "sUnit file name with extension: ")
+  (interactive "sUnit file name WITH (!) extension: ")
   (unless (string-match-p "\." filename)
     (setq filename (concat filename ".service")))
   (find-file (concat user-home-directory "/.config/systemd/user/" filename))
-  (let* ((extension (file-name-extension filename))
-         (templates (yas--all-templates (yas--get-snippet-tables)))
-         (template-data  (some (lambda (template)
-                                 (and (string= extension (yas--template-name template)) template))
-                               templates)))
-    (when template-data
-      (systemd-mode)
-      (yas-minor-mode)
-      (evil-insert-state)
-      (yas-expand-snippet (yas--template-content template-data)))))
+  (my/insert-yasnippet (file-name-extension filename))
+  )
 
 (defun my/spacemacs-buffer//lord-lislon ()
   "Returns lord lislon news"
@@ -57,6 +69,7 @@
          (region (buffer-substring-no-properties beg end)))
     (kill-region beg end)
     (insert "$" varname)
+    (evil-backward-paragraph)
     (forward-line -1)
     (newline-and-indent)
     (insert varname "=" region)
@@ -158,7 +171,7 @@
 ;; ----------------------------------------------------------------
 
 (defvar my/org-mobile-sync-timer nil)
-(defvar my/org-mobile-sync-secs (* 60 60 24))
+(defvar my/org-mobile-sync-secs (* 60 10 100000))
 
 (defun my/org-mobile-sync-pull-and-push ()
   (require 'org)
@@ -304,28 +317,123 @@ home directory is a root directory) and removes automounter prefixes
 ;; Google translate interactive mode
 (define-derived-mode google-translate-interactive-mode
   text-mode "Google Translate"
-  (defun my/next-line-empty-p ()
-    "Check if next line empty"
-    (save-excursion
-      (beginning-of-line 2)
-      (save-match-data
-        (looking-at "
-[ \t]*$"))
-        ))
-    (defun my/translate-word-and-next-line ()
-      "Shows translation of current line in help buffer and inserts
-new line after it"
-      (interactive)
-      (save-selected-window
-        (move-beginning-of-line nil)
-        (set-mark-command nil)
-        (move-end-of-line nil)
-        (google-translate-at-point))
-      (if (eq (point) (point-max))
-          (newline-and-indent)
-        (end-of-line 2)))
-
     (define-key google-translate-interactive-mode-map (kbd "RET") 'my/translate-word-and-next-line)
-    (evil-define-key 'normal google-translate-interactive-mode-map
-      (kbd "RET") 'my/translate-word-and-next-line)
+    (evil-define-key 'normal google-translate-interactive-mode-map (kbd "RET") 'my/translate-word-and-next-line)
+    (add-hook 'google-translate-interactive-mode-hook
+              (lambda ()
+                (add-hook 'kill-buffer-hook
+                          'my/google-translate-append-to-dictionary t t)))
 )
+
+(defun my/google-translate-append-to-dictionary ()
+  "Appends words from interactive buffer to dictionary"
+  (when my/english-dictionary-file
+    (append-to-file (point-min) (point-max) my/english-dictionary-file)))
+
+(defvar my/english-dictionary-file nil "Filename of txt file,
+that is storing words from interactive google translate buffer")
+
+(defun my/translate-word-and-next-line ()
+  "Shows translation of current line in help buffer and inserts
+new line after it"
+  (interactive)
+  (save-selected-window
+    (move-beginning-of-line nil)
+    (set-mark-command nil)
+    (move-end-of-line nil)
+    (google-translate-at-point))
+  (if (eq (point) (point-max))
+      (newline-and-indent)
+    (end-of-line 2)))
+
+(defun my/next-line-empty-p ()
+  "Check if next line empty"
+  (save-excursion
+    (beginning-of-line 2)
+    (save-match-data
+      (looking-at "
+[ \t]*$"))))
+
+(defun my/init-swiper ()
+  (use-package swiper
+    :config
+    (progn
+      (defun spacemacs/swiper-region-or-symbol ()
+        "Run `swiper' with the selected region or the symbol
+around point as the initial input."
+        (interactive)
+        (let ((input (if (region-active-p)
+                         (buffer-substring-no-properties
+                          (region-beginning) (region-end))
+                       (thing-at-point 'symbol t))))
+          (swiper input)))
+
+      (defun spacemacs/swiper-all-region-or-symbol ()
+        "Run `swiper-all' with the selected region or the symbol
+around point as the initial input."
+        (interactive)
+        (ivy-read "Swiper: " (swiper--multi-candidates
+                              (cl-remove-if-not
+                               #'buffer-file-name
+                               (buffer-list)))
+                  :initial-input (if (region-active-p)
+                                     (buffer-substring-no-properties
+                                      (region-beginning) (region-end))
+                                   (thing-at-point 'symbol t))
+                  :action 'swiper-multi-action-2
+                  :unwind #'swiper--cleanup
+                  :caller 'swiper-multi))
+
+      (spacemacs/set-leader-keys
+        "ss" 'swiper
+        "sS" 'spacemacs/swiper-region-or-symbol
+        "sb" 'swiper-all
+        "sB" 'spacemacs/swiper-all-region-or-symbol)
+      (global-set-key "\C-s" 'swiper)
+      )))
+
+(defun eww/init-eww ()
+  (use-package eww
+    :defer t
+    :config
+    (evilified-state-evilify-map eww-mode-map
+      :bindings
+      (kbd "H") 'eww-back-url
+      (kbd "L") 'eww-next-url
+      (kbd "B") 'eww-bookmark-browse
+      )
+    ))
+
+(defun my-javadoc-return ()
+  "Advanced C-m for Javadoc multiline comments.
+Inserts `*' at the beggining of the new line if
+unless return was pressed outside the comment"
+  (interactive)
+  (setq last (point))
+  (setq is-inside
+        (if (search-backward "*/" nil t)
+            ;; there are some comment endings - search forward
+            (search-forward "/*" last t)
+          ;; it's the only comment - search backward
+          (goto-char last)
+          (search-backward "/*" nil t)
+          )
+        )
+  ;; go to last char position
+  (goto-char last)
+  ;; the point is inside some comment, insert `* '
+  (if is-inside
+      (progn
+        (insert "\n* ")
+        (indent-for-tab-command))
+    ;; else insert only new-line
+    (insert "\n")))
+
+(defun my/java-text ()
+  "Search phrase from java book"
+  (interactive)
+  (save-buffer)
+  (save-excursion
+    (save-restriction
+
+      (spacemacs//helm-do-grep-region-or-symbol (list  "~/Dropbox/emacs-resources/abc-java-perfomance.txt")))))

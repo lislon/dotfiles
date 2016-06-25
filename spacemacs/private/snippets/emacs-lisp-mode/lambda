@@ -1,5 +1,6 @@
 # -*- mode: snippet -*-
+#contributor: Igor Avdeev (lislon@mail.ru)
 # name: lambda
 # key: lambda
 # --
-(lambda ($1)${2: (interactive)} $0)
+(lambda ($1) ${2:(interactive)} $0)

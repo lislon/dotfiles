@@ -44,6 +44,7 @@
  ;; levels deep
  org-refile-targets (quote ((nil :maxlevel . 9)
                             (org-agenda-files :maxlevel . 9)
+                            ("~/org/computers.org" :maxlevel . 9)
                             ("~/org/diary.org" :maxlevel . 1)))
 
  ;; Mobile
@@ -51,7 +52,10 @@
  org-mobile-directory "~/Dropbox/MobileOrg"
  org-mobile-files '(append org-agenda-files
                            "~/org/refile.org"
-                           "~/org/books.org")
+                           "~/org/books.org"
+                           "~/org/computers.org"
+                           "~/org/books.org_archive"
+                           )
  org-mobile-force-id-on-agenda-items nil
 
  ;; ------------------------------------------------------------------------------
@@ -366,22 +370,31 @@ SCHEDULED %^T
 ;; (setq epa-armor t)
 ;; (setq org-mobile-encryption-password "password")
 
-(evil-leader/set-key-for-mode 'org-mode "of" 'helm-org-in-buffer-headings)
+;; void-function bind-map error:
+;;(evil-leader/set-key-for-mode 'org-mode "of" 'helm-org-in-buffer-headings)
 
 ;; Shortcuts
-;; SPC o o - todo.org
-;; SPC o c - config.el
-(evil-leader/set-key "oo" (defun my/jump-to-todo-file() (interactive) (find-file "~/org/todo.org")))
+(defmacro my/set-key-file-link (key file)
+  `(evil-leader/set-key ,key
+     (defun ,(make-symbol
+              (concat "my/jump-to-" (file-name-base file) "-file"))()
+       (interactive)
+       (find-file ,file))))
+
+(my/set-key-file-link "oC" "~/dotfiles/spacemacs/private/my-org/config.el")
+(my/set-key-file-link "oo" "~/org/todo.org")
+(my/set-key-file-link "oc" "~/org/computers.org")
+(my/set-key-file-link "ok" "~/org/keys.org")
+(my/set-key-file-link "oe" "~/org/tasks.org")
+(my/set-key-file-link "or" "~/org/refile.org")
+(my/set-key-file-link "ob" "~/org/books.org")
+
 (evil-leader/set-key "bo" (defun my/make-org-buffer() (interactive)
                                  (spacemacs/new-empty-buffer)
                                  (org-mode)
                                  ))
-(evil-leader/set-key "oc" (defun my/jump-to-org-config-file () (interactive) (find-file "~/dotfiles/spacemacs/private/my-org/config.el")))
-(evil-leader/set-key "ok" (defun my/jump-to-org-keys-file () (interactive) (find-file "~/org/keys.org")))
-(evil-leader/set-key "oe" (defun my/jump-to-org-tasks-file () (interactive) (find-file "~/org/tasks.org")))
-(evil-leader/set-key "or" (defun my/jump-to-org-refile-file () (interactive) (find-file "~/org/refile.org")))
-(evil-leader/set-key "oa" 'org-agenda)
-(evil-leader/set-key "oC" 'org-capture)
+
+
 (global-set-key (kbd "<f5>") (lambda () (interactive) (org-capture '() "g")))
 (global-set-key (kbd "S-<f5>") (lambda () (interactive) (org-capture '() "G")))
 (global-set-key (kbd "C-<f5>") 'org-clock-jump-to-current-clock)
