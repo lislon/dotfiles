@@ -28,13 +28,14 @@ init-base-settings() {
     autoload -U run-help
     autoload run-help-sudo
     autoload run-help-git
+    unalias run-help
 
     # Vim for tty
     if [[ -n "$SSH_TTY" ]] ; then
         MAINEDITOR="vim"
         alias se=sudoedit
     else
-        MAINEDITOR="~/bin/shared/emacs-open-in-client"
+        MAINEDITOR="$HOME/bin/shared/emacs-open-in-client"
         alias se=sudoedit
         # Run emacs with sudo
         # se() {
@@ -122,11 +123,13 @@ init-simple-aliases() {
     alias myzsh="$EDITOR ~/dotfiles/zsh/zshrc && reload"
     alias view=vim -R
     alias reload=". ~/.zshrc"
+    alias microdate="date +\"%T.%N\""
     alias v='f -e vim' # quick opening files with vim
     alias gl='git --no-pager log --oneline --graph -5'
     alias gpush='git push'
     alias tmux='tmux -2'
     alias mk='mkdir -p'
+    alias sa='ssh-add'
     alias s="sudo "
     alias sus="systemctl suspend"
     alias -g G="| grep -i"
@@ -140,8 +143,7 @@ init-simple-aliases() {
     alias cal='cal -m'
     alias dmesgl='dmesg --color=always | less -R'
     alias ll='ls -hlAt'
-    alias mp='mplayer'
-    alias ag='ag --color'
+    alias mp='mpv'
     alias pia='ping ya.ru'
     alias pil='ping lislon.ru'
     alias bb='sudo /usr/bin/shutdown now'
@@ -163,6 +165,8 @@ init-simple-aliases() {
     alias -g DN=/dev/null
     alias -g BOTH=2>&1
     alias calc=python
+    alias mail=mutt
+    alias restore=recover
     alias o=xdg-open
     alias jl='sudo journalctl -b 0'
     hash -d scu="$HOME/.config/systemd/user"
@@ -212,6 +216,11 @@ init-complex-aliases() {
         tr -d '\r' | tr '\n' '\r' | sed  -r 's/\r([^ ])/ \1/g' | tr '\r' '\n'
     }
 
+    ssh() {
+        ssh-add -l >/dev/null || ssh-add
+        /usr/bin/ssh "$@"
+    }
+
     git-pr() {
         git fetch -fu origin refs/pull/$1/head:pr/$1
         git checkout pr/$1
@@ -246,7 +255,7 @@ init-complex-aliases() {
     # PLAY bell sound (at the end of long commands)
     bell() {
         (notify-send "Command complete $1" &
-            aplay ~/bin/ding.wav 2>/dev/null &)
+            aplay ~/Dropbox/confiles/linux/bin/ding.wav 2>/dev/null &)
     }
 
     bakup () {
@@ -314,16 +323,6 @@ init-complex-aliases() {
 
     writecmd() {
         perl -e '$TIOCSTI = 0x5412; $l = <STDIN>; $lc = $ARGV[0] eq "-run" ? "\n" : ""; $l =~ s/\s*$/$lc/; map { ioctl STDOUT, $TIOCSTI, $_; } split "", $l;' -- $1
-    }
-
-    make-bin-link() {
-        if [[ -f "~/bin/${1:t}" ]] ; then
-            mv "$1" ~/confiles/linux/bin/
-            ln -s ~/confiles/linux/bin/${1:t} ~/bin/${1:t}
-            echo "link done ~/bin/${1:t} -> ~/confiles/linux/bin/${1:t}"
-        else
-            echo "File already exists"
-        fi
     }
 
     make-systemd-link() {
@@ -400,8 +399,8 @@ init-bindkeys() {
 
 
     # Ctrl+SPC - find mark, Ctrl+K - add mark, Ctrl+T - jump to next field
-    MARKER_DATA_HOME=$HOME/confiles/linux/config/marker/marks.txt
-    [[ -s "$HOME/.local/share/marker/marker.sh" ]] && source "$HOME/.local/share/marker/marker.sh"
+    # MARKER_DATA_HOME=$HOME/confiles/linux/config/marker/marks.txt
+    # [[ -s "$HOME/.local/share/marker/marker.sh" ]] && source "$HOME/.local/share/marker/marker.sh"
 }
 
 
@@ -421,7 +420,8 @@ init-at-the-end() {
 
 
     # I use my own upgrade in ~/bin
-    type upgrade >/dev/null && unset -f upgrade
+    type upgrade | grep alias &>/dev/null && unset -f upgrade
+    #type upgrade | grep alias &>/dev/null && unalias upgrade
 }
 
 init-local-zsh() {
