@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: help
+# key: help
+# --
+
+function help {
+    echo "Usage: \$0 $2"
+    exit 1
+}
+
+[[ $# -eq 0 ]] && help
+
+$0

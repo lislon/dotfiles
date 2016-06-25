@@ -1,0 +1,25 @@
+# -*- mode: snippet -*-
+# name: parseargs
+# key: parseargs
+# --
+# >1 when all args have values
+# >0 when some args don't ave values
+while [[ $# > 1 ]] ; do
+key="\$1"
+
+case $key in
+    ${1:-e|--extension})
+    ${2:EXTENSION}="\$2"
+    shift # past argument
+    ;;
+    --default)
+    DEFAULT=YES
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past argument or value
+done
+
+$0
