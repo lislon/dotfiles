@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: co
+# key: console.out
+# --
+System.out.println("$1");

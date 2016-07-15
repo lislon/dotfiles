@@ -1,23 +1,48 @@
 
-(defun my/make-temp-java-sandbox ()
+(defun my/make-temp-java-sandbox (project-name)
   "Generates a temporarty java file with boilerplate hello world example"
-  (interactive)
-  (let ((dir (make-temp-file "sandbox-java" t)))
-    (find-file (concat dir "/Sandbox.java"))
+  (interactive "sName of project: ")
+  (let ((dir (make-temp-file (concat "sandbox-java-" project-name) t)))
+    (find-file (concat (file-name-as-directory dir) (concat (capitalize project-name) ".java")))
     (eclim-mode nil)
-    (my/insert-yasnippet "sandbox")
+    (my/insert-yasnippet "sandbox" (list 'class-name (capitalize project-name)))
     ;; (quickrun-autorun-mode)
     ))
+(defun my/save-java-sandbox (project-name)
+  "Exports java sandbox environment to persistent location"
+  (interactive "sName of project in ~/src: ")
+  (message project-name)
+  (when (string-match-p "sandbox-java" buffer-file-name)
+    (let* ((temp-proj-dir (file-name-directory buffer-file-name))
+          (new-proj-dir (concat (file-name-directory
+                                 my/java-sandbox-persist-dir) project-name))
+          (bufs (cl-loop for buf in (buffer-list)
+                         if (and (buffer-file-name buf)
+                                 (string-prefix-p temp-proj-dir (buffer-file-name buf)))
+                         collect buf)))
+      (mapc 'save-buffer bufs)
+      (copy-directory temp-proj-dir new-proj-dir t t)
+      (delete-directory temp-proj-dir t)
+      (find-file (concat (file-name-directory new-proj-dir) (file-name-nondirectory buffer-file-name)) )
+      (mapc 'kill-buffer bufs)
+      (message "Project was exported to %s" new-proj-dir)
+      )))
+(defcustom my/java-sandbox-persist-dir "~/src/" "Directory used
+for export java sandbox projects")
 
-(defun my/insert-yasnippet (name)
-  "Inserts snippet with given name into current buffer"
+(defun my/insert-yasnippet (name &rest expand-env)
+  "Inserts snippet with given name into current buffer
+
+EXPAND-ENV is a list of (SYM VALUE) let-style dynamic bindings
+considered when expanding the snippet.
+"
   (let* ((templates (yas--all-templates (yas--get-snippet-tables)))
          (template-data  (some (lambda (template)
                                  (and (string= name (yas--template-name template)) template))
                                templates)))
     (when template-data
       (evil-insert-state)
-      (yas-expand-snippet (yas--template-content template-data)))))
+      (yas-expand-snippet (yas--template-content template-data) nil nil expand-env))))
 
 (defun my/systemd-create-unit (filename)
   "Creates a user systemd file and expands ya-snippet template"
@@ -34,7 +59,7 @@
   )
 
 (defun my/ediff-buffer-with-file (file-B &optional startup-hooks)
-  "Run Ediff on a current buffer and other file"
+  "Run Ediff on a current buffer and other file. Need to require ediff somewhere"
   (interactive
    (list (ediff-read-file-name "File to compare"
                                (setq dir-B
@@ -165,53 +190,6 @@
     (evil-insert-state)
     (goto-char (buffer-end 1))
     ))
-
-;; ----------------------------------------------------------------
-;; Org mobile sync
-;; ----------------------------------------------------------------
-
-(defvar my/org-mobile-sync-timer nil)
-(defvar my/org-mobile-sync-secs (* 60 10 100000))
-
-(defun my/org-mobile-sync-pull-and-push ()
-  (require 'org)
-  (org-mobile-pull)
-  (org-mobile-push)
-  (when (fboundp 'sauron-add-event)
-    (sauron-add-event 'my 3 "Called org-mobile-pull and org-mobile-push")))
-
-(defun my/org-mobile-sync-start ()
-  "Start automated `org-mobile-push'"
-  (interactive)
-  (setq my/org-mobile-sync-timer
-        (run-with-timer my/org-mobile-sync-secs my/org-mobile-sync-secs
-                        'my/org-mobile-sync-pull-and-push)))
-
-(defun my/org-mobile-sync-stop ()
-  "Stop automated `org-mobile-push'"
-  (interactive)
-  (cancel-timer my/org-mobile-sync-timer))
-
-(my/org-mobile-sync-start)
-
-(defun my/org-mobile-fix-index-bug ()
-  "Fixes MobileOrg's index.org after push to workaround bug in Android.
-That function deletes \"#+ALLPRIORITIES\" line from index.org file"
-  (interactive)
-  (let ((file (concat org-mobile-directory "/index.org")))
-    (save-excursion
-      (with-temp-buffer
-        (insert-file-contents file)
-        (goto-char (point-min))
-        (when (search-forward "#+ALLPRIORITIES" nil t)
-          ;; Avoid polluting kill-ring by not calling (kill-line)
-          (let ((beg (progn (forward-line 0)
-                            (point))))
-            (forward-line 1)
-            (delete-region beg (point))))
-        (write-region nil nil file)
-        )
-      )))
 
 (defun bb/erc-github-filter ()
   "Shortens messages from gitter."

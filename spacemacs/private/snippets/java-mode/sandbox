@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: sandbox
+# key: sandbox
+# --
+import java.util.*;
+
+class `class-name` {
+    public static void main(String[] args) {
+        $0
+        System.out.println("Done");
+    }
+}
