@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: loop
+# key: loop
+# --
+(cl-loop for ${1:buf} in {$2:(buffer-list)}
+$0))

@@ -1,0 +1,4 @@
+* Download mysys
+https://msys2.github.io/
+* Install emacs
+ : pacman -S mingw-w64-x86_64-emacs

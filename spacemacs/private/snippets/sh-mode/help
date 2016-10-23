@@ -5,7 +5,13 @@
 
 function help {
     echo "Usage: \$0 $2"
-    exit 1
+cat << EOF
+usage: \$0 ${1:[--level <n>| -n <levels>][--help][--version]}
+
+Report bugs to:
+up home page:
+EOF
+  exit 1
 }
 
 [[ $# -eq 0 ]] && help

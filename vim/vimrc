@@ -104,6 +104,12 @@ Plug 'pangloss/vim-javascript', { 'for' : 'js' }
 "Plug 'lfilho/cosco.vim'
 
 " }}}
+" {{{ Java
+Plug 'dansomething/vim-eclim', { 'for' : 'java' }
+" Colon/Semicolon
+"Plug 'lfilho/cosco.vim'
+
+" }}}
 
 " {{{ Utility Editing
 
@@ -202,6 +208,7 @@ set rtp+=~/.vim/bundle/vim-colors-solarized
 
     " }}}
 " }}}
+
 
 " {{{ Basic stuff
 source ~/dotfiles/vim/light_vimrc
@@ -353,7 +360,7 @@ command! PI :update | PlugInstall
 
 " Bind this shit to something else to prevent conflict with NerdCommneter
 map <localLeader>rd <Plug>RooterChangeToRootDirectory
-"map <leader>cs <plug>NERDCommenterSexy
+map <leader>cS <plug>NERDCommenterSexy
 
 " Remove trailing spaces
 nnoremap <silent> <leader>ts :let _oldts = @/<CR>:%s/\v\s+$//<CR>:let @/=_oldts<CR>

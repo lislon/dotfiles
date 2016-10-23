@@ -1,19 +1,41 @@
 
 (defun my/make-temp-java-sandbox (project-name)
-  "Generates a temporarty java file with boilerplate hello world example"
+  "Generates a temporary java file with boilerplate hello world example"
   (interactive "sName of project: ")
-  (let ((dir (make-temp-file (concat "sandbox-java-" project-name) t)))
-    (find-file (concat (file-name-as-directory dir) (concat (capitalize project-name) ".java")))
+  (setq project-name (upcase-initials
+                      (replace-regexp-in-string "-\\(.\\)"
+                                                (lambda (f) (upcase-initials (substring f 1)))
+                                                project-name)))
+  (let ((dir (make-temp-file (concat "sandbox-java-" project-name "-") t)))
+    (find-file (concat (file-name-as-directory dir)  project-name ".java"))
     (eclim-mode nil)
-    (my/insert-yasnippet "sandbox" (list 'class-name (capitalize project-name)))
+    (my/insert-yasnippet "sandbox" (list 'class-name project-name))
     ;; (quickrun-autorun-mode)
     ))
-(defun my/save-java-sandbox (project-name)
+
+(defun my/make-temp-latex-sandbox (project-name)
+  "Generates a temporary latex file for testing purposes"
+  (interactive "sName of project: ")
+  (let ((dir (make-temp-file (concat "sandbox-latex-" project-name "-") t)))
+    (find-file (concat (file-name-as-directory dir)  project-name ".tex"))
+    (my/insert-yasnippet "sandbox" (list 'class-name project-name))
+    ;; (quickrun-autorun-mode)
+    ))
+
+(defun my/make-sandbox ()
+  "Creates a sandbox environment dependings on active major-mode."
+  (interactive)
+  (cond
+   ((eq major-mode 'java-mode) (call-interactively 'my/make-temp-java-sandbox)
+    (eq major-mode 'latex-mode) (call-interactively 'my/make-temp-latex-sandbox)))
+  )
+
+(defun my/export-java-sandbox ()
   "Exports java sandbox environment to persistent location"
-  (interactive "sName of project in ~/src: ")
-  (message project-name)
-  (when (string-match-p "sandbox-java" buffer-file-name)
-    (let* ((temp-proj-dir (file-name-directory buffer-file-name))
+  (interactive)
+  (when (string-match "sandbox-java-\\(.+\\)-[^\-]+$" buffer-file-name)
+    (let* ((project-name (match-string 1 buffer-file-name))
+           (temp-proj-dir (file-name-directory buffer-file-name))
           (new-proj-dir (concat (file-name-directory
                                  my/java-sandbox-persist-dir) project-name))
           (bufs (cl-loop for buf in (buffer-list)
@@ -23,7 +45,7 @@
       (mapc 'save-buffer bufs)
       (copy-directory temp-proj-dir new-proj-dir t t)
       (delete-directory temp-proj-dir t)
-      (find-file (concat (file-name-directory new-proj-dir) (file-name-nondirectory buffer-file-name)) )
+      (find-file (concat (file-name-directory new-proj-dir) "/" (file-name-nondirectory buffer-file-name)) )
       (mapc 'kill-buffer bufs)
       (message "Project was exported to %s" new-proj-dir)
       )))
@@ -44,7 +66,7 @@ considered when expanding the snippet.
       (evil-insert-state)
       (yas-expand-snippet (yas--template-content template-data) nil nil expand-env))))
 
-(defun my/systemd-create-unit (filename)
+(defun my/systemd-create-user-unit (filename)
   "Creates a user systemd file and expands ya-snippet template"
   (interactive "sUnit file name WITH (!) extension: ")
   (unless (string-match-p "\." filename)
@@ -53,10 +75,25 @@ considered when expanding the snippet.
   (my/insert-yasnippet (file-name-extension filename))
   )
 
+(defun my/systemd-create-unit (filename)
+  "Creates a user systemd file and expands ya-snippet template"
+  (interactive "sUnit file name WITH (!) extension: ")
+  (unless (string-match-p "\." filename)
+    (setq filename (concat filename ".service")))
+  (find-file (concat "/sudo:root@localhost:/etc/systemd/system/" filename))
+  (my/insert-yasnippet (file-name-extension filename))
+  )
+
 (defun my/spacemacs-buffer//lord-lislon ()
   "Returns lord lislon news"
   (require 'org-agenda)
   )
+
+;; This autoload is needed for my/ediff-buffer-with-file.
+;; Otherwise this function cannot be found by elisp
+(autoload 'ediff-read-file-name "ediff-util")
+(autoload 'ediff-read-file-name "ediff")
+(autoload 'ediff-use-last-dir "ediff")
 
 (defun my/ediff-buffer-with-file (file-B &optional startup-hooks)
   "Run Ediff on a current buffer and other file. Need to require ediff somewhere"
@@ -75,11 +112,11 @@ considered when expanding the snippet.
                                     dir-B)))
                                  (ediff-get-default-file-name buffer-file-name 1)))
          ))
-  (ediff-files-internal (if (file-directory-p file-B)
+  (ediff-files-internal buffer-file-name
+                        (if (file-directory-p file-B)
                             (expand-file-name
                              (file-name-nondirectory file-A) file-B)
                           file-B)
-                        buffer-file-name
                         nil ; file-C
                         startup-hooks
                         'ediff-files))
@@ -148,17 +185,6 @@ considered when expanding the snippet.
       (find-file service-name))))
   )
 
-(defun my/spacemacs-maybe-kill-emacs ()
-  "If emacs server is running, kills frame instead of server"
-  (interactive)
-  ;; Check local buffer variable if we editing files from console.
-  (if server-buffer-clients
-      ;; if yes, just kill buffer it to return to console
-      (kill-buffer)
-    ;; Otherwise kill frame
-    (if (server-running-p)
-        (spacemacs/frame-killer)
-      (spacemacs/kill-emacs))))
 
 (defun my/isearch-other-window ()
   "Search in other window"
@@ -167,19 +193,26 @@ considered when expanding the snippet.
     (other-window 1)
     (isearch-forward)))
 
-
-(defun lsn-insert-line-and-paste (count)
+(defun lsn/insert-line-below-and-paste ()
   "Moves to new line and paste text"
-  (interactive "P")
+  (interactive)
+  (save-excursion
+    (move-end-of-line nil)
+    (newline)
+    (spacemacs/paste-transient-state/evil-paste-after)
+    ))
+
+(defun lsn/insert-line-above-and-paste ()
+  "Moves to new line above and paste text"
+  (interactive)
+  (save-excursion
+    (move-end-of-line nil)
+  (forward-line -1)
   (move-end-of-line nil)
   (newline)
-  (evil-paste-after count))
+  (spacemacs/paste-transient-state/evil-paste-after)
+  ))
 
-(defun my/keys-help-sheet ()
-  "Move to keys cheat sheet"
-  (interactive)
-  (find-file "~/org/keys.org")
-  )
 
 (defun my/google-translate-repl ()
   (interactive)
@@ -230,60 +263,60 @@ and evaling there."
         (funcall cmd '())))))
 
 ;; Do I need this?
-(defun abbreviate-file-name (filename)
-  "Return a version of FILENAME shortened using `directory-abbrev-alist'.
-This also substitutes \"~\" for the user's home directory (unless the
-home directory is a root directory) and removes automounter prefixes
-\(see the variable `automount-dir-prefix')."
-  ;; Get rid of the prefixes added by the automounter.
-  (if (not filename)
-      (debug)
-      )
-  (save-match-data
-    (if (and automount-dir-prefix
-       (string-match automount-dir-prefix filename)
-       (file-exists-p (file-name-directory
-           (substring filename (1- (match-end 0))))))
-  (setq filename (substring filename (1- (match-end 0)))))
-    ;; Avoid treating /home/foo as /home/Foo during `~' substitution.
-    ;; To fix this right, we need a `file-name-case-sensitive-p'
-    ;; function, but we don't have that yet, so just guess.
-    (let ((case-fold-search
-     (memq system-type '(ms-dos windows-nt darwin cygwin))))
-      ;; If any elt of directory-abbrev-alist matches this name,
-      ;; abbreviate accordingly.
-      (dolist (dir-abbrev directory-abbrev-alist)
-  (if (string-match (car dir-abbrev) filename)
-      (setq filename
-      (concat (cdr dir-abbrev)
-        (substring filename (match-end 0))))))
-      ;; Compute and save the abbreviated homedir name.
-      ;; We defer computing this until the first time it's needed, to
-      ;; give time for directory-abbrev-alist to be set properly.
-      ;; We include a slash at the end, to avoid spurious matches
-      ;; such as `/usr/foobar' when the home dir is `/usr/foo'.
-      (or abbreviated-home-dir
-    (setq abbreviated-home-dir
-    (let ((abbreviated-home-dir "$foo"))
-      (concat "\\`" (abbreviate-file-name (expand-file-name "~"))
-        "\\(/\\|\\'\\)"))))
+;; (defun abbreviate-file-name (filename)
+;;   "Return a version of FILENAME shortened using `directory-abbrev-alist'.
+;; This also substitutes \"~\" for the user's home directory (unless the
+;; home directory is a root directory) and removes automounter prefixes
+;; \(see the variable `automount-dir-prefix')."
+;;   ;; Get rid of the prefixes added by the automounter.
+;;   (if (not filename)
+;;       (debug)
+;;       )
+;;   (save-match-data
+;;     (if (and automount-dir-prefix
+;;        (string-match automount-dir-prefix filename)
+;;        (file-exists-p (file-name-directory
+;;            (substring filename (1- (match-end 0))))))
+;;   (setq filename (substring filename (1- (match-end 0)))))
+;;     ;; Avoid treating /home/foo as /home/Foo during `~' substitution.
+;;     ;; To fix this right, we need a `file-name-case-sensitive-p'
+;;     ;; function, but we don't have that yet, so just guess.
+;;     (let ((case-fold-search
+;;      (memq system-type '(ms-dos windows-nt darwin cygwin))))
+;;       ;; If any elt of directory-abbrev-alist matches this name,
+;;       ;; abbreviate accordingly.
+;;       (dolist (dir-abbrev directory-abbrev-alist)
+;;   (if (string-match (car dir-abbrev) filename)
+;;       (setq filename
+;;       (concat (cdr dir-abbrev)
+;;         (substring filename (match-end 0))))))
+;;       ;; Compute and save the abbreviated homedir name.
+;;       ;; We defer computing this until the first time it's needed, to
+;;       ;; give time for directory-abbrev-alist to be set properly.
+;;       ;; We include a slash at the end, to avoid spurious matches
+;;       ;; such as `/usr/foobar' when the home dir is `/usr/foo'.
+;;       (or abbreviated-home-dir
+;;     (setq abbreviated-home-dir
+;;     (let ((abbreviated-home-dir "$foo"))
+;;       (concat "\\`" (abbreviate-file-name (expand-file-name "~"))
+;;         "\\(/\\|\\'\\)"))))
 
-      ;; If FILENAME starts with the abbreviated homedir,
-      ;; make it start with `~' instead.
-      (if (and (string-match abbreviated-home-dir filename)
-         ;; If the home dir is just /, don't change it.
-         (not (and (= (match-end 0) 1)
-       (= (aref filename 0) ?/)))
-         ;; MS-DOS root directories can come with a drive letter;
-         ;; Novell Netware allows drive letters beyond `Z:'.
-         (not (and (memq system-type '(ms-dos windows-nt cygwin))
-       (save-match-data
-         (string-match "^[a-zA-`]:/$" filename)))))
-    (setq filename
-    (concat "~"
-      (match-string 1 filename)
-      (substring filename (match-end 0)))))
-      filename)))
+;;       ;; If FILENAME starts with the abbreviated homedir,
+;;       ;; make it start with `~' instead.
+;;       (if (and (string-match abbreviated-home-dir filename)
+;;          ;; If the home dir is just /, don't change it.
+;;          (not (and (= (match-end 0) 1)
+;;        (= (aref filename 0) ?/)))
+;;          ;; MS-DOS root directories can come with a drive letter;
+;;          ;; Novell Netware allows drive letters beyond `Z:'.
+;;          (not (and (memq system-type '(ms-dos windows-nt cygwin))
+;;        (save-match-data
+;;          (string-match "^[a-zA-`]:/$" filename)))))
+;;     (setq filename
+;;     (concat "~"
+;;       (match-string 1 filename)
+;;       (substring filename (match-end 0)))))
+;;       filename)))
 
 (defun my/compile ()
   "Compile program. With prefix arg change compile args"
@@ -334,6 +367,7 @@ new line after it"
 
 (defun my/init-swiper ()
   (use-package swiper
+    :defer nil
     :config
     (progn
       (defun spacemacs/swiper-region-or-symbol ()
@@ -415,3 +449,63 @@ unless return was pressed outside the comment"
     (save-restriction
 
       (spacemacs//helm-do-grep-region-or-symbol (list  "~/Dropbox/emacs-resources/abc-java-perfomance.txt")))))
+
+(defun my/eval-print-sexp-line ()
+  "Evaluates expression under cursor in evil normal mode and print result"
+  (interactive)
+  (evil-insert-state)
+  (end-of-line)
+  (eval-print-last-sexp)
+  (evil-normal-state)
+  (forward-sexp)
+  )
+
+(defun my/redefine-evilified-key (map key action)
+  "Replaces key in keymap of evilified mode"
+  (define-key (cdr (assoc 'evilified-state map)) key action))
+
+(defun my/buffer-is-dropbox-p ()
+  "Returns true if current buffer is under dropbox. Needed for suspend check"
+  (or (string-prefix-p (expand-file-name "~/org") (buffer-file-name))
+      (string-prefix-p (expand-file-name "~/Dropbox") (buffer-file-name))))
+
+(defun my/save-dropbox-buffers ()
+  (interactive)
+  "Saves all dropbox buffers"
+  (let ((bufs (cl-loop for buf in (buffer-list)
+                       if (and (buffer-file-name buf)
+                               (or (string-prefix-p (expand-file-name "~/org") (buffer-file-name buf))
+                                   (string-prefix-p (expand-file-name "~/Dropbox") (buffer-file-name buf))
+                                   (string-prefix-p (expand-file-name "~/dotfiles") (buffer-file-name buf)))
+                               (buffer-modified-p buf))
+                       collect buf))
+        (cl-loop for buf in buffs
+                 do
+                 (with-current-buffer buf
+                   (save-buffer)))
+    (and buf t))))
+
+(defun my/sql-connect-preset (name)
+  "Connect to a predefined SQL connection listed in `sql-connection-alist'"
+  (interactive
+   (list
+    (completing-read "Choose preset connection: "
+                     (mapcar 'car sql-connection-alist))))
+  (eval `(let ,(cdr (assoc (intern name) sql-connection-alist))
+           (flet ((sql-get-login (&rest what)))
+             (sql-product-interactive sql-product)))))
+
+(defun my-shell-mode-hook ()
+  (comint-read-input-ring t))
+
+(defun my/define-key (keymap &rest bindings)
+  (declare (indent 1))
+  (while bindings
+    (define-key keymap (kbd (pop bindings)) (pop bindings))))
+
+(defun my/select-first-if-day (args)
+  "select theme by time of the day"
+  (let* ((hour (nth 2 (decode-time))))
+    (if (< 10 hour 18)
+        args                                      ; normal order
+      (append (list (cadr args) (car args)) (cddr args)))))

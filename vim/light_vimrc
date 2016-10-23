@@ -63,6 +63,9 @@ set isfname-=, " Allow to gf work in rtp
 " Man page
 nnoremap M K
 nnoremap K <nop>
+" Y to copy till line end
+nnoremap Y y$
+
 "inoremap <Esc> <nop>
 inoremap kj <Esc>
 inoremap jk <Esc>
@@ -238,10 +241,20 @@ set viminfo='10,\"100,:100,%,n~/.viminfo
 if has('persistent_undo')
     set undofile
     set undodir=~/.vimtmp/undo
+    " Auto-create directory
+    if !isdirectory(&undodir)
+      call mkdir(&undodir, "p")
+    endif
+
 endif
 " Move swap files
 set backupdir=~/.vimtmp/swp
 set directory=~/.vimtmp/swp
+" Auto-create directory
+if !isdirectory(&backupdir)
+  call mkdir(&backupdir, "p")
+endif
+
 :highlight lCursor guifg=NONE guibg=Cyan
 
 " Support color highlight in putty
@@ -261,4 +274,6 @@ set guioptions-=m  "remove menu bar
 set guioptions-=T  "remove toolbar
 set guioptions-=r  "remove right-hand scroll bar
 set guioptions-=L  "remove left-hand scroll bar
+
+colorscheme elflord
 "}}}

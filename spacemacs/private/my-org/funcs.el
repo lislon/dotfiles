@@ -60,7 +60,9 @@ is nil, refile in the current file."
   "Always insert new header below on M-RET"
   (if (and (org-at-heading-p) (eq (line-beginning-position) (point)))
       (goto-char (+ 1 (point))))
-  )
+  ;; insert mode when inserting new list item from normal mo
+  (if (org-at-item-p)
+      (evil-insert-state)))
 
 
 (defun my/org-capture-delete-other-windows (&optional args)
@@ -162,3 +164,44 @@ a sound to be played"
       (org-time-stamp-inactive '(16))
       )
     ))
+
+(defun my/org-metaright-or-evil-shift-right-advice (orig-func &rest args)
+  "Overrides org-metaright if cursor is not at heading or item"
+  (message "at-heading-or-item: %s" (org-at-heading-or-item-p))
+  ;; (message "at-block: %s" (org-at-block-p))
+  ;; (message "at-item-desc: %s" (org-at-item-description-p))
+  ;; (apply orig-func args)
+  (if (org-at-heading-or-item-p)
+      (apply orig-func args)
+    (call-interactively 'evil-shift-right))
+  )
+(defun my/org-metaleft-or-evil-shift-left-advice (orig-func &rest args)
+  "Overrides org-metaleft if cursor is not at heading or item"
+  (message "at-heading-or-item: %s" (org-at-heading-or-item-p))
+
+  (if (org-at-heading-or-item-p)
+      (apply orig-func args)
+    (call-interactively 'evil-shift-left))
+  )
+
+;; Autosave all org & config file buffers for Dropbox
+(defun auto-save-all-files ()
+  (interactive)
+  (save-excursion
+    (unless (evil-insert-state-p)
+      (dolist (buf (buffer-list))
+        (set-buffer buf)
+        ;; (message "Autosave: Buffer %s modified? %s" (buffer-file-name) (buffer-modified-p))
+        (if (and (buffer-file-name) (buffer-modified-p))
+            (if (or (eq major-mode 'emacs-lisp-mode) (eq major-mode 'org-mode))
+                ;; (message "Autosave: yes!")
+                (basic-save-buffer))
+          )))))
+
+(defun my/calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-source "Green")  ; orgmode source
+    )))

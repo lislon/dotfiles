@@ -13,3 +13,12 @@ Thumbs.db
 npm-debug.log
 node_modules/
 *.js.js
+.idea/
+.project/
+*.eml
+# IntelliJ Idea
+*.iml
+# Java target
+*.log
+target/
+

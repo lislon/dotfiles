@@ -9,18 +9,18 @@
  ;; ------------------------------------------------------------------------------
  org-directory "~/org"
 
- org-agenda-files (quote (
-                          "~/org/todo.org"
-                          "~/org/tasks.org"
-                          "~/org/refile.org"
-                          "~/org/hosting.org"))
+ org-agenda-files '("~/org/dynamic/"
+                   "~/org/dynamic/projects/")
 
  diary-file "~/org/diary.txt"
  calendar-date-style 'iso
  org-special-ctrl-a/e t                  ; Ignore tags when editing headline
  auto-save-timeout 5                     ; Autosave for dropbox each 10 sec IDLE
- calendar-week-start-day 1               ; Start from monday
-
+ calendar-week-start-day 1               ; Start from Monday
+ org-agenda-span 'day                    ; View only today, so other days not distract me
+ org-agenda-start-on-weekday nil         ; When viewing view start from current day
+ org-agenda-text-search-extra-files '(agenda-archives)
+ org-todo-keywords '((sequence "TODO" "|" "DONE" "REJT"))
  ;; ------------------------------------------------------------------------------
  ;; Clocking
  ;; ------------------------------------------------------------------------------
@@ -31,86 +31,108 @@
  org-clock-idle-time 3
  org-clock-x11idle-program-name "xprintidle"
  org-x11idle-exists-p t                 ; When emacs started as daemon, x11 not initialized
+ org-global-properties (quote (("Effort_ALL" . "0:10 0:30 1:00 2:00 3:00 5:00")))
+ org-columns-default-format "%40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM"
 
 
  ;; ------------------------------------------------------------------------------
  ;; Refile
  ;; ------------------------------------------------------------------------------
- org-refile-use-outline-path t           ; Fuzzy match path when refile
- org-outline-path-complete-in-steps nil  ; Fuzzy match path when refile
+ org-refile-use-outline-path 'file           ; Fuzzy match path when refile
+ org-outline-path-complete-in-steps nil      ; Fuzzy match path when refile
+
+ ;; Archive
+ org-archive-location "~/org/archive/%s_archive::"
 
 
  ;; Targets include this file and any file contributing to the agenda - up to 9
  ;; levels deep
  org-refile-targets (quote ((nil :maxlevel . 9)
                             (org-agenda-files :maxlevel . 9)
-                            ("~/org/computers.org" :maxlevel . 9)
-                            ("~/org/diary.org" :maxlevel . 1)))
-
- ;; Mobile
- ;; ------------------------------------------------------------------------------
- org-mobile-directory "~/Dropbox/MobileOrg"
- org-mobile-files '(append org-agenda-files
-                           "~/org/refile.org"
-                           "~/org/books.org"
-                           "~/org/computers.org"
-                           "~/org/books.org_archive"
-                           )
- org-mobile-force-id-on-agenda-items nil
+                            ("~/org/dynamic/computers.org" :maxlevel . 2)
+                            ("~/org/dynamic/programming.org" :maxlevel . 1)
+                            ("~/org/dynamic/todo-someday.org" :level . 1)
+                            ("~/org/dynamic/notes.org" :level . 0)
+                            ("~/org/static/diary.org" :maxlevel . 1)))
 
  ;; ------------------------------------------------------------------------------
  ;; Edit
  ;; ------------------------------------------------------------------------------
- org-M-RET-may-split-line '((default . t) (item . nil))
+ ;; I do not want splitting while editing header
+ org-M-RET-may-split-line '((default . nil) (item . nil))
+ org-catch-invisible-edits 'show-and-error         ; let's test this optio
+
+ ;; ------------------------------------------------------------------------------
+ ;; Export
+ ;; ------------------------------------------------------------------------------
+ org-export-initial-scope 'subtree
 
  ;; ------------------------------------------------------------------------------
  ;; Capture
  ;; ------------------------------------------------------------------------------
- org-capture-templates (quote (("t" "todo" entry (file+headline "~/org/tasks.org" "Simple")
+ org-capture-templates (quote (("t" "todo" entry (file+headline "~/org/dynamic/tasks.org" "Simple")
                                 "* TODO %^{Todo}\n%U" :clock-in t :clock-resume t
                                 :immediate-finish nil)
 
-                               ("T" "Tag todo" entry (file+headline "~/org/tasks.org" "Simple")
+                               ("T" "Tag todo" entry (file+headline "~/org/dynamic/tasks.org" "Simple")
                                 "* TODO %^{Todo} %^G\n%U\n%?" :clock-in t :clock-resume t
                                 :immediate-finish nil)
 
-                               ("d" "Date todo" entry (file+headline "~/org/tasks.org" "Simple")
+                               ("d" "todo today" entry (file+headline "~/org/dynamic/tasks.org" "Simple")
+                                "* TODO %^{Todo today}\n%U\nSCHEDULED: %t" :clock-in t :clock-resume t
+                                :immediate-finish nil)
+
+                               ("j" "java todo" entry (file+headline "~/org/dynamic/javaschool.org" "Работы Time")
+                                "* TODO %^{Java Todo} %^g\n%U" :clock-in t :clock-keep t
+                                :immediate-finish t)
+
+                               ("D" "Date todo" entry (file+headline "~/org/dynamic/tasks.org" "Simple")
                                 "* TODO %^{Todo}\n%U\n%T" :clock-in t :clock-resume t
                                 :immediate-finish nil)
                                ;; ("L" "Learning" entry (file "~/org/refile.org")
                                ;;  "* TODO %^{Todo} %^G:learning:\n%U\n" :clock-in t :clock-resume t
                                ;;  :immediate-finish t)
 
-                               ("b" "book" entry (file+headline "~/org/todo.org" "Books")
+                               ("B" "book" entry (file+headline "~/org/dynamic/todo.org" "Books")
+
                                 "* PENDING %^{Book}\n%U\n%?")
+
+                               ("o" "organization note" entry (file+headline "~/org/dynamic/todo.org" "Organization my life")
+                                "* %^{Organization title}\n%U\n%?")
 
                                ("g" "goal" entry (file+headline "~/org/goal-today.org" "Task stack")
                                 "* TODO %^{Title}\n:PROPERTIES:\n:Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}\n:END:\n" :immediate-finish t :prepend t :clock-in t :clock-keep t)
                                ("G" "goal later" entry (file+headline "~/org/goal-today.org" "Task stack")
                                 "* TODO %^{Title}\n:PROPERTIES:\n:Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}\n:END:\n" :prepent t)
 
-                               ("m" "movie" entry (file+headline "~/org/todo.org" "Movies")
+                               ("M" "movie" entry (file+headline "~/org/dynamic/todo.org" "Movies")
                                 "* TODO %?\n%U\n")
 
                                ("s" "share" entry (file+headline "~/Dropbox/lord-lislon/lord-lislon.org" "Shared")
                                 "* %^{Title} :lislon:\n%U\n%?")
 
-                               ("e" "English quote" item (file+headline "~/org/todo.org" "Just phrases")
+                               ("e" "English quote" item (file+headline "~/org/dynamic/todo.org" "Just phrases")
                                 "%^{quote}" :immediate-finish t)
 
-                               ("r" "Russian quote" item (file+headline "~/org/todo.org" "Russian")
+                               ("E" "English question" entry (file+headline "~/org/dynamic/english.org" "Questions")
+                                "* TODO %^{Title}\n%U\n%F\n%?\n#+BEGIN_SRC\n%i\n#+END_SRC")
+
+                               ("q" "Russian quote" item (file+headline "~/org/dynamic/todo.org" "Russian")
                                 "* %^{quote}\n%?")
 
-                               ("n" "note" entry (file "~/org/refile.org")
+                               ("n" "note" entry (file "~/org/dynamic/notes.org")
                                 "* %^{Title}\n%U\n%?")
 
-                               ("z" "snippet zsh" entry (file+headline "~/org/todo.org" "Bash/Zsh")
+                               ("p" "note" entry (file+headline "~/org/dynamic/computers.org" "Problem solving")
+                                "* %^{Title}\n%U\n%?")
+
+                               ("z" "snippet zsh" entry (file+headline "~/org/dynamic/todo.org" "Bash/Zsh")
                                 "* %?\n#+BEGIN_SRC sh\n%x\n#+END_SRC")
 
-                               ("M" "migration" entry (file+headline "~/org/todo.org" "Tools Migration")
+                               ("m" "migration" entry (file+headline "~/org/dynamic/todo.org" "Tools Migration")
                                 "* %^{Old} -> %^{New}\n%U\nReason: %?")
 
-                               ("a" "appointment" entry (file+headline "~/org/tasks.org" "Events")
+                               ("a" "appointment" entry (file+headline "~/org/dynamic/tasks.org" "Events")
                                 "* APPOINTMENT with %?
 :PROPERTIES:
 :APPT_WARNTIME: 90
@@ -118,59 +140,59 @@
 SCHEDULED %^T
 %U")
 
-                               ("h" "buy" entry (file "~/org/refile.org")
-                                "* TODO Купить %^{Buy} %^G :errands:buy:\n%U")
+                               ("b" "buy" entry (file+headline "~/org/dynamic/tasks.org" "Buy")
+                                "* TODO Buy %^{Buy} :errands:buy:\n%U\n%?")
 
-                               ("p" "pain" entry (file+headline "~/org/tasks.org" "Pains")
-                                "* TODO Pain to %^{Pain}\n%U\n%?")
+                               ("p" "pain" entry (file+headline "~/org/dynamic/tasks.org" "Pains")
+                                "* TODO %^{Activity} / %^{Pain}\n%U\n%?")
 
                                ("i" "interruption")
 
-                               ("ii" "default" entry (file+datetree "~/org/diary.org")
+                               ("ii" "default" entry (file+datetree "~/org/static/diary.org")
                                 "* %^{Interruption} %^G\n%U" :clock-in t :clock-keep t)
 
-                               ("iy" "youtube" entry (file+datetree "~/org/diary.org")
+                               ("iy" "youtube" entry (file+datetree "~/org/static/diary.org")
                                 "* %^{Interruption} %^G:youtube:\n%U" :clock-in t :clock-keep t
                                 :immediate-finish t)
 
-                               ("it" "talk" entry (file+datetree "~/org/diary.org")
+                               ("it" "talk" entry (file+datetree "~/org/static/diary.org")
                                 "* Talking with %^{Whom} :talk:\n%U" :clock-in t :clock-keep t)
 
-                               ("ik" "kitchen" entry (file+datetree "~/org/diary.org")
+                               ("ik" "kitchen" entry (file+datetree "~/org/static/diary.org")
                                 "* go to kitchen%?\n%U" :clock-in t :clock-resume t)
 
-                               ("is" "shower" entry (file+datetree "~/org/diary.org")
+                               ("is" "shower" entry (file+datetree "~/org/static/diary.org")
                                 "* Shower :shower:\n%U"
                                 :clock-in t :clock-resume t)
 
-                               ("in" "News" entry (file+datetree "~/org/diary.org")
+                               ("in" "News" entry (file+datetree "~/org/static/diary.org")
                                 "* Reading news :news:\n%U"
                                 :clock-in t :clock-resume t)
 
-                               ("iw" "WC" entry (file+datetree "~/org/diary.org")
+                               ("iw" "WC" entry (file+datetree "~/org/static/diary.org")
                                 "* WC :wc:\n%U"
                                 :clock-in t :clock-resume t)
 
-                               ("il" "learning" entry (file+datetree "~/org/diary.org")
+                               ("il" "learning" entry (file+datetree "~/org/static/diary.org")
                                 "* Learning %^{Subject} :learning:\n%U\n%?"
                                 :clock-in t :clock-keep t)
 
-                               ("ie" "emacs idea" entry (file "~/org/refile.org")
+                               ("ie" "emacs idea" entry (file "~/org/dynamic/refile.org")
                                 "* TODO %^{Idea} :emacs:idea:\n%U" :clock-in t :clock-resume t
                                 :immediate-finish t)
 
-                               ("im" "modify system" entry (file "~/org/refile.org")
+                               ("im" "modify system" entry (file "~/org/dynamic/refile.org")
                                 "* TODO %^{Title} %^G\n%U" :clock-in t :clock-keep t
                                 :immediate-finish t)
 
-                               ("ig" "googling" entry (file "~/org/refile.org")
+                               ("ig" "googling" entry (file "~/org/dynamic/refile.org")
                                 "* Googling %^{Title} :google:%^G\n%U" :clock-in t :clock-keep t
                                 :immediate-finish t)
 
-                               ("ib" "blackhole" entry (file+datetree "~/org/diary.org")
+                               ("ib" "blackhole" entry (file+datetree "~/org/static/diary.org")
                                 "* Default task for the day\n%U" :clock-in t :clock-keep t)
 
-                               ("l" "Default template" entry (file "~/org/refile.org")
+                               ("l" "Default template" entry (file "~/org/dynamic/refile.org")
                                 "* %c\n%u\n%i"
                                 :empty-lines 1)
                                ))
@@ -178,8 +200,8 @@ SCHEDULED %^T
  ;; ------------------------------------------------------------------------------
  ;; Agenda
  ;; ------------------------------------------------------------------------------
- org-agenda-skip-scheduled-if-done t    ; Do not shot DONE items
- org-agenda-skip-deadline-if-done t
+ org-agenda-skip-scheduled-if-done nil    ; Do not shot DONE items
+ org-agenda-skip-deadline-if-done nil
  org-deadline-warning-days 5            ; Warn about deadline
 
  org-agenda-custom-commands (quote (("r" "Refile" tags "REFILE"
@@ -190,7 +212,7 @@ SCHEDULED %^T
                                      ((org-agenda-overriding-header "Books I am reading")
                                       (org-agenda-sorting-strategy '(user-defined-down))
                                       (org-agenda-cmp-user-defined 'my/org-sort-agenda-logbook)
-                                      (org-agenda-files '("~/org/todo.org"))))
+                                      (org-agenda-files '("~/org/dynamic/todo.org"))))
 
                                     ("y" "Todo things"
                                      (
@@ -246,7 +268,7 @@ SCHEDULED %^T
                                                   (org-agenda-prefix-format "Rest ")))
                                       ;; (org-agenda-files '("~/org/todo.org"
                                       ;;                     "~/org/refile.org"
-                                      ;;                     "~/org/tasks.org"))
+                                      ;;                     "~/org/dynamic/tasks.org"))
                                       ;; - training/practicing
                                       ) (
                                          (org-agenda-sorting-strategy '(time-down))
@@ -310,8 +332,24 @@ SCHEDULED %^T
  ;;------------------------------------------------------------------------------
  ;; pomodoro
  ;; ------------------------------------------------------------------------------
- org-pomodoro-length 45
- org-pomodoro-short-break-length 15
+ org-pomodoro-length 20
+ org-pomodoro-short-break-length 5
+
+ ;;------------------------------------------------------------------------------
+ ;; babel
+ ;; ------------------------------------------------------------------------------
+ org-confirm-babel-evaluate nil
+ my-org-babel-languages '(
+                          (sh . t)
+                          (lisp . t)
+                          (emacs-lisp . t)
+                          (java . t)
+                          (plantuml . t)
+                          )
+ ;;------------------------------------------------------------------------------
+ ;; UML
+ ;; ------------------------------------------------------------------------------
+ org-plantuml-jar-path "/opt/plantuml/plantuml.jar"
 
  ;; ------------------------------------------------------------------------------
  ;; TODO faces
@@ -319,14 +357,14 @@ SCHEDULED %^T
  org-todo-keyword-faces '(("PENDING" . "SaddleBrown")
                           ("DOWNLD" . "LimeGreen")
                           ("INPROGR" . "Yellow")
+                          ("REJT" . "SlateGray")
                           ("APPOINTMENT" . "DarkViolet"))
  )
 
 
 ;; C-C c capture
-;; (global-set-key "\C-cc" 'org-capture)  ;; Spacemacs by default use C-c c 
+;; (global-set-key "\C-cc" 'org-capture)  ;; Spacemacs by default use C-c c
 (global-set-key (kbd "<f1>") 'org-agenda)
-
 ;; Make C-c C-x C-i/o work everywhere (with prefix - clock in recent task)
 (global-set-key (kbd "C-c C-x C-i") 'org-clock-in)
 (global-set-key (kbd "C-c C-x C-o") 'org-clock-out)
@@ -347,28 +385,12 @@ SCHEDULED %^T
 (add-hook 'org-capture-mode-hook 'evil-insert-state)
 ;; Insert mode when adding headers
 (add-hook 'org-insert-heading-hook 'evil-insert-state)
+;; (add-hook 'org-insert- 'evil-insert-state)
 
-;; Auto fill
-(add-hook 'org-mode-hook 'auto-fill-mode)
+;; Auto fill for org and all text-mode hooks
+(add-hook 'text-mode-hook 'auto-fill-mode)
 
-;; Autosave all org & config file buffers for Dropbox
-(defun auto-save-all-files ()
-  (interactive)
-  (save-excursion
-    (unless (evil-insert-state-p)
-      (dolist (buf (buffer-list))
-        (set-buffer buf)
-        ;; (message "Autosave: Buffer %s modified? %s" (buffer-file-name) (buffer-modified-p))
-        (if (and (buffer-file-name) (buffer-modified-p))
-            (if (or (eq major-mode 'emacs-lisp-mode) (eq major-mode 'org-mode))
-                ;; (message "Autosave: yes!")
-                (basic-save-buffer))
-          )))))
-(add-hook 'auto-save-hook 'auto-save-all-files)
 ;; Encryption (ACP NullPointerException on android)
-;; (setq org-mobile-use-encryption t)
-;; (setq epa-armor t)
-;; (setq org-mobile-encryption-password "password")
 
 ;; void-function bind-map error:
 ;;(evil-leader/set-key-for-mode 'org-mode "of" 'helm-org-in-buffer-headings)
@@ -382,23 +404,27 @@ SCHEDULED %^T
        (find-file ,file))))
 
 (my/set-key-file-link "oC" "~/dotfiles/spacemacs/private/my-org/config.el")
-(my/set-key-file-link "oo" "~/org/todo.org")
-(my/set-key-file-link "oc" "~/org/computers.org")
-(my/set-key-file-link "ok" "~/org/keys.org")
-(my/set-key-file-link "oe" "~/org/tasks.org")
-(my/set-key-file-link "or" "~/org/refile.org")
-(my/set-key-file-link "ob" "~/org/books.org")
+(my/set-key-file-link "oo" "~/org/dynamic/todo.org")
+(my/set-key-file-link "oc" "~/org/dynamic/computers.org")
+(my/set-key-file-link "ok" "~/org/dynamic/keys.org")
+(my/set-key-file-link "ot" "~/org/dynamic/tasks.org")
+(my/set-key-file-link "or" "~/org/dynamic/refile.org")
+(my/set-key-file-link "on" "~/org/dynamic/notes.org")
+(my/set-key-file-link "oj" "~/org/dynamic/javaschool.org")
+(my/set-key-file-link "ob" "~/org/static/books.org")
+(my/set-key-file-link "ou" "~/org/static/coubs.org")
 
 (evil-leader/set-key "bo" (defun my/make-org-buffer() (interactive)
                                  (spacemacs/new-empty-buffer)
                                  (org-mode)
                                  ))
+;; (evil-define-key 'normal evil-org-mode-map "gp" nil)
 
-
-(global-set-key (kbd "<f5>") (lambda () (interactive) (org-capture '() "g")))
-(global-set-key (kbd "S-<f5>") (lambda () (interactive) (org-capture '() "G")))
-(global-set-key (kbd "C-<f5>") 'org-clock-jump-to-current-clock)
-(global-set-key (kbd "M-<f5>") (lambda () (interactive) (find-file "~/org/goal-today.org")))
+;; not using
+;(global-set-key (kbd "<f5>") (lambda () (interactive) (org-capture '() "g")))
+;(global-set-key (kbd "S-<f5>") (lambda () (interactive) (org-capture '() "G")))
+;(global-set-key (kbd "C-<f5>") 'org-clock-jump-to-current-clock)
+;(global-set-key (kbd "M-<f5>") (lambda () (interactive) (find-file "~/org/goal-today.org")))
 
 ;; Resume clocking task when emacs is restarted
 (with-eval-after-load 'org
@@ -425,7 +451,6 @@ SCHEDULED %^T
   (advice-add 'org-insert-heading :before 'my/org-insert-heading-advice)
   )
 
-
 ;; ------------------------------------------------------------------------------
 ;; lord-lislon hooks
 ;; ------------------------------------------------------------------------------
@@ -440,13 +465,7 @@ SCHEDULED %^T
 ;; (epa-file-enable)
 
 (with-eval-after-load "org"
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '(
-     (sh . t)
-     (lisp . t)
-     (emacs-lisp . t)
-     ))
+  (org-babel-do-load-languages 'org-babel-load-languages my-org-babel-languages)
   ;; Auto insert when ~TAB` in tables
   (advice-add 'org-table-next-field :after 'evil-insert-state))
 
@@ -472,41 +491,29 @@ SCHEDULED %^T
 ;; ;; do it once at startup
 ;; (th-org-update-agenda-file t)
 
-(defun my/org-metaright-or-evil-shift-right-advice (orig-func &rest args)
-  "Overrides org-metaright if cursor is not at heading or item"
-  ;; (message "at-heading-or-item: %s" (org-at-heading-or-item-p))
-  ;; (message "at-block: %s" (org-at-block-p))
-  ;; (message "at-item-desc: %s" (org-at-item-description-p))
-  ;; (apply orig-func args)
-  (if (org-at-heading-or-item-p)
-      (apply orig-func args)
-    (call-interactively 'evil-shift-right))
-  )
-(defun my/org-metaleft-or-evil-shift-left-advice (orig-func &rest args)
-  "Overrides org-metaleft if cursor is not at heading or item"
-  (if (org-at-heading-or-item-p)
-      (apply orig-func args)
-    (call-interactively 'evil-shift-left))
-  )
-
 (advice-add 'org-metaright :around #'my/org-metaright-or-evil-shift-right-advice)
 (advice-add 'org-metaleft :around #'my/org-metaleft-or-evil-shift-left-advice)
 (advice-add 'org-metareturn :around #'my/org-metaleft-or-evil-shift-left-advice)
 
-(with-eval-after-load 'org
-  ;; emacs 24.4 No such file or directory
-  ;; (require 'org-notify)                 ; Support only deadlines
-  ;; (org-notify-start)
-  ;; how deadline worked?
-  (appt-activate 1)
+;; Auto insert when press C-SPC in tables for clear field
+(advice-add 'org-table-blank-field :after (lambda (&rest r) (evil-insert-state)))
+
+
+;; Commented for optimization tests
+ (with-eval-after-load 'org
+   ;; emacs 24.4 No such file or directory
+   ;; (require 'org-notify)                 ; Support only deadlines
+   ;; (org-notify-start)
+   ;; how deadline worked?
+   (appt-activate 1)
 
   ;; update appt each time agenda opened
   (add-hook 'org-finalize-agenda-hook 'org-agenda-to-appt)
 
   ;; our little façade-function for djcb-popup
   (defun djcb-appt-display (min-to-app new-time msg)
-    (djcb-popup (format "Appointment in %s minute(s)" min-to-app) msg 
-                "~/confiles/linux/icons/apppointment-grey-32x32.pngf"
+    (djcb-popup (format "Appointment in %s minute(s)" min-to-app) msg
+                "~/confiles/linux/icons/apppointment-grey-32x32.png"
 
                 "~/confiles/linux/sounds/choir-a.wav"))
   (setq appt-disp-window-function 'djcb-appt-display)
@@ -530,4 +537,25 @@ SCHEDULED %^T
                    "oD" 'my/org-goal-today-finish-day)
                  )))
 
-;; End of org config file
+
+;; Natural help help
+
+(add-hook 'org-agenda-mode-hook (lambda ()
+(define-key org-agenda-keymap (kbd "q") (lambda ()
+                                          "Fast exit from agenda in special frame"
+                                          (interactive)
+                                          (when (equal "agenda" (frame-parameter nil 'name))
+                                            (delete-frame))))
+                                  ;; (if f)
+                                  ;; (define-key overriding-local-map (kbd "v") 'org-agenda-view-mode-dispatch )
+                                  ;; (my/redefine-evilified-key org-agenda-keymap (kbd "C-h") nil)
+                                  ))
+
+;; (my/redefine-evilified-key org-agenda-keymap (kbd "v") nil) ;; not works for some reason :(
+
+
+;; (defun org-mode-hook-fix-agenda-keys ()
+;;   ;; make v button work in agenda
+;;   (define-key evil-evilified-state-map (kbd "v") nil))
+
+;; (add-hook 'org-mode-hook 'org-mode-hook-fix-agenda-keys)

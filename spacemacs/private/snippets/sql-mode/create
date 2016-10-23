@@ -1,0 +1,9 @@
+# name: create
+# key: create
+# --
+CREATE TABLE IF NOT EXISTS \`${1:table}\` (
+id INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'pk',
+\`${2:first_name}\` ${3:$$(yas-choose-value '("INT" "VARCHAR(255)" "DATETIME" "TIMESTAMP" "TEXT", "FLOAT(10,6))} ${4:NOT NULL} COMMENT '${5:comment}',
+\`${6:first_name}\` ${7:$$(yas-choose-value '("INT" "VARCHAR(255)" "DATETIME" "TIMESTAMP" "TEXT", "FLOAT(10,6))} ${8:NOT NULL} COMMENT '${9:comment}',$0
+CONSTRAINT uk__$1_$2 UNIQUE(\`$2\`)
+) ENGINE=InnoDB CHARACTER SET=utf8 COMMENT '';

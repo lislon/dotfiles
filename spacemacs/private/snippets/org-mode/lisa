@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: lisa
+# key: lisa
+# --
+* Tree
+** Subtree $1
+*** SubSubtree $2
+$0

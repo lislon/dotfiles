@@ -30,13 +30,15 @@ values."
      ;;     'spacemacs-ivy
      ;;   'spacemacs-helm)
      helm
-     ;; spacemacs-ivy
-     auto-completion
+     ;; ivy
+     (auto-completion :disabled-for org markdown)
      better-defaults
      emacs-lisp
      common-lisp
+     yaml
+     search-engine
+     ;; smex
      ;; browser-edit
-     chrome
      ;; php
      html
      lua
@@ -50,32 +52,47 @@ values."
      javascript
      python
      gnus
+     sql
+     php
+     docker
+     ;; dash ;; zeal help
+     ;; commented out because SPC f e R is not work
+     ;; ,@(unless (eq system-type 'windows-nt)
+     ;;     '(fasd
+     ;;       spell-checking))
+     fasd
+     spell-checking
      ;; mu4e
      ;; eyebrowse
-     semantic
+     (semantic :disabled-for emacs-lisp) ;; emacs 25 hang bug
      erc
      emoji
-     xkcd
-     ;; markdown
+     (ranger :variables ranger-override-dired t)
+     (markdown :variables markdown-live-preview-engine 'vmd)
      org
      my-org
-     ;; my-picture
+     my-keys
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
      syntax-checking
      version-control
-     csharp
-     spell-checking
-     gtags
+     ;; csharp
+
+     ;; gtags
+     latex
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
+                                      ;; plantuml
+                                      refine
                                       openwith
                                       quickrun
+                                      palette
+                                      secreteria
                                       ;; todochiku
                                       systemd
                                       tea-time
@@ -88,10 +105,18 @@ values."
                                       vimrc-mode
                                       bbdb
                                       wttrin
+                                      monokai-theme
+                                      f3 ;; find wrapper
+                                      sos
+                                      nyan-mode
+                                      restclient
+                                      vimgolf
                                       )
 
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
+   ;; A list of packages that cannot be updated.
+   dotspacemacs-frozen-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
@@ -125,7 +150,7 @@ values."
    ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
    ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
    ;; unchanged. (default 'vim)
-   dotspacemacs-editing-style 'hybrid
+   dotspacemacs-editing-style 'vim
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading t
    ;; Specify the startup banner. Default value is `official', it displays
@@ -134,10 +159,10 @@ values."
    ;; directory. A string value must be a path to an image format supported
    ;; by your Emacs build.
    ;; If the value is nil then no banner is displayed. (default 'official)
-   dotspacemacs-startup-banner 'official
+   dotspacemacs-startup-banner nil
    ;; List of items to show in the startup buffer. If nil it is disabled.
    ;; Possible values are: `recents' `bookmarks' `projects'."
-   dotspacemacs-startup-lists '(recents bookmarks agenda)
+   dotspacemacs-startup-lists '(projects agenda)
    ;; Number of recent files to show in the startup buffer. Ignored if
    ;; `dotspacemacs-startup-lists' doesn't include `recents'. (default 5)
    dotspacemacs-startup-recent-list-size 5
@@ -146,7 +171,8 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(leuven spacemacs-dark)
+   ;; dotspacemacs-themes (my/select-first-if-day '(leuven monokai spacemacs-dark))
+   dotspacemacs-themes '(monokai leuven spacemacs-dark)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -157,11 +183,16 @@ values."
                                ;; :weight normal
                                ;; :width normal
                                ;; :powerline-scale 1.5)
-   dotspacemacs-default-font '("Liberation Mono"
-                               :size 15
+   dotspacemacs-default-font '("Source Code Pro"
+                               :size 13
                                :weight normal
                                :width normal
                                :powerline-scale 1.5)
+   ;; dotspacemacs-default-font '("Liberation Mono"
+   ;;                             :size 15
+   ;;                             :weight normal
+   ;;                             :width normal
+   ;;                             :powerline-scale 1.5)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -278,6 +309,7 @@ values."
    dotspacemacs-whitespace-cleanup 'changed
    )
   ;; User initialization goes here
+  (add-to-load-path "~/dotfiles/spacemacs/thirdparty")
   )
 
 
@@ -293,6 +325,12 @@ values."
                                          (,(expand-file-name "~/.spacemacs") . ,shared-dir)
                                          ("." . ,(expand-file-name "~/.emacs.d/.cache/undo"))))
     )
+  (when (eq system-type 'windows-nt)
+    ;; repalace process-coding system-alist with from undecided-dos to windows-1251
+    ;; this will allow cyrillic characters on windows machines
+    (mapc (lambda (val) (setcdr val (cons 'windows-1251 'windows-1251))) process-coding-system-alist)
+  ;;   ;; (setq default-process-coding-system '(windows-1251 . windows-1251))
+      )
   (setq custom-theme-directory "~/dotfiles/spacemacs/custom-themes")
   )
 
@@ -300,7 +338,7 @@ values."
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
-  (setq initial-buffer-choice '(lambda () (get-buffer org-agenda-buffer-name)))
+  ;; (setq initial-buffer-choice '(lambda () (get-buffer org-agenda-buffer-name)))
   (setq
 
    ;; basic
@@ -314,37 +352,28 @@ layers configuration."
    ffap-newfile-prompt t                ; gf can create new files
    source-directory "/home/ele/src-dormant/emacs/src"
    avy-case-fold-search nil             ; avy jump respect case
-   spaceline-org-clock-p t
    spacemacs-paste-transient-state-add-bindings '(("p" evil-paste-pop "paste next")
                                                   ("P" evil-paste-pop-next "paste previous"))
    timer-max-repeats 0                  ; Do not repeat timer on suspen
    delete-by-moving-to-trash nil        ; Do not use trash when deleting files
    dired-listing-switches "-alk"
+   create-lockfiles nil                 ; get rid of .#filename.org (intented to prevent multiuser editing of file, but I always save files)
+   evil-shift-round nil                 ; explanation https://youtu.be/HKF41ivkBb0?t=13m35s
 
-   ;; mu4e
-   mu4e-maildir                "~/.mail/lislon"
-   mu4e-enable-notifications   t
-   mu4e-enable-mode-line       t
-   mu4e-sent-folder            "/&BB4EQgQ,BEAEMAQyBDsENQQ9BD0ESwQ1-"  ;;  folder      for  sent  messages
-   mu4e-drafts-folder          "/&BCcENQRABD0EPgQyBDgEOgQ4-"          ;;  unfinished  messages
-   mu4e-trash-folder           "/&BBoEPgRABDcEOAQ9BDA-"               ;;  trashed     messages
-   mu4e-refile-folder          "/refile"                              ;;  saved       messages
-   send-mail-function          'sendmail-send-it
-   message-send-mail-function  'message-send-mail-with-sendmail
-   mu4e-get-mail-command       "mbsync lislon"
-   mu4e-attachment-dir         "~/Downloads"
-   mu4e-update-interval        300
-   ;; mu4e-html2text-command "w3m -T text/html"
-   ;; mu4e-update-interval 120
-   ;; mu4e-headers-auto-update t
+
+   ;; Dired - directories first
+   dired-listing-switches "-alkh  --group-directories-first"
+   ;; dired-listing-switches "-aBhl  --group-directories-first"
 
    ;; Man in same window
    Man-notify-method 'pushy
 
    ;; java
-   ;; eclim-eclipse-dirs "/usr/lib/eclipse"
-   ;; eclim-executable "/usr/lib/eclipse/eclim"
+   eclim-eclipse-dirs "/usr/lib/eclipse"
+   eclim-executable "/usr/lib/eclipse/eclim"
 
+   ;; ftp
+   ange-ftp-try-passive-mode t
 
    ;; backup
    make-backup-files t
@@ -360,8 +389,15 @@ layers configuration."
 
    ;; Autocompletion
    auto-completion-complete-with-key-sequence "jk"
-   auto-completion-enable-snippets-in-popup t
+   auto-completion-enable-sort-by-usage t
    auto-completion-enable-help-tooltip t
+
+   ;; zsh shell
+   comint-input-ring-size 100000
+   comint-input-ring-file-name "~/.zsh_history"
+                                        ; Ignore timestamps in history file.  Assumes that zsh
+                                        ; EXTENDED_HISTORY option is in use.
+   comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);"
 
    ;; IRC
    erc-autojoin-channels-alist
@@ -391,20 +427,20 @@ layers configuration."
    google-translate-translation-directions-alist
    '(("en" . "ru") ("ru" . "en") )
    google-translate-pop-up-buffer-set-focus t
-   my/english-dictionary-file "~/Dropbox/org/dictionary.txt"
+   my/english-dictionary-file "~/Dropbox/org/static/dictionary.txt"
    ispell-personal-dictionary "~/Dropbox/emacs-resources/ispell-dictionary"
+   abbrev-file-name "~/Dropbox/emacs-resources/abbrev_defs.el"
 
    ;; big undo
-   undo-limit (* 300 1000)                    ; 300kb per file
-   undo-strong-limit (* 3 1000 1000)            ; 3MB max
+   undo-limit (* 10 1000 1000)                    ; 10MB per file
+   undo-strong-limit (* 100 1000 1000)            ; 100MB max
 
    ;; gnus
-   gnus-select-method '(nntp "news.gmane.org")
    gnus-save-killed-list nil
    gnus-always-read-dribble-file t
-   gnus-init-file "~/Dropbox/confiles/linux/emacs/gnus.el"
-   gnus-dribble-directory "~/Dropbox/emacs-resources/gnus"
-   gnus-home-directory "~/Dropbox/emacs-resources/gnus"
+   gnus-init-file "~/Dropbox/confiles/common/emacs/gnus.el"
+   gnus-dribble-directory "~/Dropbox/emacs-resources/gnus/"
+   gnus-home-directory "~/Dropbox/emacs-resources/gnus/"
 
    ;; org-mode timestamps in english
    system-time-locale "C"
@@ -419,8 +455,22 @@ layers configuration."
    undo-tree-history-directory-alist
    `(("." . ,(concat spacemacs-cache-directory "undo")))
 
-   spaceline-org-clock-p t
+   ;; scroll margin 3 lines without jumping
+   scroll-margin 3
+   scroll-conservatively 10000
+   scroll-step 1
+
+   ;; Latex
+   TeX-engine 'luatex
+
+   ;; quickrun
+   quickrun-focus-p nil
+
+   eww-search-prefix "https://www.google.ru/search?q="
+
+
    )
+
 
   (setq openwith-associations '(("\\.mp4\\'" "mplayer" (file))))
   (openwith-mode t)
@@ -432,7 +482,8 @@ layers configuration."
     ;; (add-to-list ivy-initial-inputs-alist '(counsel-M-x  "^"))
     (setq
      helm-locate-command "locate %s -e %s"
-     helm-ff-auto-update-initial-value t)
+     ;; helm-ff-auto-update-initial-value t
+     )
     (global-set-key (kbd "M-a") 'helm-mini)
     ;; recent-f sort minor mode
     (helm-adaptive-mode)
@@ -452,20 +503,16 @@ layers configuration."
           (define-key map (kbd "q") 'delete-window)
           (evil-define-key 'normal map (kbd "q") 'delete-window)))
 
-  ;; java multiline comments
-  (add-hook 'java-hook (lambda () (local-set-key "\r" 'my-javadoc-return)))
 
   (with-eval-after-load "quickrun"
     (advice-add 'quickrun :before (lambda (&rest PLIST) (save-buffer))))
 
-  ;; Vim move right or left
-  (define-key evil-normal-state-map "L" 'evil-end-of-line)
-  (define-key evil-normal-state-map "H" 'spacemacs/smart-move-beginning-of-line)
 
 
   ;; ------------------------------------------------------------------------------
   ;; DEBUG recentf
   ;; ------------------------------------------------------------------------------
+  ;; (setq debug-on-quit t)
 
   (with-eval-after-load "recent"
     (defun recentf-track-opened-file ()
@@ -476,12 +523,11 @@ layers configuration."
       ;; Must return nil because it is run from `write-file-functions'.
       nil))
 
-  (add-hook 'find-file-hook (lambda () (message "find file hook called %s" buffer-file-name)))
+  ;; (add-hook 'find-file-hook (lambda () (message "find file hook called %s" buffer-file-name)))
 
-
-
-  (with-eval-after-load "org"
-    (mapcar 'funcall org-store-link-functions))
+  ;; Why do we need this shit?
+  ;; (with-eval-after-load "org"
+  ;;   (mapcar 'funcall org-store-link-functions))
 
   ;;------------------------------------------------------------------------------
   ;; Google translate
@@ -518,9 +564,11 @@ layers configuration."
   ;; (with-eval-after-load 'eww-mode
   ;;   (define-key eww-mode-map (kbd "<Tab>") 'forward-button))
   (add-hook 'eww-mode 'evil-insert-state)
+  (add-hook 'yaml-mode 'indent-guide-mode)
 
   ;; locate shows bad results on archlinux
   (add-hook 'helm-after-initialize-hook (lambda () (setq helm-locate-fuzzy-match nil)))
+  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
   (add-hook 'after-save-hook (lambda ()
                                (when (and
                                       (string-prefix-p (concat user-home-directory "bin") buffer-file-name)
@@ -555,31 +603,31 @@ layers configuration."
 
   ;; startundo
   ;; Custom bookmakrs path
-  (setq bookmark-default-file (concat "~/Dropbox/emacs-bookmarks/" system-name "-bookmarks.el"))
+  ;; in emacs 24 system-name is FQDN and in emacs 25 it is a hostname
+  (setq bookmark-default-file (concat "~/Dropbox/emacs-bookmarks/" (replace-regexp-in-string "\.[^\.]+$" "" (system-name)) "-bookmarks.el"))
 
 
-  ;; Disable hello file, because it hangs
-  (global-unset-key (kbd "C-h h"))
-  ;; Allow C-x C-n goal column for csv
-  (put 'set-goal-column 'disabled nil)
 
-  ;; Fix tab key
-  (evil-define-key 'motion help-mode-map (kbd "<tab>") 'forward-button)
+  (global-unset-key (kbd "C-h h")) ;; Disable hello file, because it hangs
+  (put 'set-goal-column 'disabled nil)  ;; Allow C-x C-n goal column for csv
 
-  ;; C-h - updirectory in dired
-  (evil-define-key 'normal dired-mode-map (kbd "C-S-h") 'dired-up-directory)
 
-  ;; Fix RET key in profiler (not works)
-  ;; (evil-define-key 'normal profiler-report-mode-map (kbd "j") 'profiler-report-toggle-entry)
+;;   ;; C-h - updirectory in dired
+;;   (evil-define-key 'normal dired-mode-map (kbd "C-S-h") 'dired-up-directory)
 
-  ;; IRC
-  (add-hook 'erc-insert-pre-hook
-            (defun bb/erc-foolish-filter (msg)
-              "Ignores messages matching `erc-foolish-content'."
-              (when (erc-list-match erc-foolish-content msg)
-                (setq erc-insert-this nil))))
+;;   ;; Fix RET key in profiler (not works)
+;;   ;; (evil-define-key 'normal profiler-report-mode-map (kbd "j") 'profiler-report-toggle-entry)
+
 
   (with-eval-after-load 'erc
+    ;; IRC
+    (add-hook 'erc-insert-pre-hook
+              (defun bb/erc-foolish-filter (msg)
+                "Ignores messages matching `erc-foolish-content'."
+                (when (erc-list-match erc-foolish-content msg)
+                  (setq erc-insert-this nil))))
+    (add-hook 'erc-mode-hook 'emoji-cheat-sheet-plus-display-mode)
+    (erc-track-mode -1)
     (setq erc-insert-modify-hook
           '(erc-controls-highlight
             erc-button-add-buttons
@@ -589,100 +637,33 @@ layers configuration."
             erc-add-timestamp
             erc-hl-nicks)))
 
-  (add-hook 'erc-mode-hook 'emoji-cheat-sheet-plus-display-mode)
   ;; auto-save all files on lost focus
   (add-hook 'focus-out-hook (lambda () (interactive) (save-some-buffers t)))
-
-  (with-eval-after-load 'erc
-    (erc-track-mode -1))
 
 
   (defvar lsn/gitter-pwd "" "Password in local.el")
 
-  (evil-leader/set-key
-    "aiq" 'erc-quit-server
-    "aid" (defun bb/gitter-debug ()
-            (interactive)
-            (erc :server "localhost"
-                 :port 6667
-                 :nick "lislon"
-                 :password lsn/gitter-pwd
-                 :full-name "lislon"))
-    "aig" (defun bb/gitter ()
-            (interactive)
-            (erc-tls :server "irc.gitter.im"
-                     :port 6667
-                     :nick "lislon"
-                     :password lsn/gitter-pwd
-                     :full-name "lislon"))
-    "aif" (defun bb/freenode ()
-            (interactive)
-            (erc :server "irc.freenode.net"
-                 :port "6667"
-                 :nick "lislon"
-                 :full-name "lislon"))
-    "fd" 'my/ediff-buffer-with-file
-    "oj" 'my/make-temp-java-sandbox
-    "oJ" 'my/java-text)
 
 
+  ;; Do I use next keys?
+;;   (global-set-key (kbd "C-M-S-x") 'eval-parent-sexp)
+;;   ;; (global-set-key (kbd "M-k") 'kill-buffer)
+;;   (global-set-key (kbd "C-t") 'yas-insert-snippet)
+;;   (define-key yas-minor-mode-map (kbd "C-t") 'yas-insert-snippet)
+;;   (global-set-key (kbd "C-h E") 'elisp-index-search)
+;;   ;; I tried global-set-key, but it breaks occur in ctrl-s
+;;   ;; (global-set-key (kbd "M-s") 'save-buffer)
+;;   (define-key evil-normal-state-map (kbd "M-s") 'save-buffer)
+;;   (define-key evil-insert-state-map (kbd "M-s") 'save-buffer)
 
-  (advice-add 'org-mobile-push :after 'my/org-mobile-fix-index-bug)
-
-;; (with-eval-after-load 'mu4e
-;;   (require 'utf7)
-
-;;   (defun my/utf7-to-utf8-str-list (utf7-list)
-;;     (let* ((iter utf7-list)
-;;            (decoded)
-;;            (result))
-;;       (while (not (eq nil iter))
-;;         (setq decoded (cons (utf7-decode (car iter) t) decoded)
-;;               iter (cdr iter)))
-;;       (setq result decoded)))
-
-;;   (advice-add 'mu4e~get-maildirs-1 :around
-;;               (lambda (orig-func &rest args)
-;;                 (my/utf7-to-utf8-str-list (apply orig-func args))
-;;                 ))
-;;   )
-
-
-  (evil-leader/set-key "x g i" 'my/google-translate-repl)
-  ;; SPC o k - Show cheatsheet with hotkeys
-  (evil-leader/set-key "ok" 'my/keys-help-sheet)
-  (evil-leader/set-key "os" 'yas-visit-snippet-file)
-  (evil-leader/set-key "oS" 'yas-new-snippet)
-  (evil-leader/set-key "az" 'shell)
-  (define-key evil-normal-state-map (kbd "gp") 'lsn-insert-line-and-paste)
-  (add-hook 'dired-mode-hook (lambda ()
-                               (define-key dired-mode-map "e" 'wdired-change-to-wdired-mode)))
-  (global-set-key (kbd "C-M-S-x") 'eval-parent-sexp)
-  ;; (global-set-key (kbd "M-k") 'kill-buffer)
-  (global-set-key (kbd "C-t") 'yas-insert-snippet)
-  (define-key yas-minor-mode-map (kbd "C-t") 'yas-insert-snippet)
-  (global-set-key (kbd "C-h E") 'elisp-index-search)
-  ;; I tried global-set-key, but it breaks occur in ctrl-s
-  ;; (global-set-key (kbd "M-s") 'save-buffer)
-  (define-key evil-normal-state-map (kbd "M-s") 'save-buffer)
-  (define-key evil-insert-state-map (kbd "M-s") 'save-buffer)
-
-  (global-set-key (kbd "C-0") 'delete-window)
-  (global-set-key (kbd "C-1") 'delete-other-windows)
-  (global-set-key (kbd "C-2") 'split-window-vertically)
-  (global-set-key (kbd "C-3") 'split-window-horizontally)
-  (global-set-key (kbd "C-5") 'make-frame-command)
+;;   (global-set-key (kbd "C-0") 'delete-window)
+;;   (global-set-key (kbd "C-1") 'delete-other-windows)
+;;   (global-set-key (kbd "C-2") 'split-window-vertically)
+;;   (global-set-key (kbd "C-3") 'split-window-horizontally)
+;;   (global-set-key (kbd "C-5") 'make-frame-command)
 
 
   ;; I used to C-v for scroll down, not sure about visual block
-  (define-key evil-normal-state-map (kbd "C-v") 'evil-scroll-down)
-  (define-key evil-motion-state-map (kbd "C-v") 'evil-scroll-down)
-  (define-key evil-normal-state-map (kbd "C-S-v") 'evil-visual-block)
-
-  (global-set-key (kbd "M-%") 'anzu-query-replace)
-  (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
-
-  (global-set-key (kbd "<f8>") 'quickrun)
 
   ;; at the begining of working i see message in log:
   ;; <C-f13> is undefined
@@ -701,10 +682,8 @@ layers configuration."
 
   (add-hook 'minibuffer-setup-hook
             (lambda ()
-              (local-set-key (kbd "<f13>") 'toggle-input-method)))
-  (add-hook 'minibuffer-setup-hook
-            (lambda ()
-              (local-set-key (kbd "<f12>") 'toggle-input-method)))
+              (local-set-key (kbd "<f13>") 'toggle-input-method))
+              )
 
   ;; autoscroll messages
   (defadvice message (after message-tail activate)
@@ -717,7 +696,6 @@ layers configuration."
                     nil
                     t)))
 
-  (setq quickrun-focus-p nil)
 
 
   ; Auto set lisp-interaction-mode in *scratch*
@@ -729,14 +707,17 @@ layers configuration."
   ;;   )
   ;; (add-hook 'window-configuration-change-hook 'my/scratch-interactive-mode)
 
-  ;; Beyond eol makes ~SPC m e e~ usable
-  (add-hook 'lisp-mode-hook ((lambda () (setq-local evil-move-beyond-eol t))))
   ;; (add-hook 'calc-mode-hook 'calc-algebraic-entry)
 
   ;; Using chrome as default browser
   (if (eq system-type 'gnu/linux)
-      (setq browse-url-browser-function 'browse-url-generic
-            browse-url-generic-program "chromium"))
+      ;; On minijack opera is default browser
+      (with-eval-after-load 'browse-url
+        (message "%s default browser changed to chrome. again" (current-time-string))
+        (defun browse-url-can-use-xdg-open () (and (getenv "DISPLAY") (executable-find "xdg-open") t))) ;
+      ;; (setq browse-url-browser-function 'browse-url-generic
+      ;;       browse-url-generic-program "chromium")
+      )
 
   ;; Auto github favore mode when editing markdown
   (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
@@ -748,7 +729,6 @@ layers configuration."
   ;; Shell mode for ~/bin
   (add-to-list 'auto-mode-alist '("rc\\'" . conf-mode))
   (add-to-list 'auto-mode-alist `(,(concat user-home-directory "bin/.+") . shell-script-mode))
-
   (add-to-list 'auto-mode-alist '("dictionary\\.txt\\'" . google-translate-interactive-mode))
 
 
@@ -761,38 +741,37 @@ layers configuration."
                                "/snippets"))
             (cdr yas-snippet-dirs))))
 
-  (with-eval-after-load "recentf"
-    ;; Remove ~/.emacs.d/melpa from ignore list
-    (delete (expand-file-name package-user-dir) recentf-exclude)
+  ;; commented because i tired of missing buffer in recentf list after I close it with SPC b d
+;;   (with-eval-after-load "recentf"
+;;     ;; I want to have  ~/.emacs.d/melpa files in recentf
+;;     (delete (expand-file-name package-user-dir) recentf-exclude)
 
-    (defsubst file-was-visible-p (file)
-      "Return non-nil if FILE's buffer exists and has been displayed."
-      (let ((buf (find-buffer-visiting file)))
-        (if buf
-            (let ((display-count (buffer-local-value 'buffer-display-count buf)))
-              (if (> display-count 0) display-count nil)))))
+;;     (defsubst file-was-visible-p (file)
+;;       "Return non-nil if FILE's buffer exists and has been displayed."
+;;       (message "file-was-visible-p %s?" file)
+;;       (let ((buf (find-buffer-visiting file)))
+;;         (if buf
+;;             (let ((display-count (buffer-local-value 'buffer-display-count buf)))
+;;               (if (> display-count 0) display-count nil)))))
 
-    (let ((r-list recentf-list))
-      (defun keep-default-old-and-visible-recentf-p (file)
-        "Decide whether to keep file in recentf-list.
-Return non-nil if recentf would, by default, keep FILE, and
-either FILE name was loaded from recentf file on disk or FILE
-has been displayed in this session."
-        (if (recentf-keep-default-predicate file)
-            (if (or (member file r-list)
-                    (file-was-visible-p file))
-                (progn
-                  (message "File good: %s" file)
-                  t)
-              nil))))
+;;     (let ((r-list recentf-list))
+;;       (defun keep-default-old-and-visible-recentf-p (file)
+;;         "Decide whether to keep file in recentf-list.
+;; Return non-nil if recentf would, by default, keep FILE, and
+;; either FILE name was loaded from recentf file on disk or FILE
+;; has been displayed in this session."
+;;         (if (recentf-keep-default-predicate file)
+;;             (if (or (member file r-list)
+;;                     (file-was-visible-p file))
+;;                 (progn
+;;                   (message "File good: %s" file)
+;;                   t)
+;;               (message "Recentf delete: %s" file)
+;;               nil))))
 
-    ;; And, of course, you now need:
-    (setf recentf-keep '(keep-default-old-and-visible-recentf-p)))
+;;     ;; And, of course, you now need:
 
-  (with-eval-after-load "browse-url"
-    ;; override `browse-url-can-use-xdg-open'; does not work on my awesomewm setup
-    (defun browse-url-can-use-xdg-open ()
-      (and (getenv "DISPLAY") (getenv "XDG_SESSION_ID"))))
+;;     (setf recentf-keep '(keep-default-old-and-visible-recentf-p)))
 
   (with-eval-after-load "helm-locate"
     (setq helm-locate-command "locate %s -e %s")
@@ -810,17 +789,8 @@ has been displayed in this session."
     ;; (add-hook systemd-mode-map)
     )
 
-  ;; I don't want close emacs daemon by SPC q q
-  (evil-leader/set-key "qq" 'my/spacemacs-maybe-kill-emacs)
 
   (global-set-key (kbd "C-M-S") 'my/isearch-other-window)
-
-  ;; (defun my/evil-visual-restore (func &rest args)
-  ;;   (if (eq last-command evil-paste-after)
-  ;;       )
-  ;;   )
-
-  ;; (advice-add 'evil-visual-restore :around 'my/org-mobile-fix-index-bug)
 
   ;; Load local
   (when (file-exists-p "~/local.el")
@@ -836,9 +806,6 @@ has been displayed in this session."
   ;; (with-eval-after-load "Man"
   ;;   (add-hook 'Man-mode-hook (lambda () (pop-to-buffer (current-buffer))))
   ;;   ;; (add-hook 'woman-post-format-hook (lambda () (message "Buffer %s" (buffer-name)))))
-  (define-key evil-normal-state-map  (kbd "g r") 'jump-to-register)
-  (define-key evil-normal-state-map  (kbd "g c") 'org-capture)
-  (define-key evil-normal-state-map  (kbd "g a") 'org-agenda-list)
 
   ;; Autoinsert variables Not working + on update on save
   ;; (setq-default auto-insert-directory "~/dotfiles/spacemacs/private/skeletons")
@@ -846,8 +813,8 @@ has been displayed in this session."
   ;; (define-auto-insert "/\\.emacs.d/.+?\\.el\\'" "spacemacs-skel.el")
 
   ;; Do not overwrite history on buffer close
-  (require 'undohist)
-  (undohist-initialize)
+  (use-package undohist
+    :config (undohist-initialize))
 
   ;; Extract variable to the line above
   ;; (evil-define-operator my/sh-extract-variable-operator (beg end)
@@ -866,10 +833,8 @@ has been displayed in this session."
   ;;       )
   ;;     ))
 
-  (spacemacs/set-leader-keys-for-major-mode 'sh-mode
-    "rv" 'my/sh-extract-variable)
-  (add-hook 'systemd-mode-hook (lambda () (setq-local comment-start-skip "#")))
 
+  ;; fringes (right tiny column with current cursor) for emacs debug
   (setq-default fringe-indicator-alist
                 '((truncation left-arrow right-arrow)
                   (continuation left-curly-arrow right-curly-arrow)
@@ -904,40 +869,7 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
     :repeat evil-repeat-search
     (progn                 ;MADE CHANGES HERE
       (evil-insert-state)
-      (evil-search-incrementally t evil-regexp-search)
-      (evil-normal-state)
-      ))
-
-  (evil-define-motion evil-search-backward ()
-    (format "Search forward for user-entered text.
-Searches for regular expression if `evil-regexp-search' is t.%s"
-            (if (and (fboundp 'isearch-forward)
-                     (documentation 'isearch-forward))
-                (format "\n\nBelow is the documentation string \
-for `isearch-forward',\nwhich lists available keys:\n\n%s"
-                        (documentation 'isearch-forward)) ""))
-    :jump t
-    :type exclusive
-    :repeat evil-repeat-search
-    (progn                 ;MADE CHANGES HERE
-      (evil-insert-state)
-      (evil-search-incrementally nil evil-regexp-search)
-      (evil-normal-state)
-      ))
-  (evil-define-motion evil-search-forward ()
-    (format "Search forward for user-entered text.
-Searches for regular expression if `evil-regexp-search' is t.%s"
-            (if (and (fboundp 'isearch-forward)
-                     (documentation 'isearch-forward))
-                (format "\n\nBelow is the documentation string \
-for `isearch-forward',\nwhich lists available keys:\n\n%s"
-                        (documentation 'isearch-forward)) ""))
-    :jump t
-    :type exclusive
-    :repeat evil-repeat-search
-    (progn                 ;MADE CHANGES HERE
-      (evil-insert-state)
-      (evil-search-incrementally t evil-regexp-search)
+      (evil-rch-incrementally t evil-regexp-search)
       (evil-normal-state)
       ))
 
@@ -970,10 +902,150 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
   (global-set-key (kbd "<f13>") 'toggle-input-method)
   (define-key special-event-map [sigusr1] 'toggle-input-method)
 
-  ;; End of private config
-  (my/init-swiper)
+  ;; make this buffers available for switching via SPC TAB
+
+   (setq spacemacs-useful-buffers-regexp '("\\*SQL*"
+                                           "\\*Man*"
+                                           "\\*unset mail*"
+                                           "\\*Article*"
+                                           "\\*Dir\\*"
+                                           "\\*info\\*"
+                                           "\\*sos\\*"
+                                           "\\*new snippet\\*"
+                                           "\\*Help\\*"))
+  (dotspacemacs/custom-keys)
+  (dotspacemacs/hooks)
+
+  ;; I don't know if this works
+  (use-package secretaria
+    :config
+    ;; use this for getting a reminder every 30 minutes of those tasks scheduled
+    ;; for today and which have no time of day defined.
+    (add-hook 'after-init-hook #'secretaria-today-unknown-time-appt-always-remind-me))
+
+  ;; Fix for mariadb
+  ;; TODO: eval-after-load "???" or (Spacemacs) Error in dotspacemacs/user-config: Symbol's function definition is void: sql-set-product-feature
+  (with-eval-after-load "sql"
+    (setq
+     sql-connection-alist `((logiweb
+                             (sql-product 'mysql)
+                             (sql-user "root")
+                             (sql-password ,lsn/mysql-pwd)
+                             (sql-server "localhost")
+                             (sql-database "logiweb"))))
+     (sql-set-product-feature 'mysql :prompt-regexp "^\a?MariaDB[^>]+> "))
+
+  (defun sqli-add-hooks ()
+    "My hooks for sql-interactive-mode"
+    (spacemacs/toggle-truncate-lines-on)
+    )
+  (add-hook 'sql-interactive-mode-hook 'sqli-add-hooks)
+    ;; (sql-set-product-feature 'mysql :prompt-regexp "^\\(MariaDB\\|MySQL\\) \\[[_a-zA-Z]*\\]> ")
+
+;;   ;; End of private config
+;;   (my/init-swiper)
+  (use-package nyan-mode
+    :config (nyan-mode))
   )
 
+(defun dotspacemacs/custom-keys ()
+  "Here goes my keys customization"
+
+  ;; Vim move right or left
+  (my/define-key evil-normal-state-map
+    "L" 'evil-end-of-line
+    "H" 'evil-first-non-blank
+    "C-v" 'evil-scroll-down
+    "C-S-v" 'evil-visual-block
+    "C-v" 'evil-scroll-down
+    "gc" 'org-capture
+    "ga" 'org-agenda-list
+
+    ;; paste above/below
+    "gp" 'lsn/insert-line-below-and-paste
+    "gP" 'lsn/insert-line-above-and-paste
+    ;; vim C-a/C-x increase/decrease number
+    "+" 'spacemacs/evil-numbers-transient-state/evil-numbers/inc-at-pt
+    "-" 'spacemacs/evil-numbers-transient-state/evil-numbers/dec-at-pt
+    )
+
+  (global-set-key (kbd "M-%") 'anzu-query-replace)
+  (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
+  (global-set-key (kbd "<f8>") 'quickrun)
+
+  ;; Make C-j work with evil in *scratch*
+  (evil-define-key 'normal lisp-interaction-mode-map (kbd "C-j") 'my/eval-print-sexp-line)
+
+  (use-package dired
+    :bind (:map dired-mode-map
+           ("e" . wdired-change-to-wdired-mode))
+    )
+  (evil-leader/set-key
+    "aiq" 'erc-quit-server
+    "aid" (defun bb/gitter-debug ()
+            (interactive)
+            (erc :server "localhost"
+                 :port 6667
+                 :nick "lislon"
+                 :password lsn/gitter-pwd
+                 :full-name "lislon"))
+    "aig" (defun bb/gitter ()
+            (interactive)
+            (erc-tls :server "irc.gitter.im"
+                     :port 6667
+                     :nick "lislon"
+                     :password lsn/gitter-pwd
+                     :full-name "lislon"))
+    "aif" (defun bb/freenode ()
+            (interactive)
+            (erc :server "irc.freenode.net"
+                 :port "6667"
+                 :nick "lislon"
+                 :full-name "lislon"))
+    "am" 'my/sql-connect-preset          ; connect to mysql
+    "fd" 'my/ediff-buffer-with-file
+    "oJ" 'my/java-text
+    "xgi" 'my/google-translate-repl
+    "os" 'yas-visit-snippet-file
+    "oi" (lambda () (interactive) (error "Use SPC i s to insert yasnippet"))
+    ;; "oS" 'yas-new-snippet
+    "oS" (lambda () (interactive) (error "Use SPC i S c to create yasnippet"))
+    "az" 'shell
+    "hs" 'sos                           ; Stackoverflow help
+    "os" 'just-one-space
+    )
+
+  (spacemacs/set-leader-keys-for-major-mode 'sh-mode
+    "rv" 'my/sh-extract-variable)
+
+  ;; documentation for snippet mode
+  (spacemacs/set-leader-keys-for-major-mode
+    'snippet-mode "h" (lambda () (interactive)
+                        (browse-url "http://joaotavora.github.io/yasnippet/snippet-development.html")))
+
+  ;; connect to mysql via SPC m c
+  ;; (spacemacs/set-leader-keys-for-major-mode 'sql-mode "c" 'my/sql-connect-preset)
+)
+
+(defun dotspacemacs/hooks ()
+  "Here goes my keys customization"
+  (add-hook 'palette-mode-hook (lambda ()
+                                 (highlight-)))
+  ;; java multiline comments
+  (add-hook 'java-hook (lambda () (local-set-key "\r" 'my-javadoc-return)))
+  ;; Beyond eol makes ~SPC m e e~ usable
+  (add-hook 'lisp-mode-hook ((lambda () (setq-local evil-move-beyond-eol t))))
+  (add-hook 'auto-save-hook 'auto-save-all-files)
+
+  (add-hook 'systemd-mode-hook (lambda () (setq-local comment-start-skip "#")))
+  (add-hook 'shell-mode-hook 'my-shell-mode-hook)
+  (add-hook 'nxml-mode-hook 'turn-on-evil-matchit-mode)
+  (add-hook 'ranger-mode-hook (lambda () (face-remap-add-relative 'hl-line '((:background "DimGray")))))
+  )
+
+
+;; TODO implement this
+ ; swap 1 and 2
 (setq custom-file (expand-file-name "~/Dropbox/dotfiles/spacemacs/emacs-custom.el"))
 (load custom-file)
 (load "~/Dropbox/dotfiles/spacemacs/funcs.el")

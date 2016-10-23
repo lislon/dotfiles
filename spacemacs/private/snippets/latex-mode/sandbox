@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: sandbox
+# key: sandbox
+# --
+%!TEX TS-program = xelatex
+\documentclass{article}
+
+\begin{document}
+$0
+\end{document}

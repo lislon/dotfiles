@@ -14,11 +14,12 @@
 	d = difftool
 	vhr = !git fetch && git reset --hard FETCH_HEAD
 [user]
-	email = elephant@lislon.ru
+  email = lislon@mail.ru
 	name = Igor Avdeev
 [core]
 	autocrlf = false
 	excludesfiles = ~/dotfiles/git/gitignore_global
+	excludesfile = /home/ele/.gitignore_global
 [color]
 	diff = auto
 	status = auto
