@@ -1,0 +1,238 @@
+" -*- mode: vimrc -*-
+" :actionlist <search> to search actions "
+
+set scrolloff=5
+set gdefault
+set ignorecase
+set clipboard=unnamed
+set surround
+
+" Russian "
+nmap р h
+nmap о j
+nmap л k
+nmap д l
+nmap ф a
+nmap Ф A
+nmap ц w
+nmap Ц W
+nmap и b
+nmap И B
+nmap ш i
+nmap Ш I
+nmap й q
+nmap Й Q
+nmap с c
+nmap С C
+nmap х [
+nmap ъ ]
+nmap щ o
+nmap Щ O
+nmap у e
+nmap У E
+nmap в d
+nmap В D
+nmap а f
+nmap А F
+nmap е t
+nmap Е T
+nmap т n
+nmap Т N
+nmap м v
+nmap М V
+
+
+nmap <S-Enter> O<Esc>j
+nmap <cr> o<Esc>k
+
+" Fast exit from insert mode
+inoremap fd <Esc>
+inoremap ав <Esc>
+
+nmap <c-w> ci'
+
+"noremap <left> <nop>
+"noremap <right> <nop>
+"noremap <up> <nop>
+"noremap <down> <nop>
+
+"copy
+vmap <C-Insert> "+y
+"paste (Insert like = p, Shift+Insrt like P)
+imap <C-y> <c-o>"+P
+nmap <Insert> "+p
+imap <Insert> <c-o>"+p
+nmap <S-Insert> "+P
+imap <S-Insert> <c-o>"+P
+
+" Very left & Very Right
+noremap H ^
+noremap L $
+
+map <Tab> %
+
+" Delete till end"
+noremap D d$
+
+" Split line
+noremap S i<cr><Esc>
+
+" Emacs movements
+inoremap <C-a> <Esc>I
+inoremap <C-e> <Esc>A
+nnoremap <C-f> <right>
+nnoremap <C-b> <left>
+inoremap <C-f> <right>
+inoremap <C-b> <left>
+inoremap <C-d> <del>
+inoremap <a-d> <C-o>:action EditorDeleteToWordEnd<cr>
+inoremap <c-k> <C-o>:action EditorDeleteToLineEnd<cr>
+
+; Ctrl+x,f - delete stacked function a(b(c))
+;:noremap Xf diwmx<Tab>x`xx
+
+imap <C-l> <C-O>l
+imap <C-h> <C-O>h
+
+nnoremap Y ynnoremap Y y$
+
+" Emacs
+
+nmap <A-\> :action AutoIndentLines<cr>
+imap <A-\> :action AutoIndentLines<cr>
+map <c-s> :action Find<cr>
+nmap <C-x>rm :action ToggleBookmarkWithMnemonic<cr>
+" nmap <C-x>rb2 :action GotoBookmark2<cr>
+
+
+" Spacemacs
+
+let mapleader=" "
+let maplocalleader=","
+
+nmap <leader>fs :w<cr>
+nmap <leader>fr :action RecentFiles<cr>
+nmap <leader>ff :action GotoFile<cr>
+nmap <leader>fn :action NewFile<cr>
+nmap <leader>fN :action NewClass<cr>
+nmap <leader>fR :action RenameFile<cr>
+nmap <leader>feR :source ~/.ideavimrc<cr>
+nmap <leader>fed :e ~/.ideavimrc<cr>
+nmap <leader>fes :action ShowSettings<cr>
+
+nmap <leader>bd :action CloseContent<cr>
+nmap <leader>bb :action SearchEverywhere<cr>
+nmap <leader>bn gt<cr>
+nmap <leader>bp gT<cr>
+nmap <leader>bN :action NewScratchBuffer<cr>
+
+nmap <leader><tab> :action VimFilePrevious<cr>
+
+nmap <leader>tn :action EditorToggleShowLineNumbers<cr>
+nmap <leader>tw :action EditorToggleShowWhitespaces<cr>
+nmap <leader>tl :action EditorToggleUseSoftWraps<cr>
+nmap <leader>ti :action EditorToggleShowIndentLines<cr>
+nmap <leader>Tn :action QuickChangeScheme<cr>
+nmap <leader>Ts :action QuickChangeScheme<cr>
+
+nmap <leader>cl :action CommentByLineComment<cr>
+# Workaround https://youtrack.jetbrains.com/issue/VIM-862
+vmap <leader>cl :<bs><bs><bs><bs><bs>action VimVisualSwapSelections<cr>:action CommentByLineComment<cr>
+
+
+nmap <leader>wm :action HideAllWindows<cr>
+nmap <leader>wd :action CloseContent<cr>
+nmap <leader>wv :vsplit<cr>
+nmap <leader>wV :vsplit<cr>:action VimWindowRight<cr>
+nmap <leader>ws :split<cr>
+nmap <leader>wS :split<cr>:action VimWindowDown<cr>
+nmap <leader>wC :action VimWindowOnly<cr>
+nmap <leader>wh :action VimWindowLeft<cr>
+nmap <leader>wl :action VimWindowRight<cr>
+nmap <leader>wj :action VimWindowDown<cr>
+nmap <leader>wk :action VimWindowUp<cr>
+nmap <leader>wc :action VimWindowClose<cr>
+" nmap <a-1> :action VimWindowLeft<cr>
+" nmap <a-2> :action VimWindowRight<cr>
+
+nmap <leader>se :action RenameElement<cr>
+nmap <leader>sj :action FileStructurePopup<cr>
+nmap <leader>sc :nohlsearch<cr>
+nmap <leader>sf :action FindInPath<cr>
+nmap <leader>sp :action FindInPath<cr>
+nmap <leader>sF :action ShowUsages<cr>
+
+nmap <leader>jj :action AceJumpAction<cr>
+nmap <leader>jw :action emacsIDEAs.AceJumpWord<cr>
+nmap <leader>jW :action emacsIDEAs.AceJumpSelect<cr>
+" nmap <leader>js :action emacsIDEAs.AceJumpAndReplace.String<cr>
+nmap <leader>jcw :action emacsIDEAs.AceJumpCopy.Quote<cr>
+nmap <leader>jrl :action emacsIDEAs.AceJumpAndReplace.Line<cr>
+
+nmap <leader>au :action LocalHistory.ShowHistory<cr>
+
+nmap <leader><leader> :action GotoAction<cr>
+vmap <leader><leader> :<c-u>action GotoAction<cr>
+
+nmap <leader>zf+ :action EditorIncreaseFontSize<cr>
+nmap <leader>zf= :action EditorIncreaseFontSize<cr>
+nmap <leader>zf- :action EditorDecreaseFontSize<cr>
+nmap <leader>zf0 :action EditorResetFontSize<cr>
+
+nmap <leader>pa :action GotoTest<cr>
+" nmap <leader>pt :action SelectIn<cr> " Old
+nmap <leader>pt :action ActivateProjectToolWindow<cr>
+nmap <leader>py :action GotoSymbol<cr>
+nmap <leader>pp :action ManageRecentProjects<cr>
+nmap <leader>pf :action GotoFile<cr>
+
+nmap <leader>fb :action ActivateFavoritesToolWindow<cr>
+
+" Custom prefix
+nmap <leader>or :action Run<cr>
+nmap <leader>mrr  :action RenameElement<cr>
+nmap <leader>mrm  :action ExtractMethod<cr>
+vmap <leader>mrm  :action ExtractMethod<cr>
+nmap <leader>mrv  :action IntroduceVariable<cr>
+vmap <leader>mrv  :action IntroduceVariable<cr>
+nmap <leader>mrg  :action Generate<cr>
+nmap <leader>mri  :action ImplementMethods<cr>
+nmap gr :action Debug<cr>
+nmap gR :action Run<cr>
+nmap gf :action GotoDeclaration<cr>
+nmap gi :action GotoImplementation<cr>
+nmap gb :action ToggleLineBreakpoint<cr>
+nmap <localLeader>r :action Run<cr>
+nmap <leader>md :action Debug<cr>
+
+nmap zr :action ExpandAll<cr>
+nmap zm :action CollapseAll<cr>
+nmap zc :action CollapseRegion<cr>
+
+
+nnoremap [m :action MethodUp<cr>
+nnoremap ]m :action MethodDown<cr>
+
+
+";imap <A-Backspace> :action EditorDeleteToWordStart<cr>
+nmap <leader>qq :action exit<cr>
+nmap <leader>az :action ActivateTerminalToolWindow<cr>
+
+" Git
+nmap <leader>gs  :action ChangesView.Commit<cr>
+
+" Insert unicode
+nmap <leader>iu  :action ActivateUnicodeBrowserToolWindow<cr>
+
+
+" misc
+nmap gD :action GotoImplementation<cr>
+" paste on new line
+nmap gp A<cr><Esc>p
+nmap gP <S-o><Esc>p
+nmap <c-w> :action CloseContent<cr>
+vmap <a-\> :<c-u>action ReformatCode<cr>
+
+nmap <C-S-q> :action ParameterInfo<cr>
+imap <C-S-q> <C-o>:action ParameterInfo<cr>
+nmap gs <C-o>:action GotoSuperMethod<cr>

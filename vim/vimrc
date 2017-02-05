@@ -1188,6 +1188,11 @@ let g:UltiSnipsEditSplit="vertical"
 let g:snips_author = 'Igor Avdeev <elephant@lislon.ru>'
 
 " }}}
+" {{{ Plugin:NERDCommenter
+
+let g:NERDCustomDelimiters = { 'lisp': { 'left': ';;', 'nested': 1, 'leftAlt': '#|', 'rightAlt': '|#', 'nestedAlt': 1 } }
+
+" }}}
 " {{{ Plugin:Pdv PHPDoc
 let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
 " }}}

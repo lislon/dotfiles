@@ -127,7 +127,7 @@ init-fzf() {
 }
 
 init-simple-aliases() {
-    alias myzsh="$EDITOR ~/dotfiles/zsh/zshrc && reload"
+    alias myzsh='$EDITOR ~/dotfiles/zsh/zshrc && reload'
     alias view=vim -R
     alias reload=". ~/.zshrc"
     alias microdate="date +\"%T.%N\""
@@ -143,8 +143,8 @@ init-simple-aliases() {
     alias -g L="| less -R"
     alias -g H="| ack --passthru "
     alias -g F="| fpp"
+    alias -g cp1251="iconv -f 'windows-1251' -t 'utf-8'"
     alias ack="ack --pager='less -RFSX'"
-    alias luarc="$EDITOR ~/.config/awesome/rc.lua"
     alias fx='setxkbmap -layout "us,ru" -option "grp:ctrl_shift_toggle" -option ctrl:nocaps'
     alias help='man'
     alias cal='cal -m'
@@ -157,14 +157,25 @@ init-simple-aliases() {
     alias ytmp3='youtube-dl --extract-audio --audio-quality 0 --audio-format mp3 ' # works for playlists too
     alias bb='sudo /usr/bin/shutdown now'
     alias bbr='sudo /usr/bin/shutdown -r now'
-    alias bbh='_emacs-clock-out && systemctl suspend'
+    # alias bbh='_emacs-clock-out && systemctl suspend'
+    alias bbh='systemctl suspend'
+    alias иир='_emacs-clock-out && systemctl suspend'
     alias emacsrestart='systemctl --user restart emacs-daemon'
     alias emacsstop='systemctl --user stop emacs-daemon'
     alias svim='SUDO_EDITOR=vim sudoedit'
     alias cx='chmod +x'
-    alias feh='feh --scale-down \
---action1 "readlink -f %F | xclip -selection clipboard -f | xclip -selection p" \
---action2 "NAME=\$(zenity --entry) && echo cp %F \"\$(dirname %F)/$NAME\""'
+    alias -g copy='xclip -selection clipboard -f | xclip -selection p'
+    alias feh='feh -G --scale-down \
+        --thumb-height 256 --thumb-width 256 --cache-thumbnails \
+        --action2 ";~/bin/arch/feh/clipboard %F" \
+        --action3 ";~/bin/arch/feh/fav %F" \
+        --action4 ";~/bin/arch/feh/unfav %F" \
+        --action5 "~/bin/arch/feh/rename %F" \
+        '
+#     alias feh='feh -G --scale-down \
+# --action1 "readlink -f %F | xclip -selection p" \
+# --action2 "mkdir p" \
+# --action3 "NAME=\$(zenity --entry) && echo cp %F \"\$(dirname %F)/$NAME\""'
     alias -s pdf='xdg-open'
     alias -s html='chromium'
     alias emax="emacsclient -nw"                      # used to be "emacs -nw"
@@ -176,14 +187,15 @@ init-simple-aliases() {
     alias sc-user-dr='systemctl --user daemon-reload'
     alias sc-dr='sudo systemctl daemon-reload'
     alias jc='sudo journalctl -u'
+    alias jf='sudo journalctl -f'
     alias -g DN=/dev/null
     alias -g BOTH=2>&1
     alias calc=python
     alias mail=mutt
-    alias restore=recover
+    alias restore=~/bin/backup/recover
     alias o=xdg-open
     alias jl='sudo journalctl -b 0 --no-pager | tail'
-    alias myip='curl ifconfig.co'
+    alias myip='curl ipinfo.io/ip; curl ipinfo.io/city'
     alias rs='rsync --progress -r'
     alias simple-server='python3 -m http.server'
     alias drm='docker rm'
@@ -195,14 +207,14 @@ init-simple-aliases() {
     alias r=reload
     alias fix-null='sudo /bin/sh -c "rm -f /dev/null; mknod -m 666 /dev/null c 1 3"'
     # Move to last made photos
-    alias cd-last-photos="/media/photos/Photos/Everyday/*(oc[1,1])"
-    alias sc-status-vpn="sc-status openvpn@\*"
-    alias sc-stop-vpn="sc-stop $(systemctl show openvpn@\* --state active -p Id --value)"
+    alias cd-last-photos='/media/photos/Photos/Everyday/*(oc[1,1])'
+    alias sc-status-vpn="sc-status openvpn-client@\*"
+    alias sc-stop-vpn='sc-stop $(systemctl show openvpn-client@\* --state active -p Id --value)'
+    function sc-start-vpn { sc-start openvpn-client@$1 }
+    alias sc-restart-vpn='ACTIVE=$(systemctl show openvpn-client@\* --state active -p Id --value); sc-restart $ACTIVE'
     # Start docker with openvpn running
     alias music="urxvt -name urxvt.ncmpcpp -e ncmpcpp"
-
-
-
+    alias ipl="sudo iptables -L -n"
 
     # OS-depend aliases
     if `which pacman &>/dev/null`; then
@@ -232,7 +244,7 @@ init-complex-aliases() {
     }
 
     ssh() {
-        ssh-add -l >/dev/null || ssh-add -t 2h
+        ssh-add -l >/dev/null || ssh-add -t 8h
         /usr/bin/ssh "$@"
     }
 
@@ -344,12 +356,6 @@ init-complex-aliases() {
 
 
     # Shows who is listening port $1 with process info
-    who-listen() {
-        exec 3<&1 # new pipe to show output of nestat in stdout
-        # Netstat and then ps -p of process that netstat showed to us
-        sudo netstat -tulpn | grep :$1 >&3 3>&- | grep -P -o '\d+(?=/)' | sort -u | xargs -r ps -up
-        exec 3>&- # close pipe
-    }
 
     # # fd - cd to selected directory
     # fd() {
@@ -371,14 +377,15 @@ init-complex-aliases() {
         file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
     }
 
-    dbash() { docker exec -it $1 bash }
-
-    fag() {
-    ag --hidden --nobreak --nonumbers --noheading --depth 5 . | fzf
+    # generate random password
+    genpass() {
+        < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-16}; echo;
     }
 
-    mkdircd() {
-        mkdir -p $1 && cd $1
+    # dbash() { docker exec -it $1 bash }
+
+    fag() {
+        ag --hidden --nobreak --nonumbers --noheading --depth 5 . | fzf
     }
 
     writecmd() {
@@ -464,7 +471,7 @@ init-bindkeys() {
     bindkey "^L" clear-screen
 
     # Auto ls on RET
-    my-lsret() { [[ -z $BUFFER ]] && BUFFER='ls -lth --group-directories-first'; zle accept-line }
+    my-lsret() { [[ -z $BUFFER ]] && BUFFER=' ls -lth --group-directories-first'; zle accept-line }
     zle -N my-lsret
     bindkey "" my-lsret
 

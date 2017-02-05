@@ -38,8 +38,8 @@ values."
      yaml
      search-engine
      ;; smex
-     ;; browser-edit
-     ;; php
+     browser-edit
+     php
      html
      lua
      c-c++
@@ -48,38 +48,40 @@ values."
      github
      playground
      colors
-     java
+     (java :packages (not eclim))
      javascript
      python
      gnus
      sql
      php
      docker
-     ;; dash ;; zeal help
-     ;; commented out because SPC f e R is not work
-     ;; ,@(unless (eq system-type 'windows-nt)
-     ;;     '(fasd
-     ;;       spell-checking))
+     nginx
+     dash ;; zeal help
+     commented out because SPC f e R is not work
+     ,@(unless (eq system-type 'windows-nt)
+         '(fasd
+           spell-checking))
      fasd
      spell-checking
-     ;; mu4e
-     ;; eyebrowse
+     mu4e
+     eyebrowse
      (semantic :disabled-for emacs-lisp) ;; emacs 25 hang bug
      erc
      emoji
+     ;; bisect
      (ranger :variables ranger-override-dired t)
      (markdown :variables markdown-live-preview-engine 'vmd)
      org
      my-org
      my-keys
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
-     syntax-checking
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom)
+     ; syntax-checking
      version-control
-     ;; csharp
+     ;;; csharp
 
-     ;; gtags
+     ;;; gtags
      latex
      )
    ;; List of additional packages that will be installed without being
@@ -87,12 +89,16 @@ values."
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
+                                      all-the-icons
+                                      all-the-icons-dired
+                                      w3m
                                       ;; plantuml
                                       refine
                                       openwith
                                       quickrun
                                       palette
-                                      secreteria
+                                      ;; secreteria
+                                      clipmon
                                       ;; todochiku
                                       systemd
                                       tea-time
@@ -111,10 +117,11 @@ values."
                                       nyan-mode
                                       restclient
                                       vimgolf
+                                      impatient-mode
                                       )
 
    ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(eyebrowse) ; Conflicts with org mode C-C C-w
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -195,13 +202,19 @@ values."
    ;;                             :powerline-scale 1.5)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
+   ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
+   ;; (default "SPC")
+   dotspacemacs-emacs-command-key "SPC"
+   ;; The key used for Vim Ex commands (default ":")
+   dotspacemacs-ex-command-key ":"
    ;; The leader key accessible in `emacs state' and `insert state'
    ;; (default "M-m")
    dotspacemacs-emacs-leader-key "M-m"
    ;; Major mode leader key is a shortcut key which is the equivalent of
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
    dotspacemacs-major-mode-leader-key ","
-   ;; Major mode leader key accessible in `emacs state' and `insert state'
+   ;; Major mode leader key accessible in `emacs state' and `insert state'.
+   ;; (default "C-M-m")
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
    ;; (default "SPC")
@@ -233,13 +246,9 @@ values."
    dotspacemacs-auto-save-file-location 'cache
    ;; Maximum number of rollback slots to keep in the cache. (default 5)
    dotspacemacs-max-rollback-slots 5
-   ;; If non nil then `ido' replaces `helm' for some commands. For now only
-   ;; `find-files' (SPC f f), `find-spacemacs-file' (SPC f e s), and
-   ;; `find-contrib-file' (SPC f e c) are replaced. (default nil)
-   dotspacemacs-use-ido nil
-   ;; If non nil, `helm' will try to minimize the space it uses. (default nil)
+   ;; If non-nil, `helm' will try to minimize the space it uses. (default nil)
    dotspacemacs-helm-resize nil
-   ;; if non nil, the helm header is hidden when there is only one source.
+   ;; if non-nil, the helm header is hidden when there is only one source.
    ;; (default nil)
    dotspacemacs-helm-no-header nil
    ;; define the position to display `helm', options are `bottom', `top',
@@ -258,10 +267,10 @@ values."
    ;; If non nil the frame is fullscreen when Emacs starts up.
    ;; (Emacs 24.4+ only)
    dotspacemacs-fullscreen-at-startup nil
-   ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
+   ;; If non-nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
-   ;; If non nil the frame is maximized when Emacs starts up.
+   ;; If non-nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (Emacs 24.4+ only)
    dotspacemacs-maximized-at-startup t
@@ -288,18 +297,26 @@ values."
    ;; (default nil)
    dotspacemacs-line-numbers nil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
-   dotspacemacs-smartparens-strict-mode nil
-   ;; Select a scope to highlight delimiters. Possible value is `all',
-   ;; `current' or `nil' or `any`''. Default is `all'
+   ;; (default nil)
+   dotspacemacs-smartparens-strict-mode t
+   ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
+   ;; over any automatically added closing parenthesis, bracket, quote, etc…
+   ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
+   dotspacemacs-smart-closing-parenthesis nil
+   ;; Select a scope to highlight delimiters. Possible values are `any',
+   ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
+   ;; emphasis the current one). (default 'all)
    dotspacemacs-highlight-delimiters 'all
-   ;; If non nil advises quit functions to keep server open when quitting.
+   ;; If non-nil, advise quit functions to keep server open when quitting.
+   ;; (default nil)
    dotspacemacs-persistent-server nil
    ;; List of search tool executable names. Spacemacs uses the first installed
-   ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
-   dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
+   ;; tool of the list. Supported tools are `rg', `ag', `pt', `ack' and `grep'.
+   ;; (default '("rg" "ag" "pt" "ack" "grep"))
+   dotspacemacs-search-tools '("rg" "ag" "pt" "ack" "grep")
    ;; The default package repository used if no explicit repository has been
    ;; specified with an installed package.
-   ;; Not used for now.
+   ;; Not used for now. (default nil)
    dotspacemacs-default-package-repository nil
    ;; Delete whitespace while saving buffer. Possible values are `all'
    ;; to aggressively delete empty line and long sequences of whitespace,
@@ -310,14 +327,17 @@ values."
    )
   ;; User initialization goes here
   (add-to-load-path "~/dotfiles/spacemacs/thirdparty")
-  )
+  (add-to-load-path (expand-file-name "~/dotfiles/spacemacs/thirdparty/smsru/"))
+)
 
 
 (defun dotspacemacs/user-init ()
   ;; Shared undo of org files between computers
 
   (when (eq system-type 'gnu/linux)
-    (setq shared-dir (expand-file-name "~/Dropbox/emacs-bookmarks/cache/undo"))
+    (setq shared-dir (expand-file-name "~/Dropbox/emacs-bookmarks/cache/undo")
+          spell-checking-enable-by-default nil ; Disabled because it freezes emacs 25.1 when commenting XML region with ending line
+          )
     (setq-default
      undo-tree-history-directory-alist `(
                                          (,(expand-file-name "~/org") . ,shared-dir)
@@ -347,10 +367,11 @@ layers configuration."
    evil-move-beyond-eol nil
    evil-escape-unordered-key-sequence t
    spaceline-org-clock-p t
+   spaceline-always-show-segments t     ; always show clock
    x-select-enable-primary t            ; copy/paste from emacs to urxvt
    message-kill-buffer-query nil        ; do not ask confirmation of killing buffer
    ffap-newfile-prompt t                ; gf can create new files
-   source-directory "/home/ele/src-dormant/emacs/src"
+   source-directory (concat user-home-directory "src-dormant/emacs/src")
    avy-case-fold-search nil             ; avy jump respect case
    spacemacs-paste-transient-state-add-bindings '(("p" evil-paste-pop "paste next")
                                                   ("P" evil-paste-pop-next "paste previous"))
@@ -361,9 +382,11 @@ layers configuration."
    evil-shift-round nil                 ; explanation https://youtu.be/HKF41ivkBb0?t=13m35s
 
 
+   yas-wrap-around-region nil           ; I set to nil to prevent duplication of region when using surround snip
    ;; Dired - directories first
    dired-listing-switches "-alkh  --group-directories-first"
    ;; dired-listing-switches "-aBhl  --group-directories-first"
+
 
    ;; Man in same window
    Man-notify-method 'pushy
@@ -376,7 +399,9 @@ layers configuration."
    ange-ftp-try-passive-mode t
 
    ;; backup
-   make-backup-files t
+
+   ;; make-backup-files Switched off because of error backup-extract-version: Args out of range: "!home!ele!Dropbox!emacs-resources!gnus!archive!Отправленные.~1~", 73
+   make-backup-files nil
    keep-new-versions 10
    keep-old-versions 2
    backup-by-copying t
@@ -428,8 +453,9 @@ layers configuration."
    '(("en" . "ru") ("ru" . "en") )
    google-translate-pop-up-buffer-set-focus t
    my/english-dictionary-file "~/Dropbox/org/static/dictionary.txt"
-   ispell-personal-dictionary "~/Dropbox/emacs-resources/ispell-dictionary"
+   ;; ispell-personal-dictionary "~/Dropbox/emacs-resources/ispell-dictionary"
    abbrev-file-name "~/Dropbox/emacs-resources/abbrev_defs.el"
+   spell-checking-enable-auto-dictionary t
 
    ;; big undo
    undo-limit (* 10 1000 1000)                    ; 10MB per file
@@ -439,8 +465,12 @@ layers configuration."
    gnus-save-killed-list nil
    gnus-always-read-dribble-file t
    gnus-init-file "~/Dropbox/confiles/common/emacs/gnus.el"
-   gnus-dribble-directory "~/Dropbox/emacs-resources/gnus/"
-   gnus-home-directory "~/Dropbox/emacs-resources/gnus/"
+   ;; gnus-dribble-directory "~/Dropbox/emacs-resources/gnus/"
+   gnus-dribble-directory "~/.emacs.d/.cache/gnus"
+   gnus-home-directory "~/.emacs.d/.cache/gnus"
+   ;; we don't use other news readers
+   gnus-save-newsrc-file nil
+   gnus-read-newsrc-file nil
 
    ;; org-mode timestamps in english
    system-time-locale "C"
@@ -468,9 +498,10 @@ layers configuration."
 
    eww-search-prefix "https://www.google.ru/search?q="
 
-
    )
 
+  ;; prevent overwire of clipboard when selection
+  (fset 'evil-visual-update-x-selection 'ignore)
 
   (setq openwith-associations '(("\\.mp4\\'" "mplayer" (file))))
   (openwith-mode t)
@@ -482,6 +513,7 @@ layers configuration."
     ;; (add-to-list ivy-initial-inputs-alist '(counsel-M-x  "^"))
     (setq
      helm-locate-command "locate %s -e %s"
+     ;; I enabled this on for better candidate matching like recentf gnus.el
      ;; helm-ff-auto-update-initial-value t
      )
     (global-set-key (kbd "M-a") 'helm-mini)
@@ -514,14 +546,14 @@ layers configuration."
   ;; ------------------------------------------------------------------------------
   ;; (setq debug-on-quit t)
 
-  (with-eval-after-load "recent"
-    (defun recentf-track-opened-file ()
-      "Insert the name of the file just opened or written into the recent list."
+  ;; (with-eval-after-load "recent"
+  ;;   (defun recentf-track-opened-file ()
+  ;;     "Insert the name of the file just opened or written into the recent list."
 
-      (and buffer-file-name (message "recentf track file: %s" buffer-file-name)
-           (recentf-add-file buffer-file-name))
-      ;; Must return nil because it is run from `write-file-functions'.
-      nil))
+  ;;     (and buffer-file-name (message "recentf track file: %s" buffer-file-name)
+  ;;          (recentf-add-file buffer-file-name))
+  ;;     ;; Must return nil because it is run from `write-file-functions'.
+  ;;     nil))
 
   ;; (add-hook 'find-file-hook (lambda () (message "find file hook called %s" buffer-file-name)))
 
@@ -578,29 +610,7 @@ layers configuration."
                                  (set-file-modes buffer-file-name #o755)
                                  )))
 
-  ;; Fixed russian keyboard with proper numbers keys
-  (quail-define-package
-   "cyrillic-jcuken" "Cyrillic" "RU" nil
-   "ЙЦУКЕH keyboard layout widely used in Russia (ISO 8859-5 encoding)"
-   nil t t t t nil nil nil nil nil t)
-
-  (quail-define-rules
-   ("1" ?1) ("2" ?2) ("3" ?3) ("4" ?4) ("5" ?5) ("6" ?6) ("7" ?7) ("8" ?8)
-   ("9" ?9) ("0" ?0) ("-" ?-) ("=" ?=) ("`" ?ё) ("q" ?й) ("w" ?ц) ("e" ?у)
-   ("r" ?к) ("t" ?е) ("y" ?н) ("u" ?г) ("i" ?ш) ("o" ?щ) ("p" ?з) ("[" ?х)
-   ("]" ?ъ) ("a" ?ф) ("s" ?ы) ("d" ?в) ("f" ?а) ("g" ?п) ("h" ?р) ("j" ?о)
-   ("k" ?л) ("l" ?д) (";" ?ж) ("'" ?э) ("\\" ?\\) ("z" ?я) ("x" ?ч) ("c" ?с)
-   ("v" ?м) ("b" ?и) ("n" ?т) ("m" ?ь) ("," ?б) ("." ?ю) ("/" ?.) ("!" ?!)
-   ("@" ?\") ("#" ?#) ("$" ?\;) ("%" ?%) ("^" ?:) ("&" ??) ("*" ?*) ("(" ?()
-                                                                     (")" ?)) ("_" ?_) ("+" ?+) ("~" ?Ё) ("?" ?,)
-                                                                     ("Q" ?Й) ("W" ?Ц) ("E" ?У) ("R" ?К) ("T" ?Е) ("Y" ?Н) ("U" ?Г) ("I" ?Ш)
-                                                                     ("O" ?Щ) ("P" ?З) ("{" ?Х) ("}" ?Ъ) ("A" ?Ф) ("S" ?Ы) ("D" ?В) ("F" ?А)
-                                                                     ("G" ?П) ("H" ?Р) ("J" ?О) ("K" ?Л) ("L" ?Д) (":" ?Ж) ("\"" ?Э) ("|" ?/)
-                                                                     ("Z" ?Я) ("X" ?Ч) ("C" ?С) ("V" ?М) ("B" ?И) ("N" ?Т) ("M" ?Ь) ("<" ?Б)
-                                                                     (">" ?Ю))
-
-  (setq default-input-method "cyrillic-jcuken")
-
+  (my/russian-langue)
   ;; startundo
   ;; Custom bookmakrs path
   ;; in emacs 24 system-name is FQDN and in emacs 25 it is a hostname
@@ -682,19 +692,20 @@ layers configuration."
 
   (add-hook 'minibuffer-setup-hook
             (lambda ()
-              (local-set-key (kbd "<f13>") 'toggle-input-method))
-              )
+              (local-set-key (kbd "<f13>") 'toggle-input-method)))
 
   ;; autoscroll messages
-  (defadvice message (after message-tail activate)
-    "goto point max after a message"
-    (with-current-buffer "*Messages*"
-      (goto-char (point-max))
-      (walk-windows (lambda (window)
-                      (if (string-equal (buffer-name (window-buffer window)) "*Messages*")
-                          (set-window-point window (point-max))))
-                    nil
-                    t)))
+  ;; commented because i can't copy line with yy
+  ;; TODO: Add check that cursor is not in current window
+  ;; (defadvice message (after message-tail activate)
+  ;;   "goto point max after a message"
+  ;;   (with-current-buffer "*Messages*"
+  ;;     (goto-char (point-max))
+  ;;     (walk-windows (lambda (window)
+  ;;                     (if (string-equal (buffer-name (window-buffer window)) "*Messages*")
+  ;;                         (set-window-point window (point-max))))
+  ;;                   nil
+  ;;                   t)))
 
 
 
@@ -724,13 +735,36 @@ layers configuration."
 
   ;; Automode for awesomewm files like rc.lua.blackburg, rc.lua_test
   (add-to-list 'auto-mode-alist '("\\.lua.+" . lua-mode))
+
   (add-to-list 'auto-mode-alist '("vimrc\\'" . vimrc-mode))
 
   ;; Shell mode for ~/bin
   (add-to-list 'auto-mode-alist '("rc\\'" . conf-mode))
   (add-to-list 'auto-mode-alist `(,(concat user-home-directory "bin/.+") . shell-script-mode))
   (add-to-list 'auto-mode-alist '("dictionary\\.txt\\'" . google-translate-interactive-mode))
+  (add-to-list 'auto-mode-alist '("\\.desktop\\'" . desktop-entry-mode))
 
+  (define-derived-mode desktop-entry-mode conf-unix-mode "Desktop" "Desktop entry")
+
+  ;; enable flycheck for lua (usefull for awesomewm configs)
+  (with-eval-after-load 'flycheck
+    (add-hook 'lua-mode-hook flycheck-mode))
+
+  ;; custom error checker for awesomewm just for practice> (`C-c ! s` to select it)
+  (with-eval-after-load "lua-mode"
+    (with-eval-after-load "flycheck"
+      (flycheck-define-checker lua-awesome
+                               "A Lua syntax checker using awesome -k."
+                               :command ("awesome"
+                                         "-k"
+                                         "-c" source)
+                               :standard-input t
+                               :error-patterns
+                               ((error line-start
+                                       (optional (file-name))
+                                       ":" line
+                                       ":" (message) line-end))
+                               :modes lua-mode)))
 
   ;; Add ~/dotfiles/spacemacs/private/snippets directory
   (eval-after-load "yasnippet"
@@ -783,21 +817,20 @@ layers configuration."
       "e" 'my/systemd-enable-unit
       "d" 'my/systemd-disable-unit
       "a" 'my/systemd-start-unit
-      "o" 'my/systemd-switch-timer-service
-      )
-
-    ;; (add-hook systemd-mode-map)
-    )
+      "o" 'my/systemd-switch-timer-service))
 
 
   (global-set-key (kbd "C-M-S") 'my/isearch-other-window)
 
-  ;; Load local
+  ;; Private config for this host
   (when (file-exists-p "~/local.el")
     (load "~/local.el"))
 
-  (spacemacs/set-leader-keys "cC" 'my/compile)
+  ;; Private config for all my hosts
+  (when (file-exists-p "~/confiles/common/emacs/semi-local.el")
+    (load "~/confiles/common/emacs/semi-local.el"))
 
+  (spacemacs/set-leader-keys "cC" 'my/compile)
 
   ;; Preload org to resume clock in time
   ;; speed up
@@ -911,17 +944,39 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
                                            "\\*Dir\\*"
                                            "\\*info\\*"
                                            "\\*sos\\*"
+                                           "\\*REST\\*"
                                            "\\*new snippet\\*"
                                            "\\*Help\\*"))
+
+   ;; C-x / g - search google
+   (use-package engine-mode
+     :config
+     (defengine google
+        "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+        :keybinding "g")
+
+     (defengine github
+       "https://github.com/search?ref=simplesearch&q=%s"
+       :keybinding "h")
+
+     (defengine youtube
+       "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
+       :keybinding "y")
+
+     (defengine wikipedia
+       "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+       :keybinding "w")
+     )
+
   (dotspacemacs/custom-keys)
   (dotspacemacs/hooks)
 
   ;; I don't know if this works
-  (use-package secretaria
-    :config
-    ;; use this for getting a reminder every 30 minutes of those tasks scheduled
-    ;; for today and which have no time of day defined.
-    (add-hook 'after-init-hook #'secretaria-today-unknown-time-appt-always-remind-me))
+  ;; (use-package secretaria
+  ;;   :config
+  ;;   ;; use this for getting a reminder every 30 minutes of those tasks scheduled
+  ;;   ;; for today and which have no time of day defined.
+  ;;   (add-hook 'after-init-hook #'secretaria-today-unknown-time-appt-always-remind-me))
 
   ;; Fix for mariadb
   ;; TODO: eval-after-load "???" or (Spacemacs) Error in dotspacemacs/user-config: Symbol's function definition is void: sql-set-product-feature
@@ -934,6 +989,11 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
                              (sql-server "localhost")
                              (sql-database "logiweb"))))
      (sql-set-product-feature 'mysql :prompt-regexp "^\a?MariaDB[^>]+> "))
+  (with-eval-after-load 'w3m
+    (define-key gnus-article-mode-map (kbd "RET") 'my/w3m-open-link-or-image-browser)
+    (define-key w3m-minor-mode-map (kbd "RET") 'my/w3m-open-link-or-image-browser)
+    (define-key w3m-minor-mode-map "F" 'my/w3m-open-link-or-image-browser))
+
 
   (defun sqli-add-hooks ()
     "My hooks for sql-interactive-mode"
@@ -945,11 +1005,48 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
 ;;   ;; End of private config
 ;;   (my/init-swiper)
   (use-package nyan-mode
-    :config (nyan-mode))
+    :config (nyan-mode 1))
+  (use-package smsru
+    :commands (smsru/send-sms)
+    :defer t)
+  (use-package all-the-icons
+    :config
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+  (with-eval-after-load "auto-dictionary"
+    (setq adict-dictionary-list '(("en" "english"
+                                   "ru" "russian")))
+    (setq adict-hash (let* ((hash (make-hash-table :test 'equal)))
+                            (adict-add-word hash 1 "and" "are" "at" "been" "but" "dear" "get" "have"
+                                            "he" "hello" "it" "me" "my" "not" "on" "of" "off" "put"
+                                            "regarding" "set" "she" "some" "that" "than" "the" "there"
+                                            "us" "was" "we" "while" "with" "yes" "you" "your" "yours")
+
+                            (adict-add-word hash 2 "и" "в" "не" "он" "на" "я" "что" "тот" "быть" "с" "а"
+                                            "весь" "это" "как" "она" "по" "но" "они" "к" "у" "ты" "из"
+                                            "мы" "за" "вы" "так" "же" "от" "сказать" "этот" "который"
+                                            "мочь" "человек" "о" "один" "еще" "бы" "такой" "только"
+                                            "себя" "свой" "какой" "когда" "уже" "для" "вот" "кто"
+                                            "да" "говорить" "год")
+                            hash
+                       )))
+
+  ;; (use-package web-mode
+  ;;   :defer t
+  ;;   :init
+  ;;   (setq web-mode-extra-snippets
+  ;;         '(("erb" . (("toto" . "<% toto | %>\n\n<% end %>")))
+  ;;           ("php" . (("dowhile" . "<?php do { ?>\n\n<?php } while (|); ?>")
+  ;;                     ("debug" . "<?php error_log(__LINE__); ?>")))
+  ;;           )))
+  ;; Integrate system clipboard with emacs kill ring
+  ;; It doesn't work with russian text in clipboard
+  ;; (use-package clipmon
+  ;;   :config (clipmon-mode-start))
   )
 
 (defun dotspacemacs/custom-keys ()
-  "Here goes my keys customization"
+  "Here go my keys customization."
 
   ;; Vim move right or left
   (my/define-key evil-normal-state-map
@@ -1003,32 +1100,42 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
                  :nick "lislon"
                  :full-name "lislon"))
     "am" 'my/sql-connect-preset          ; connect to mysql
+    "aR" 'my/rest-client
     "fd" 'my/ediff-buffer-with-file
     "oJ" 'my/java-text
     "xgi" 'my/google-translate-repl
-    "os" 'yas-visit-snippet-file
-    "oi" (lambda () (interactive) (error "Use SPC i s to insert yasnippet"))
-    ;; "oS" 'yas-new-snippet
-    "oS" (lambda () (interactive) (error "Use SPC i S c to create yasnippet"))
+    ;; "os" 'yas-visit-snippet-file
+    "os" (lambda () (interactive) (error "Use SPC i s to list snippets"))
+    ;; "oi" (lambda () (interactive) (error "Use SPC i s to insert yasnippet"))
+    "oS" 'yas-new-snippet
+    ;; "oS" (lambda () (interactive) (error "Use SPC i S c to create yasnippet"))
     "az" 'shell
+    "as" 'eshell
     "hs" 'sos                           ; Stackoverflow help
-    "os" 'just-one-space
+    ;; "os" 'just-one-space
+    "swy" 'engine/search-youtube
     )
 
   (spacemacs/set-leader-keys-for-major-mode 'sh-mode
     "rv" 'my/sh-extract-variable)
 
   ;; documentation for snippet mode
-  (spacemacs/set-leader-keys-for-major-mode
-    'snippet-mode "h" (lambda () (interactive)
+  (spacemacs/set-leader-keys-for-major-mode 'snippet-mode
+    "h" (lambda () (interactive)
                         (browse-url "http://joaotavora.github.io/yasnippet/snippet-development.html")))
+
+  (spacemacs/set-leader-keys-for-major-mode 'gfm-mode
+    "h" (lambda () (interactive) (browse-url "https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet")))
+
+  (spacemacs/set-leader-keys-for-major-mode 'desktop-mode
+    "i" 'my/install-desktop-file)
 
   ;; connect to mysql via SPC m c
   ;; (spacemacs/set-leader-keys-for-major-mode 'sql-mode "c" 'my/sql-connect-preset)
 )
 
 (defun dotspacemacs/hooks ()
-  "Here goes my keys customization"
+  "Here go my keys customization."
   (add-hook 'palette-mode-hook (lambda ()
                                  (highlight-)))
   ;; java multiline comments
@@ -1049,3 +1156,23 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
 (setq custom-file (expand-file-name "~/Dropbox/dotfiles/spacemacs/emacs-custom.el"))
 (load custom-file)
 (load "~/Dropbox/dotfiles/spacemacs/funcs.el")
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (eyebrowse zeal-at-point yapfify yaml-mode xelb wttrin ws-butler window-numbering which-key web-mode web-beautify w3m volatile-highlights vmd-mode vimrc-mode vimgolf vi-tilde-fringe uuidgen use-package undohist toc-org tea-time tagedit systemd swiper stickyfunc-enhance srefactor sql-indent spacemacs-theme spaceline sos smeargle slime-company slim-mode scss-mode sass-mode restclient restart-emacs refine ranger rainbow-mode rainbow-identifiers rainbow-delimiters quickrun quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode pcre2el paradox palette orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets openwith open-junk-file noflet nginx-mode neotree mwim move-text monokai-theme mmm-mode markdown-toc magit-gitflow magit-gh-pulls lua-mode lorem-ipsum livid-mode live-py-mode linum-relative link-hint less-css-mode js2-refactor js-doc insert-shebang info+ indent-guide impatient-mode ido-vertical-mode hy-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-systemd helm-swoop helm-pydoc helm-purpose helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md flyspell-correct-helm flycheck-pos-tip flx-ido fish-mode fill-column-indicator fasd fancy-battery f3 expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu erc-yt erc-view-log erc-social-graph erc-image erc-hl-nicks engine-mode emoji-cheat-sheet-plus emmet-mode elisp-slime-nav dumb-jump drupal-mode dockerfile-mode docker disaster diff-hl define-word cython-mode company-web company-tern company-statistics company-shell company-emoji company-emacs-eclim company-c-headers company-auctex company-anaconda common-lisp-snippets column-enforce-mode color-identifiers-mode coffee-mode cmake-mode clipmon clean-aindent-mode clang-format calfw bbdb auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile auctex-latexmk all-the-icons-dired ahk-mode aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: get
+# key: get
+# --
+\##
+
+GET http://127.0.0.1:8080/

@@ -21,9 +21,12 @@
  org-agenda-start-on-weekday nil         ; When viewing view start from current day
  org-agenda-text-search-extra-files '(agenda-archives)
  org-todo-keywords '((sequence "TODO" "|" "DONE" "REJT"))
- ;; ------------------------------------------------------------------------------
- ;; Clocking
- ;; ------------------------------------------------------------------------------
+ org-list-allow-alphabetical t
+ org-table-default-size "2x5"           ; Default 2 columns table
+
+ ;;------------------------------------------------------------------------------
+ ;;Clocking
+ ;;------------------------------------------------------------------------------
  org-clock-out-remove-zero-time-clocks t ; Remove 0:00 times in :LOGBOOK:
  org-clock-remove-empty-clock-drawer t   ; Remove empty :LOGBOOK: drawlers due to 0:00 time
  org-clock-persist t                     ; Save last clock item after emacs is closed
@@ -65,7 +68,6 @@
  ;; ------------------------------------------------------------------------------
  ;; Export
  ;; ------------------------------------------------------------------------------
- org-export-initial-scope 'subtree
 
  ;; ------------------------------------------------------------------------------
  ;; Capture
@@ -78,8 +80,12 @@
                                 "* TODO %^{Todo} %^G\n%U\n%?" :clock-in t :clock-resume t
                                 :immediate-finish nil)
 
-                               ("d" "todo today" entry (file+headline "~/org/dynamic/tasks.org" "Simple")
+                               ("d" "todo today" entry (file+headline "~/org/dynamic/today.org" "Simple")
                                 "* TODO %^{Todo today}\n%U\nSCHEDULED: %t" :clock-in t :clock-resume t
+                                :immediate-finish nil)
+
+                               ("h" "home todo" entry (file+headline "~/Dropbox/workorg/home.org" "Todo")
+                                "* TODO %^{Todo}\n%U"
                                 :immediate-finish nil)
 
                                ("j" "java todo" entry (file+headline "~/org/dynamic/javaschool.org" "Работы Time")
@@ -129,7 +135,7 @@
                                ("z" "snippet zsh" entry (file+headline "~/org/dynamic/todo.org" "Bash/Zsh")
                                 "* %?\n#+BEGIN_SRC sh\n%x\n#+END_SRC")
 
-                               ("m" "migration" entry (file+headline "~/org/dynamic/todo.org" "Tools Migration")
+                               ("m" "migration" entry (file+headline "~/org/static/migration.org" "Tools Migration")
                                 "* %^{Old} -> %^{New}\n%U\nReason: %?")
 
                                ("a" "appointment" entry (file+headline "~/org/dynamic/tasks.org" "Events")
@@ -140,7 +146,7 @@
 SCHEDULED %^T
 %U")
 
-                               ("b" "buy" entry (file+headline "~/org/dynamic/tasks.org" "Buy")
+                               ("b" "buy" entry (file+headline "~/org/dynamic/buy.org" "Buy")
                                 "* TODO Buy %^{Buy} :errands:buy:\n%U\n%?")
 
                                ("p" "pain" entry (file+headline "~/org/dynamic/tasks.org" "Pains")
@@ -208,7 +214,7 @@ SCHEDULED %^T
                                      ((org-agenda-overriding-header "Refile")
                                       (org-tags-match-list-sublevels nil)))
 
-                                    ("b" "Books" todo "INPROGR"
+                                    ("B" "Books" todo "INPROGR"
                                      ((org-agenda-overriding-header "Books I am reading")
                                       (org-agenda-sorting-strategy '(user-defined-down))
                                       (org-agenda-cmp-user-defined 'my/org-sort-agenda-logbook)
@@ -317,7 +323,7 @@ SCHEDULED %^T
  ;; appt reminders
  ;; ------------------------------------------------------------------------------
  appt-message-warning-time 60
- appt-display-interval 20
+ ;appt-display-interval 20
 
  ;; ------------------------------------------------------------------------------
  ;; Calendar & Time
@@ -335,10 +341,10 @@ SCHEDULED %^T
  org-pomodoro-length 20
  org-pomodoro-short-break-length 5
 
- ;;------------------------------------------------------------------------------
- ;; babel
- ;; ------------------------------------------------------------------------------
- org-confirm-babel-evaluate nil
+ ;;;------------------------------------------------------------------------------
+ ;;; babel
+ ;;; ------------------------------------------------------------------------------
+ org-confirm-babel-evaluate t
  my-org-babel-languages '(
                           (sh . t)
                           (lisp . t)
@@ -405,6 +411,7 @@ SCHEDULED %^T
 
 (my/set-key-file-link "oC" "~/dotfiles/spacemacs/private/my-org/config.el")
 (my/set-key-file-link "oo" "~/org/dynamic/todo.org")
+(my/set-key-file-link "oh" "~/Dropbox/workorg/home.org")
 (my/set-key-file-link "oc" "~/org/dynamic/computers.org")
 (my/set-key-file-link "ok" "~/org/dynamic/keys.org")
 (my/set-key-file-link "ot" "~/org/dynamic/tasks.org")
@@ -559,3 +566,29 @@ SCHEDULED %^T
 ;;   (define-key evil-evilified-state-map (kbd "v") nil))
 
 ;; (add-hook 'org-mode-hook 'org-mode-hook-fix-agenda-keys)
+
+(setq-default
+ org-mobile-directory "~/Dropbox/MobileOrg"
+ org-mobile-files '("~/org/dynamic/"
+                    "~/org/static/books.org"
+                    "~/org/archive/books.org_archive"
+                    )
+ org-mobile-force-id-on-agenda-items nil)
+(defun my/org-mobile-fix-index-bug ()
+  "Fixes MobileOrg's index.org after push to workaround bug in Android.
+That function deletes \"#+ALLPRIORITIES\" line from index.org file"
+  (interactive)
+  (let ((file (concat org-mobile-directory "/index.org")))
+    (save-excursion
+      (with-temp-buffer
+        (insert-file-contents file)
+        (goto-char (point-min))
+        (when (search-forward "#+ALLPRIORITIES" nil t)
+          ;; Avoid polluting kill-ring by not calling (kill-line)
+          (let ((beg (progn (forward-line 0)
+                            (point))))
+            (forward-line 1)
+            (delete-region beg (point))))
+        (write-region nil nil file)))))
+
+(advice-add 'org-mobile-push :after 'my/org-mobile-fix-index-bug)

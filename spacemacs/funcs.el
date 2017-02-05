@@ -1,3 +1,4 @@
+ ;;; -*- lexical-binding: t -*-
 
 (defun my/make-temp-java-sandbox (project-name)
   "Generates a temporary java file with boilerplate hello world example"
@@ -206,12 +207,12 @@ considered when expanding the snippet.
   "Moves to new line above and paste text"
   (interactive)
   (save-excursion
-    (move-end-of-line nil)
-  (forward-line -1)
-  (move-end-of-line nil)
-  (newline)
-  (spacemacs/paste-transient-state/evil-paste-after)
-  ))
+    (move-beginning-of-line nil)
+    ;; (newline)
+    (evil-open-above 1)
+    (spacemacs/paste-transient-state/evil-paste-after)
+    (evil-normal-state)
+    ))
 
 
 (defun my/google-translate-repl ()
@@ -509,3 +510,165 @@ unless return was pressed outside the comment"
     (if (< 10 hour 18)
         args                                      ; normal order
       (append (list (cadr args) (car args)) (cddr args)))))
+
+(defun my/install-desktop-file ()
+  (interactive)
+  "Installs the destkop entry file"
+  (shell-command (format "desktop-file-install --dir \"%s\" \"%s\"" (file-name-directory (buffer-file-name)) (buffer-file-name))))
+
+
+(defun my/httpd-start ()
+  "Start httpd server from current file"
+  (interactive)
+  (httpd-serve-directory (file-name-directory (buffer-file-name)))
+  )
+
+(defun my/gnus-group (str)
+  "Gnus convert group name from utf-7 to utf-8"
+  (let ((normalized (decode-coding-string (replace-regexp-in-string "^nnimap." "" group) 'utf-7)))
+    (string= normalized str)))
+
+(defun my/gnus-convert-topic-alist (list-or-str)
+  "Convert gnus-topic-alist elements to other encoding"
+  (if (listp list-or-str)
+      (mapcar 'my/gnus-convert-topic-alist list-or-str)
+    (encode-coding-string list-or-str 'utf-8)))
+
+(defun my/w3m-open-link-or-image-browser ()
+  "Open the current link or image in Firefox."
+  (interactive)
+  (browse-url (or (w3m-anchor)
+                  (w3m-image))))
+
+
+(defun my-org-export-format-drawer (name content)
+  (message "Hi i am drawe")
+  (concat "<div class=\"drawer " (downcase name) "\">\n"
+          "<h6>" (capitalize name) "</h6>\n"
+          content
+          "\n</div>"))
+
+;; (setq html-format-drawer-function 'my-org-export-format-drawer)
+
+(defun endless/replace-org-property (backend)
+  "Convert org properties using `endless/org-property-mapping'.
+Lookup BACKEND in `endless/org-property-mapping' for a list of
+\(PROPERTY REPLACEMENT). For each healine being exported, if it has a
+PROPERTY listed insert a string immediately after the healine given by
+    (format REPLACEMENT PROPERTY-VALUE)"
+  (let (value)
+    (org-map-entries
+     (lambda ()
+       (dolist (it '("ADDRESS"))
+         (save-excursion
+           (setq value (org-entry-get (point) it))
+           (message "value of %s = %s" it value)
+           (when  value
+             (funcall #'endless/insert-org-label-html it value))))))))
+
+;; (remove-hook 'org-export-before-processing-hook #'endless/replace-org-property)
+
+(defun endless/insert-org-label-html (class label)
+  "Insert \"\\\\label{LABEL}\\n\" after the :PROPERTY: drawer."
+  (message "in label")
+  (search-forward-regexp org-property-end-re)
+  (forward-char 1)
+  (insert (format "<pre class=\"%s\">%s</pre>" class label)))
+
+(defun my/fill-lat-lng ()
+  "docstring"
+  (interactive)
+  (require 'request)
+
+  (let* ((counter-good 0))
+    (message "Starting update")
+    (org-map-entries (lambda ()
+                       (when (not (and (org-entry-get (point) "LAT")
+                                       (org-entry-get (point) "LNG")))
+                         (let* ((point (point)))
+                           (message "Point of %s is %s" (org-entry-get point "ADDRESS") point)
+
+                           (request
+                            "https://maps.googleapis.com/maps/api/geocode/json"
+                            :params `(("key" . ,my/google-api-key) ("address" . ,(org-entry-get point "ADDRESS")))
+                            :parser 'json-read
+                            :sync t
+                            :success (function*
+                                      (lambda (&key data &allow-other-keys)
+                                        (if (string= "OK" (assoc-default 'status data))
+                                            (let* ((coordinates (assoc-default 'location
+                                                                               (assoc-default 'geometry
+                                                                                              (aref (assoc-default 'results
+                                                                                                                   data)
+                                                                                                    0)))))
+                                              (setq last-point point)
+                                              (message "Point %s (%s) (coord = %s)" point  (point) (assoc-default 'lng coordinates))
+                                              (save-excursion
+                                                ;; (org-entry-put point "LNG" (number-to-string (assoc-default 'lng coordinates)))
+                                                ;; (org-entry-put point "LAT" (number-to-string (assoc-default 'lat coordinates)))
+                                                (progn (org-entry-put (point) "LNG" "a")
+                                                       (org-entry-put (point) "LAT" "b"))
+                                                )
+                                              (setq counter-good (+1 counter-good)))
+                                          (message "Can't find lat/lng for %s" (org-entry-get point "ADDRESS"))
+                                          )))
+                            :error (lambda ()  (message "Fail to make request to google API"))))
+
+                         (message "%s addresses updated" counter-good))
+                       )
+                     "ADDRESS={.}")))
+(defun my/russian-langue ()
+  "docstring"
+  (interactive)
+  ;; Fixed russian keyboard with proper numbers keys
+  (quail-define-package
+   "cyrillic-jcuken" "Cyrillic" "RU" nil
+   "ЙЦУКЕH keyboard layout widely used in Russia (ISO 8859-5 encoding)"
+   nil t t t t nil nil nil nil nil t)
+
+  (quail-define-rules
+   ("1" ?1) ("2" ?2) ("3" ?3) ("4" ?4) ("5" ?5) ("6" ?6) ("7" ?7) ("8" ?8)
+   ("9" ?9) ("0" ?0) ("-" ?-) ("=" ?=) ("`" ?ё) ("q" ?й) ("w" ?ц) ("e" ?у)
+   ("r" ?к) ("t" ?е) ("y" ?н) ("u" ?г) ("i" ?ш) ("o" ?щ) ("p" ?з) ("[" ?х)
+   ("]" ?ъ) ("a" ?ф) ("s" ?ы) ("d" ?в) ("f" ?а) ("g" ?п) ("h" ?р) ("j" ?о)
+   ("k" ?л) ("l" ?д) (";" ?ж) ("'" ?э) ("\\" ?\\) ("z" ?я) ("x" ?ч) ("c" ?с)
+   ("v" ?м) ("b" ?и) ("n" ?т) ("m" ?ь) ("," ?б) ("." ?ю) ("/" ?.) ("!" ?!)
+   ("@" ?\") ("#" ?#) ("$" ?\;) ("%" ?%) ("^" ?:) ("&" ??) ("*" ?*) ("(" ?()
+                                                                     (")" ?)) ("_" ?_) ("+" ?+) ("~" ?Ё) ("?" ?,)
+                                                                     ("Q" ?Й) ("W" ?Ц) ("E" ?У) ("R" ?К) ("T" ?Е) ("Y" ?Н) ("U" ?Г) ("I" ?Ш)
+                                                                     ("O" ?Щ) ("P" ?З) ("{" ?Х) ("}" ?Ъ) ("A" ?Ф) ("S" ?Ы) ("D" ?В) ("F" ?А)
+                                                                     ("G" ?П) ("H" ?Р) ("J" ?О) ("K" ?Л) ("L" ?Д) (":" ?Ж) ("\"" ?Э) ("|" ?/)
+                                                                     ("Z" ?Я) ("X" ?Ч) ("C" ?С) ("V" ?М) ("B" ?И) ("N" ?Т) ("M" ?Ь) ("<" ?Б)
+                                                                     (">" ?Ю))
+
+  (setq default-input-method "cyrillic-jcuken")
+  )
+
+
+(defun my/url-decode (url)
+  "Decodes url and prints to messages"
+  (interactive "sUrl: ")
+  (message (org-link-unescape url)))
+
+
+(defun my/rest-client ()
+  "Creates new restclient window"
+  (interactive)
+  (let ((newbuf (generate-new-buffer-name "*REST*")))
+    (switch-to-buffer newbuf)
+    (restclient-mode)))
+
+(defun my/notify(title &optional text second-line image)
+  ;; (message "tst timer %s" (my-get-last-clock-time))
+  (setq second-line "___")
+  (if (eq system-type 'windows-nt)
+      (shell-command (concat user-home-directory "Dropbox/confiles/win/growlnotify/growlnotify.com  \/t:\"" second-line "\" \/id:12345 \/s:false \/p:2 \/a:\"" title "\"  \/silent:true \"" text "\" \/r:\"EmacsNotification\" \/n:\"EmacsNotification\""))
+    ;;else
+    (shell-command (concat "notify-send '" title " ' '" text "' --icon=trophy-gold --expire-time=10000"))
+    ))
+
+(defun my/image-autoupdate ()
+  "Makes current buffer with image autoupdate on file's chanage"
+  (interactive)
+  (auto-revert-mode)
+  (auto-image-file-mode))
