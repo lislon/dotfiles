@@ -33,6 +33,7 @@
  org-clock-in-resume t                   ; Resume clock if clock in task with not closed clock
  org-clock-idle-time 3
  org-clock-x11idle-program-name "xprintidle"
+ org-clock-mode-line-total 'today
  org-x11idle-exists-p t                 ; When emacs started as daemon, x11 not initialized
  org-global-properties (quote (("Effort_ALL" . "0:10 0:30 1:00 2:00 3:00 5:00")))
  org-columns-default-format "%40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM"
@@ -56,7 +57,10 @@
                             ("~/org/dynamic/programming.org" :maxlevel . 1)
                             ("~/org/dynamic/todo-someday.org" :level . 1)
                             ("~/org/dynamic/notes.org" :level . 0)
-                            ("~/org/static/diary.org" :maxlevel . 1)))
+                            ("~/org/static/diary.org" :maxlevel . 1)
+                            ("~/org-shared/static/programming.org" :maxlevel . 1)
+                            ("~/org-shared/static/java.org" :maxlevel . 1)))
+
 
  ;; ------------------------------------------------------------------------------
  ;; Edit
@@ -73,7 +77,7 @@
  ;; Capture
  ;; ------------------------------------------------------------------------------
  org-capture-templates (quote (("t" "todo" entry (file+headline "~/org/dynamic/tasks.org" "Simple")
-                                "* TODO %^{Todo}\n%U" :clock-in t :clock-resume t
+                                "* TODO %^{Todo}\n%U\n%?" :clock-in t :clock-resume t
                                 :immediate-finish nil)
 
                                ("T" "Tag todo" entry (file+headline "~/org/dynamic/tasks.org" "Simple")
@@ -88,9 +92,13 @@
                                 "* TODO %^{Todo}\n%U"
                                 :immediate-finish nil)
 
-                               ("j" "java todo" entry (file+headline "~/org/dynamic/javaschool.org" "Работы Time")
-                                "* TODO %^{Java Todo} %^g\n%U" :clock-in t :clock-keep t
-                                :immediate-finish t)
+                               ("p" "Programming")
+
+                               ("pj" "java" entry (file+headline "~/org-shared/static/java.org" "Java")
+                                "* %^{Java topic}\n%U\n%?")
+
+                               ("pp" "common" entry (file+headline "~/org-shared/static/programming.org" "Java")
+                                "* %^{Topic}\n%U\n%?")
 
                                ("D" "Date todo" entry (file+headline "~/org/dynamic/tasks.org" "Simple")
                                 "* TODO %^{Todo}\n%U\n%T" :clock-in t :clock-resume t
@@ -129,8 +137,8 @@
                                ("n" "note" entry (file "~/org/dynamic/notes.org")
                                 "* %^{Title}\n%U\n%?")
 
-                               ("p" "note" entry (file+headline "~/org/dynamic/computers.org" "Problem solving")
-                                "* %^{Title}\n%U\n%?")
+                               ;; ("p" "note" entry (file+headline "~/org/dynamic/computers.org" "Problem solving")
+                               ;;  "* %^{Title}\n%U\n%?")
 
                                ("z" "snippet zsh" entry (file+headline "~/org/dynamic/todo.org" "Bash/Zsh")
                                 "* %?\n#+BEGIN_SRC sh\n%x\n#+END_SRC")
@@ -147,7 +155,7 @@ SCHEDULED %^T
 %U")
 
                                ("b" "buy" entry (file+headline "~/org/dynamic/buy.org" "Buy")
-                                "* TODO Buy %^{Buy} :errands:buy:\n%U\n%?")
+                                "* TODO Buy %^{Buy} :errands:buy:\n%U" :immediate-finish t)
 
                                ("p" "pain" entry (file+headline "~/org/dynamic/tasks.org" "Pains")
                                 "* TODO %^{Activity} / %^{Pain}\n%U\n%?")
@@ -355,7 +363,7 @@ SCHEDULED %^T
  ;;------------------------------------------------------------------------------
  ;; UML
  ;; ------------------------------------------------------------------------------
- org-plantuml-jar-path "/opt/plantuml/plantuml.jar"
+ org-plantuml-jar-path (if (file-exists-p "/opt/plantuml/plantuml.jar") "/opt/plantuml/plantuml.jar" "")
 
  ;; ------------------------------------------------------------------------------
  ;; TODO faces
@@ -396,6 +404,17 @@ SCHEDULED %^T
 ;; Auto fill for org and all text-mode hooks
 (add-hook 'text-mode-hook 'auto-fill-mode)
 
+(add-hook 'org-timer-done-hook 'my/org-timer-done)
+
+(defun my/org-timer-done ()
+  "Functions called when timer is done"
+  (if tea-time-sound
+      (if tea-time-sound-command
+          (start-process-shell-command "tea-ready" nil (format tea-time-sound-command tea-time-sound))
+        (play-sound-file tea-time-sound))
+    (progn (beep t) (beep t))))
+
+
 ;; Encryption (ACP NullPointerException on android)
 
 ;; void-function bind-map error:
@@ -417,8 +436,9 @@ SCHEDULED %^T
 (my/set-key-file-link "ot" "~/org/dynamic/tasks.org")
 (my/set-key-file-link "or" "~/org/dynamic/refile.org")
 (my/set-key-file-link "on" "~/org/dynamic/notes.org")
-(my/set-key-file-link "oj" "~/org/dynamic/javaschool.org")
-(my/set-key-file-link "ob" "~/org/static/books.org")
+(my/set-key-file-link "oj" "~/org-shared/static/java.org")
+(my/set-key-file-link "oB" "~/org/static/books.org")
+(my/set-key-file-link "ob" "~/org/dynamic/buy.org")
 (my/set-key-file-link "ou" "~/org/static/coubs.org")
 
 (evil-leader/set-key "bo" (defun my/make-org-buffer() (interactive)

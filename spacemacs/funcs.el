@@ -672,3 +672,21 @@ PROPERTY listed insert a string immediately after the healine given by
   (interactive)
   (auto-revert-mode)
   (auto-image-file-mode))
+
+(defun joaot/delete-process-at-point ()
+  "Kills processes in *Process List* buffer"
+  (interactive)
+  (let ((process (get-text-property (point) 'tabulated-list-id)))
+    (cond ((and process
+                (processp process))
+           (delete-process process)
+           (revert-buffer))
+          (t
+           (error "no process at point!")))))
+
+(defun my/org-timer-set-timer (args)
+  "Sets timer"
+  (interactive "P")
+  (with-temp-buffer (org-mode)
+                    (insert "* Tea timer")
+                    (org-timer-set-timer args)))
