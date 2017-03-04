@@ -372,6 +372,7 @@ SCHEDULED %^T
                           ("DOWNLD" . "LimeGreen")
                           ("INPROGR" . "Yellow")
                           ("REJT" . "SlateGray")
+                          ("DONE" . "green2")
                           ("APPOINTMENT" . "DarkViolet"))
  )
 

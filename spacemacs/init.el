@@ -16,7 +16,7 @@ values."
    dotspacemacs-enable-lazy-installation nil
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '("~/dotfiles/spacemacs/private")
+   dotspacemacs-configuration-layer-path '("~/.spacemacs.d/my-layers" "~/.spacemacs.d/my-layers-work")
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
@@ -65,8 +65,11 @@ values."
      (ranger :variables ranger-override-dired t)
      (markdown :variables markdown-live-preview-engine 'vmd)
      org
+     my-common
      my-org
+     my-linux
      my-keys
+     my-russian
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
@@ -88,7 +91,6 @@ values."
                                       ;; plantuml
                                       refine
                                       openwith
-                                      quickrun
                                       palette
                                       ;; secreteria
                                       clipmon
@@ -107,7 +109,6 @@ values."
                                       monokai-theme
                                       f3 ;; find wrapper
                                       sos
-                                      nyan-mode
                                       restclient
                                       vimgolf
                                       impatient-mode
@@ -401,7 +402,7 @@ layers configuration."
 
    ;; basic
    vc-follow-symlinks t
-   default-direcotry "~"
+   default-directory "~"
    evil-move-beyond-eol nil
    evil-escape-unordered-key-sequence t
    spaceline-org-clock-p t
@@ -429,9 +430,6 @@ layers configuration."
    ;; Man in same window
    Man-notify-method 'pushy
 
-   ;; java
-   eclim-eclipse-dirs "/usr/lib/eclipse"
-   eclim-executable "/usr/lib/eclipse/eclim"
 
    ;; ftp
    ange-ftp-try-passive-mode t
@@ -535,7 +533,6 @@ layers configuration."
    quickrun-focus-p nil
 
    eww-search-prefix "https://www.google.ru/search?q="
-
    )
 
   ;; prevent overwire of clipboard when selection
@@ -648,7 +645,6 @@ layers configuration."
                                  (set-file-modes buffer-file-name #o755)
                                  )))
 
-  (my/russian-langue)
   ;; startundo
   ;; Custom bookmakrs path
   ;; in emacs 24 system-name is FQDN and in emacs 25 it is a hostname
@@ -729,9 +725,6 @@ layers configuration."
   ;;       (user-error "Sound not exists at '%s'!" tea-time-sound)))
   ;;   )
 
-  (add-hook 'minibuffer-setup-hook
-            (lambda ()
-              (local-set-key (kbd "<f13>") 'toggle-input-method)))
 
   ;; autoscroll messages
   ;; commented because i can't copy line with yy
@@ -925,8 +918,6 @@ layers configuration."
                   (empty-line . empty-line)
                   (unknown . question-mark)))
 
-  ;; Fix search with russian language
-  (evil-select-search-module 'evil-search-module 'evil-search)
 
   (evil-define-motion evil-search-forward ()
     (format "Search forward for user-entered text.
@@ -961,6 +952,7 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
       (evil-search-incrementally nil evil-regexp-search)
       (evil-normal-state)
       ))
+
   (use-package wttrin
     :ensure t
     :commands (wttrin)
@@ -970,42 +962,8 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
                                 (wttrin-query "St.Petersburg")))
     :config
     )
-  ;; language switching
-  (global-set-key (kbd "<f13>") 'toggle-input-method)
-  (define-key special-event-map [sigusr1] 'toggle-input-method)
 
   ;; make this buffers available for switching via SPC TAB
-
-   (setq spacemacs-useful-buffers-regexp '("\\*SQL*"
-                                           "\\*Man*"
-                                           "\\*unset mail*"
-                                           "\\*Article*"
-                                           "\\*Dir\\*"
-                                           "\\*info\\*"
-                                           "\\*sos\\*"
-                                           "\\*REST\\*"
-                                           "\\*new snippet\\*"
-                                           "\\*Help\\*"))
-
-   ;; C-x / g - search google
-   (use-package engine-mode
-     :config
-     (defengine google
-        "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
-        :keybinding "g")
-
-     (defengine github
-       "https://github.com/search?ref=simplesearch&q=%s"
-       :keybinding "h")
-
-     (defengine youtube
-       "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
-       :keybinding "y")
-
-     (defengine wikipedia
-       "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
-       :keybinding "w")
-     )
 
   (dotspacemacs/custom-keys)
   (dotspacemacs/hooks)
@@ -1083,8 +1041,6 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
   ;; (use-package clipmon
   ;;   :config (clipmon-mode-start))
   (define-key process-menu-mode-map (kbd "C-k") 'joaot/delete-process-at-point)
-
-
   )
 
 (defun dotspacemacs/custom-keys ()
@@ -1198,9 +1154,3 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
 (setq custom-file (expand-file-name "~/Dropbox/dotfiles/spacemacs/emacs-custom.el"))
 (load custom-file)
 (load "~/Dropbox/dotfiles/spacemacs/funcs.el")
-(defun dotspacemacs/emacs-custom-settings ()
-  "Emacs custom settings.
-This is an auto-generated function, do not modify its content directly, use
-Emacs customize menu instead.
-This function is called at the very end of Spacemacs initialization."
-)

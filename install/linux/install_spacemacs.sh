@@ -12,9 +12,6 @@ function is_spacemacs_intalled {
 # install spacemacs if needed
 is_spacemacs_intalled || install_spacemacs
 
-# backup old spacemacs if it's regular file
-[[ -f ~/.spacemacs ]] && mv ~/.spacemacs{,.bak}
-
-ln -sf ~/dotfiles/spacemacs/spacemacs.el ~/.spacemacs
+ln -sf ~/dotfiles/spacemacs ~/.spacemacs.d
 
 echo "done"

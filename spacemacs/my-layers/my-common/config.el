@@ -1,0 +1,10 @@
+(setq spacemacs-useful-buffers-regexp '("\\*SQL*"
+                                        "\\*Man*"
+                                        "\\*unset mail*"
+                                        "\\*Article*"
+                                        "\\*Dir\\*"
+                                        "\\*info\\*"
+                                        "\\*sos\\*"
+                                        "\\*REST\\*"
+                                        "\\*new snippet\\*"
+                                        "\\*Help\\*"))
