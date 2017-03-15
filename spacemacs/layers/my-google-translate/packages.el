@@ -1,4 +1,4 @@
-;;; packages.el --- my-linux layer packages file for Spacemacs.
+;;; packages.el --- my-google-translate layer packages file for Spacemacs.
 ;;
 ;; Copyright (c) 2012-2017 Sylvain Benner & Contributors
 ;;
@@ -18,20 +18,20 @@
 ;;
 ;;
 ;; Briefly, each package to be installed or configured by this layer should be
-;; added to `my-linux-packages'. Then, for each package PACKAGE:
+;; added to `my-google-translate-packages'. Then, for each package PACKAGE:
 ;;
 ;; - If PACKAGE is not referenced by any other Spacemacs layer, define a
-;;   function `my-linux/init-PACKAGE' to load and initialize the package.
+;;   function `my-google-translate/init-PACKAGE' to load and initialize the package.
 
 ;; - Otherwise, PACKAGE is already referenced by another Spacemacs layer, so
-;;   define the functions `my-linux/pre-init-PACKAGE' and/or
-;;   `my-linux/post-init-PACKAGE' to customize the package as it is loaded.
+;;   define the functions `my-google-translate/pre-init-PACKAGE' and/or
+;;   `my-google-translate/post-init-PACKAGE' to customize the package as it is loaded.
 
 ;;; Code:
 
-(defconst my-linux-packages
+(defconst my-google-translate-packages
   '()
-  "The list of Lisp packages required by the my-linux layer.
+  "The list of Lisp packages required by the my-google-translate layer.
 
 Each entry is either:
 
@@ -58,5 +58,7 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
+
+(defvar my/english-dictionary-file nil "Google translate dictionary file")
 
 ;;; packages.el ends here

@@ -205,3 +205,42 @@ a sound to be played"
    (list
     (cfw:org-create-source "Green")  ; orgmode source
     )))
+
+(defun my/org-timer-done ()
+  "Functions called when timer is done"
+  (if tea-time-sound
+      (if tea-time-sound-command
+          (start-process-shell-command "tea-ready" nil (format "aplay %s" timer-sound))
+        (play-sound-file tea-time-sound))
+    (progn (beep t) (beep t))))
+
+(defun my/capture (templates)
+  "merge capture-templates with existing org-capture-templates"
+  (let* (already-added)
+    (remove-if-not (lambda (item)
+                     (if (member (car item) already-added)
+                         nil
+                       (push (car item) already-added)
+                       t)) (append templates (if (boundp 'org-capture-templates) org-capture-templates '())))))
+
+(defun my/archive-subtree (file heading &optional days)
+  "Archives all entries under given `heading' in `file', older then `days' days"
+  (let* ((buffer (get-file-buffer file))
+         (marker (org-find-exact-headline-in-buffer heading buffer))
+         (days-purge (if days days 10))
+         (counter 0))
+    (save-excursion
+      (save-restriction
+        (set-buffer buffer)
+        (goto-char marker)
+        (org-goto-first-child)
+        (while (org-on-heading-p)
+          (when (> (org-time-stamp-to-now (org-entry-get nil "TIMESTAMP_IA")) days-purge)
+            (setq counter (+1 counter))
+            (org-archive-subtree))
+          (outline-next-visible-heading 1))
+        (message "%s entries archived at heading %s" counter heading)))))
+
+
+
+(my/archive-subtree "/home/ele/org-shared/dynamic/tasks.org" "Appointments")

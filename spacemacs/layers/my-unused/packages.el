@@ -30,7 +30,16 @@
 ;;; Code:
 
 (defconst my-unused-packages
-  '(engine-mode)
+  '(engine-mode
+    f3
+    sos
+    wttrin
+    impatient-mode
+    w3m
+    xelb
+    swiper
+
+    )
   "The list of Lisp packages required by the my-unused layer.
 
 Each entry is either:
@@ -80,5 +89,34 @@ Each entry is either:
       "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
       :keybinding "w")
     ))
+
+(defun my-unused/post-init-erc ()
+  (setq
+   ;; IRC
+   erc-autojoin-channels-alist
+   '(("1\\.0\\.0" "#syl20bnr/spacemacs") ; Gitter
+     ("irc.gitter.im" "#syl20bnr/spacemacs" "#syl20bnr/spacemacs-devel")
+     ("freenode\\.net" "#emacs"))
+   erc-timestamp-format-left "\n%A %B %e, %Y\n\n"
+   erc-timestamp-format-right "%H:%M"
+   erc-timestamp-right-column 80
+   erc-prompt-for-nickserv-password nil
+   erc-image-inline-rescale 300
+   erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
+   erc-foolish-content
+   '("\\[Github\\].* starred"
+     "\\[Github\\].* forked"
+     "\\[Github\\].* synchronize a Pull Request"
+     "\\[Github\\].* labeled an issue in"
+     "\\[Github\\].* unlabeled an issue in")
+   )
+  )
+
+(defun my-unused/post-init-systemd ()
+  (spacemacs/set-leader-keys-for-major-mode 'systemd-mode
+    "e" 'my/systemd-enable-unit
+    "d" 'my/systemd-disable-unit
+    "a" 'my/systemd-start-unit
+    "o" 'my/systemd-switch-timer-service))
 
 ;;; packages.el ends here

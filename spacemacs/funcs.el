@@ -215,15 +215,7 @@ considered when expanding the snippet.
     ))
 
 
-(defun my/google-translate-repl ()
-  (interactive)
-  (require 'google-translate-default-ui)
-  (let ((buffer (get-buffer-create "Google Translate REPL")))
-    (switch-to-buffer buffer)
-    (google-translate-interactive-mode)
-    (evil-insert-state)
-    (goto-char (buffer-end 1))
-    ))
+
 
 (defun bb/erc-github-filter ()
   "Shortens messages from gitter."
@@ -323,40 +315,8 @@ and evaling there."
   "Compile program. With prefix arg change compile args"
   (interactive)
   (setq-local compilation-read-command nil)
-  (call-interactively 'compile)
-  )
+  (call-interactively 'compile))
 
-;; Google translate interactive mode
-(define-derived-mode google-translate-interactive-mode
-  text-mode "Google Translate"
-    (define-key google-translate-interactive-mode-map (kbd "RET") 'my/translate-word-and-next-line)
-    (evil-define-key 'normal google-translate-interactive-mode-map (kbd "RET") 'my/translate-word-and-next-line)
-    (add-hook 'google-translate-interactive-mode-hook
-              (lambda ()
-                (add-hook 'kill-buffer-hook
-                          'my/google-translate-append-to-dictionary t t)))
-)
-
-(defun my/google-translate-append-to-dictionary ()
-  "Appends words from interactive buffer to dictionary"
-  (when my/english-dictionary-file
-    (append-to-file (point-min) (point-max) my/english-dictionary-file)))
-
-(defvar my/english-dictionary-file nil "Filename of txt file,
-that is storing words from interactive google translate buffer")
-
-(defun my/translate-word-and-next-line ()
-  "Shows translation of current line in help buffer and inserts
-new line after it"
-  (interactive)
-  (save-selected-window
-    (move-beginning-of-line nil)
-    (set-mark-command nil)
-    (move-end-of-line nil)
-    (google-translate-at-point))
-  (if (eq (point) (point-max))
-      (newline-and-indent)
-    (end-of-line 2)))
 
 (defun my/next-line-empty-p ()
   "Check if next line empty"
@@ -664,3 +624,11 @@ PROPERTY listed insert a string immediately after the healine given by
   (with-temp-buffer (org-mode)
                     (insert "* Tea timer")
                     (org-timer-set-timer args)))
+
+;; Shortcuts
+(defmacro my/set-key-file-link (key file)
+  `(evil-leader/set-key ,key
+     (defun ,(make-symbol
+              (concat "my/jump-to-" (file-name-base file) "-file"))()
+       (interactive)
+       (find-file ,file))))

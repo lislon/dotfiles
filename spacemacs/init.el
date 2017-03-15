@@ -1,4 +1,4 @@
-;; -*- mode: emacs-lisp -*-
+﻿;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
@@ -16,7 +16,7 @@ values."
    dotspacemacs-enable-lazy-installation nil
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '("~/.spacemacs.d/my-layers" "~/.spacemacs.d/my-layers-work")
+   dotspacemacs-configuration-layer-path '("~/.spacemacs.d.local/layers")
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
@@ -36,43 +36,25 @@ values."
      better-defaults
      emacs-lisp
      common-lisp
-     yaml
-     search-engine
-     ;; smex
-     ;; php
-     html
-     lua
-     c-c++
-     shell-scripts
+
      git
      github
-     playground
-     colors
-     (java :packages (not eclim))
-     javascript
      python
+     html
+     javascript
+     yaml
+     colors
+
      gnus
      sql
-     ;; php
-     docker
-     nginx
      dash ;; zeal help
-     fasd
-     spell-checking
-     mu4e
-     erc
-     emoji
-     (ranger :variables ranger-override-dired t)
+
      (markdown :variables markdown-live-preview-engine 'vmd)
-     org
      my-common
      my-org
-     my-linux
      my-keys
      my-russian
-     (shell :variables
-            shell-default-height 30
-            shell-default-position 'bottom)
+     my-google-translate
      ; syntax-checking
      version-control
      ;;; csharp
@@ -84,35 +66,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
-   dotspacemacs-additional-packages '(
-                                      all-the-icons
-                                      all-the-icons-dired
-                                      w3m
-                                      ;; plantuml
-                                      refine
-                                      openwith
-                                      palette
-                                      ;; secreteria
-                                      clipmon
-                                      ;; todochiku
-                                      systemd
-                                      ;; tea-time
-                                      web-beautify
-                                      xelb
-                                      undohist
-                                      swiper
-                                      helm-systemd
-                                      ahk-mode
-                                      vimrc-mode
-                                      bbdb
-                                      wttrin
-                                      monokai-theme
-                                      f3 ;; find wrapper
-                                      sos
-                                      restclient
-                                      vimgolf
-                                      impatient-mode
-                                      )
+   dotspacemacs-additional-packages '(monokai-theme)
 
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '(eyebrowse) ; Conflicts with org mode C-C C-w
@@ -122,10 +76,18 @@ values."
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
    dotspacemacs-delete-orphan-packages nil)
+  (when (eq system-type 'darwin)
+    (add-to-list 'dotspacemacs-configuration-layers 'my-linux))
   (when (eq system-type 'windows-nt)
-    (setq-default dotspacemacs-configuration-layers (delete 'spell-checking dotspacemacs-configuration-layers))
-    (setq-default dotspacemacs-configuration-layers (delete 'fasd dotspacemacs-configuration-layers)))
-  )
+    (add-to-list 'dotspacemacs-configuration-layers 'my-windows))
+
+  (when (file-exists-p "~/.spacemacs.d.local/layers/my-work")
+    (add-to-list 'dotspacemacs-configuration-layers 'my-work))
+
+  (when (file-exists-p "~/Dropbox/confiles/common/emacs/layers")
+    (add-to-list 'dotspacemacs-configuration-layer-path "~/Dropbox/confiles/common/emacs/layers")
+    (add-to-list 'dotspacemacs-configuration-layers 'my-org-home))
+)
 
 
 (defun dotspacemacs/init ()
@@ -331,7 +293,7 @@ values."
    dotspacemacs-folding-method 'evil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
-   dotspacemacs-smartparens-strict-mode t
+   dotspacemacs-smartparens-strict-mode nil ;; this prevents inserting unbalanced closing )
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
    ;; over any automatically added closing parenthesis, bracket, quote, etc…
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
@@ -357,6 +319,10 @@ values."
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
    dotspacemacs-whitespace-cleanup 'changed
+
+   ;; maybe this helps from hangs.not testsed https://github.com/syl20bnr/spacemacs/issues/8462
+   dotspacemacs-mode-line-unicode-symbols nil
+   ediff-window-setup-function 'ediff-setup-windows-default
    )
   ;; User initialization goes here
   (add-to-load-path "~/dotfiles/spacemacs/thirdparty")
@@ -372,10 +338,8 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   ;; Shared undo of org files between computers
-
   (when (eq system-type 'gnu/linux)
     (setq shared-dir (expand-file-name "~/Dropbox/emacs-bookmarks/cache/undo")
-          spell-checking-enable-by-default nil ; Disabled because it freezes emacs 25.1 when commenting XML region with ending line
           )
     (setq-default
      undo-tree-history-directory-alist `(
@@ -397,7 +361,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
-  ;; (setq initial-buffer-choice '(lambda () (get-buffer org-agenda-buffer-name)))
   (setq
 
    ;; basic
@@ -426,10 +389,8 @@ layers configuration."
    dired-listing-switches "-alkh  --group-directories-first"
    ;; dired-listing-switches "-aBhl  --group-directories-first"
 
-
    ;; Man in same window
    Man-notify-method 'pushy
-
 
    ;; ftp
    ange-ftp-try-passive-mode t
@@ -454,59 +415,20 @@ layers configuration."
    auto-completion-enable-help-tooltip t
 
    ;; zsh shell
-   comint-input-ring-size 100000
-   comint-input-ring-file-name "~/.zsh_history"
-                                        ; Ignore timestamps in history file.  Assumes that zsh
-                                        ; EXTENDED_HISTORY option is in use.
-   comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);"
+   ;; comint-input-ring-size 100000
+   ;; comint-input-ring-file-name "~/.zsh_history"
+   ;;                                      ; Ignore timestamps in history file.  Assumes that zsh
+   ;;                                      ; EXTENDED_HISTORY option is in use.
+   ;; comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);"
 
-   ;; IRC
-   erc-autojoin-channels-alist
-   '(("1\\.0\\.0" "#syl20bnr/spacemacs") ; Gitter
-     ("irc.gitter.im" "#syl20bnr/spacemacs" "#syl20bnr/spacemacs-devel")
-     ("freenode\\.net" "#emacs"))
-   erc-timestamp-format-left "\n%A %B %e, %Y\n\n"
-   erc-timestamp-format-right "%H:%M"
-   erc-timestamp-right-column 80
-   erc-prompt-for-nickserv-password nil
-   erc-image-inline-rescale 300
-   erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-   erc-foolish-content
-   '("\\[Github\\].* starred"
-     "\\[Github\\].* forked"
-     "\\[Github\\].* synchronize a Pull Request"
-     "\\[Github\\].* labeled an issue in"
-     "\\[Github\\].* unlabeled an issue in")
-
-   ;; Google translate
-   google-translate-default-source-language "en"
-   google-translate-default-target-language "ru"
-   google-translate-input-method-auto-toggling t
-   google-translate-preferable-input-methods-alist
-   '((nil . ("en"))
-     ("cyrillic-jcuken" . ("ru")))
-   google-translate-translation-directions-alist
-   '(("en" . "ru") ("ru" . "en") )
-   google-translate-pop-up-buffer-set-focus t
-   my/english-dictionary-file "~/Dropbox/org/static/dictionary.txt"
    ;; ispell-personal-dictionary "~/Dropbox/emacs-resources/ispell-dictionary"
    abbrev-file-name "~/Dropbox/emacs-resources/abbrev_defs.el"
-   spell-checking-enable-auto-dictionary t
+   ;; spell-checking-enable-auto-dictionary t
+   spell-checking-enable-by-default nil ; Disabled because it freezes emacs 25.1 when commenting XML region with ending line
 
    ;; big undo
    undo-limit (* 10 1000 1000)                    ; 10MB per file
    undo-strong-limit (* 100 1000 1000)            ; 100MB max
-
-   ;; gnus
-   gnus-save-killed-list nil
-   gnus-always-read-dribble-file t
-   gnus-init-file "~/Dropbox/confiles/common/emacs/gnus.el"
-   ;; gnus-dribble-directory "~/Dropbox/emacs-resources/gnus/"
-   gnus-dribble-directory "~/.emacs.d/.cache/gnus"
-   gnus-home-directory "~/.emacs.d/.cache/gnus"
-   ;; we don't use other news readers
-   gnus-save-newsrc-file nil
-   gnus-read-newsrc-file nil
 
    ;; org-mode timestamps in english
    system-time-locale "C"
@@ -515,7 +437,8 @@ layers configuration."
    git-magit-status-fullscreen t
 
    ;; Tea time sound
-   tea-time-sound "~/Dropbox/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
+   timer-sound "~/Dropbox/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
+
    ;; Persistent undo
    undo-tree-auto-save-history t
    undo-tree-history-directory-alist
@@ -533,48 +456,24 @@ layers configuration."
    quickrun-focus-p nil
 
    eww-search-prefix "https://www.google.ru/search?q="
+
+   spacemacs-useful-buffers-regexp '("\\*SQL*"
+                                     "\\*Man*"
+                                     "\\*unset mail*"
+                                     "\\*Article*"
+                                     "\\*Dir\\*"
+                                     "\\*info\\*"
+                                     "\\*sos\\*"
+                                     "\\*REST\\*"
+                                     "\\*new snippet\\*"
+                                     "\\*Help\\*")
    )
 
   ;; prevent overwire of clipboard when selection
   (fset 'evil-visual-update-x-selection 'ignore)
 
-  (setq openwith-associations '(("\\.mp4\\'" "mplayer" (file))))
-  (openwith-mode t)
-
-  (when (configuration-layer/package-usedp 'ivy)
-    ;; (add-to-list ivy-initial-inputs-alist '(counsel-M-x  "^"))
-    )
-  (when (configuration-layer/package-usedp 'helm)
-    ;; (add-to-list ivy-initial-inputs-alist '(counsel-M-x  "^"))
-    (setq
-     helm-locate-command "locate %s -e %s"
-     ;; I enabled this on for better candidate matching like recentf gnus.el
-     ;; helm-ff-auto-update-initial-value t
-     )
-    (global-set-key (kbd "M-a") 'helm-mini)
-    ;; recent-f sort minor mode
-    (helm-adaptive-mode)
-    (evil-leader/set-key "hl" 'helm-locate-library)
-    )
-
-  (if (eq system-type 'gnu/linux)
-      (setq  tea-time-sound-command "aplay %s"))
-
   (unless (file-exists-p (concat spacemacs-cache-directory "undo"))
     (make-directory (concat spacemacs-cache-directory "undo")))
-
-  ;; q to exit java help
-  (with-eval-after-load "eclim-java"
-    (loop for map in `(,eclim-java-show-documentation-map)
-          do
-          (define-key map (kbd "q") 'delete-window)
-          (evil-define-key 'normal map (kbd "q") 'delete-window)))
-
-
-  (with-eval-after-load "quickrun"
-    (advice-add 'quickrun :before (lambda (&rest PLIST) (save-buffer))))
-
-
 
   ;; ------------------------------------------------------------------------------
   ;; DEBUG recentf
@@ -595,28 +494,6 @@ layers configuration."
   ;; Why do we need this shit?
   ;; (with-eval-after-load "org"
   ;;   (mapcar 'funcall org-store-link-functions))
-
-  ;;------------------------------------------------------------------------------
-  ;; Google translate
-  ;; ------------------------------------------------------------------------------
-
-  ;; (defun my/google-translate-smooth-translate-reverse()
-  ;;   "Mimics google-translate-query-translate with auto-toggling feature"
-  ;;   (interactive)
-  ;;   (let ((google-translate-translation-directions-alist
-  ;;          (append
-  ;;           (cdr google-translate-translation-directions-alist)
-  ;;           (last google-translate-translation-directions-alist))))
-  ;;     (with-temp-buffer
-  ;;       (google-translate-smooth-translate))))
-
-  ;; (defun my/google-translate-smooth-translate ()
-  ;;   "Mimics google-translate-query-translate-reverse with auto-toggling feature"
-  ;;   (interactive)
-  ;;   (with-temp-buffer
-  ;;     (google-translate-smooth-translate)))
-  ;; (spacemacs/set-leader-keys "xgq" 'my/google-translate-smooth-translate)
-  ;; (spacemacs/set-leader-keys "xgQ" 'my/google-translate-smooth-translate-reverse)
 
   ;; Emacs yank C-y in insert mode
 
@@ -650,9 +527,6 @@ layers configuration."
   ;; in emacs 24 system-name is FQDN and in emacs 25 it is a hostname
   (setq bookmark-default-file (concat "~/Dropbox/emacs-bookmarks/" (replace-regexp-in-string "\.[^\.]+$" "" (system-name)) "-bookmarks.el"))
 
-
-
-  (global-unset-key (kbd "C-h h")) ;; Disable hello file, because it hangs
   (put 'set-goal-column 'disabled nil)  ;; Allow C-x C-n goal column for csv
 
 
@@ -663,68 +537,10 @@ layers configuration."
 ;;   ;; (evil-define-key 'normal profiler-report-mode-map (kbd "j") 'profiler-report-toggle-entry)
 
 
-  (with-eval-after-load 'erc
-    ;; IRC
-    (add-hook 'erc-insert-pre-hook
-              (defun bb/erc-foolish-filter (msg)
-                "Ignores messages matching `erc-foolish-content'."
-                (when (erc-list-match erc-foolish-content msg)
-                  (setq erc-insert-this nil))))
-    (add-hook 'erc-mode-hook 'emoji-cheat-sheet-plus-display-mode)
-    (erc-track-mode -1)
-    (setq erc-insert-modify-hook
-          '(erc-controls-highlight
-            erc-button-add-buttons
-            bb/erc-github-filter
-            erc-fill
-            erc-match-message
-            erc-add-timestamp
-            erc-hl-nicks)))
-
   ;; auto-save all files on lost focus
-  (add-hook 'focus-out-hook (lambda () (interactive) (save-some-buffers t)))
-
-
-  (defvar lsn/gitter-pwd "" "Password in local.el")
-
-
-
-  ;; Do I use next keys?
-;;   (global-set-key (kbd "C-M-S-x") 'eval-parent-sexp)
-;;   ;; (global-set-key (kbd "M-k") 'kill-buffer)
-;;   (global-set-key (kbd "C-t") 'yas-insert-snippet)
-;;   (define-key yas-minor-mode-map (kbd "C-t") 'yas-insert-snippet)
-;;   (global-set-key (kbd "C-h E") 'elisp-index-search)
-;;   ;; I tried global-set-key, but it breaks occur in ctrl-s
-;;   ;; (global-set-key (kbd "M-s") 'save-buffer)
-;;   (define-key evil-normal-state-map (kbd "M-s") 'save-buffer)
-;;   (define-key evil-insert-state-map (kbd "M-s") 'save-buffer)
-
-;;   (global-set-key (kbd "C-0") 'delete-window)
-;;   (global-set-key (kbd "C-1") 'delete-other-windows)
-;;   (global-set-key (kbd "C-2") 'split-window-vertically)
-;;   (global-set-key (kbd "C-3") 'split-window-horizontally)
-;;   (global-set-key (kbd "C-5") 'make-frame-command)
-
-
-  ;; I used to C-v for scroll down, not sure about visual block
-
-  ;; at the begining of working i see message in log:
-  ;; <C-f13> is undefined
-  (global-set-key (kbd "C-<f13>") 'toggle-input-method)
+  (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
   (global-set-key (kbd "C-c t") 'org-timer-set-timer)
-
-  ;; (use-package tea-time
-  ;;   :bind (("C-c t" . my/tea-timer)
-  ;;          ("C-c T" . tea-show-remaining-time))
-  ;;   :config
-  ;;   (defun my/tea-timer()
-  ;;     (interactive)
-  ;;     (if (file-exists-p tea-time-sound)
-  ;;         (call-interactively 'tea-time)
-  ;;       (user-error "Sound not exists at '%s'!" tea-time-sound)))
-  ;;   )
-
+  (global-unset-key (kbd "C-h h")) ;; Disable hello file, because it hangs
 
   ;; autoscroll messages
   ;; commented because i can't copy line with yy
@@ -752,22 +568,9 @@ layers configuration."
 
   ;; (add-hook 'calc-mode-hook 'calc-algebraic-entry)
 
-  ;; Using chrome as default browser
-  (if (eq system-type 'gnu/linux)
-      ;; On minijack opera is default browser
-      (with-eval-after-load 'browse-url
-        (message "%s default browser changed to chrome. again" (current-time-string))
-        (defun browse-url-can-use-xdg-open () (and (getenv "DISPLAY") (executable-find "xdg-open") t))) ;
-      ;; (setq browse-url-browser-function 'browse-url-generic
-      ;;       browse-url-generic-program "chromium")
-      )
 
   ;; Auto github favore mode when editing markdown
   (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
-
-  ;; Automode for awesomewm files like rc.lua.blackburg, rc.lua_test
-  (add-to-list 'auto-mode-alist '("\\.lua.+" . lua-mode))
-
   (add-to-list 'auto-mode-alist '("vimrc\\'" . vimrc-mode))
 
   ;; Shell mode for ~/bin
@@ -778,34 +581,7 @@ layers configuration."
 
   (define-derived-mode desktop-entry-mode conf-unix-mode "Desktop" "Desktop entry")
 
-  ;; enable flycheck for lua (usefull for awesomewm configs)
-  (with-eval-after-load 'flycheck
-    (add-hook 'lua-mode-hook flycheck-mode))
 
-  ;; custom error checker for awesomewm just for practice> (`C-c ! s` to select it)
-  (with-eval-after-load "lua-mode"
-    (with-eval-after-load "flycheck"
-      (flycheck-define-checker lua-awesome
-                               "A Lua syntax checker using awesome -k."
-                               :command ("awesome"
-                                         "-k"
-                                         "-c" source)
-                               :standard-input t
-                               :error-patterns
-                               ((error line-start
-                                       (optional (file-name))
-                                       ":" line
-                                       ":" (message) line-end))
-                               :modes lua-mode)))
-
-  ;; Add ~/dotfiles/spacemacs/private/snippets directory
-  (eval-after-load "yasnippet"
-    '(setq yas-snippet-dirs
-           (cons
-            (expand-file-name (concat
-                               (car dotspacemacs-configuration-layer-path)
-                               "/snippets"))
-            (cdr yas-snippet-dirs))))
 
   ;; commented because i tired of missing buffer in recentf list after I close it with SPC b d
 ;;   (with-eval-after-load "recentf"
@@ -839,20 +615,6 @@ layers configuration."
 
 ;;     (setf recentf-keep '(keep-default-old-and-visible-recentf-p)))
 
-  (with-eval-after-load "helm-locate"
-    (setq helm-locate-command "locate %s -e %s")
-    )
-
-  (with-eval-after-load "systemd"
-
-    (spacemacs/set-leader-keys-for-major-mode 'systemd-mode
-      "e" 'my/systemd-enable-unit
-      "d" 'my/systemd-disable-unit
-      "a" 'my/systemd-start-unit
-      "o" 'my/systemd-switch-timer-service))
-
-
-  (global-set-key (kbd "C-M-S") 'my/isearch-other-window)
 
   ;; Private config for this host
   (when (file-exists-p "~/local.el")
@@ -877,9 +639,6 @@ layers configuration."
   ;; (auto-insert-mode)
   ;; (define-auto-insert "/\\.emacs.d/.+?\\.el\\'" "spacemacs-skel.el")
 
-  ;; Do not overwrite history on buffer close
-  (use-package undohist
-    :config (undohist-initialize))
 
   ;; Extract variable to the line above
   ;; (evil-define-operator my/sh-extract-variable-operator (beg end)
@@ -899,81 +658,10 @@ layers configuration."
   ;;     ))
 
 
-  ;; fringes (right tiny column with current cursor) for emacs debug
-  (setq-default fringe-indicator-alist
-                '((truncation left-arrow right-arrow)
-                  (continuation left-curly-arrow right-curly-arrow)
-                  (overlay-arrow . right-triangle)
-                  (up . up-arrow)
-                  (down . down-arrow)
-                  (top top-left-angle top-right-angle)
-                  (bottom bottom-left-angle
-                          bottom-right-angle
-                          top-right-angle
-                          top-left-angle)
-                  (top-bottom left-bracket
-                              right-bracket
-                              top-right-angle
-                              top-left-angle)
-                  (empty-line . empty-line)
-                  (unknown . question-mark)))
-
-
-  (evil-define-motion evil-search-forward ()
-    (format "Search forward for user-entered text.
-Searches for regular expression if `evil-regexp-search' is t.%s"
-            (if (and (fboundp 'isearch-forward)
-                     (documentation 'isearch-forward))
-                (format "\n\nBelow is the documentation string \
-for `isearch-forward',\nwhich lists available keys:\n\n%s"
-                        (documentation 'isearch-forward)) ""))
-    :jump t
-    :type exclusive
-    :repeat evil-repeat-search
-    (progn                 ;MADE CHANGES HERE
-      (evil-insert-state)
-      (evil-rch-incrementally t evil-regexp-search)
-      (evil-normal-state)
-      ))
-
-  (evil-define-motion evil-search-backward ()
-    (format "Search forward for user-entered text.
-Searches for regular expression if `evil-regexp-search' is t.%s"
-            (if (and (fboundp 'isearch-forward)
-                     (documentation 'isearch-forward))
-                (format "\n\nBelow is the documentation string \
-for `isearch-forward',\nwhich lists available keys:\n\n%s"
-                        (documentation 'isearch-forward)) ""))
-    :jump t
-    :type exclusive
-    :repeat evil-repeat-search
-    (progn                 ;MADE CHANGES HERE
-      (evil-insert-state)
-      (evil-search-incrementally nil evil-regexp-search)
-      (evil-normal-state)
-      ))
-
-  (use-package wttrin
-    :ensure t
-    :commands (wttrin)
-    :init
-    (evil-leader/set-key "aw" (lambda ()
-                                (interactive)
-                                (wttrin-query "St.Petersburg")))
-    :config
-    )
-
   ;; make this buffers available for switching via SPC TAB
 
   (dotspacemacs/custom-keys)
   (dotspacemacs/hooks)
-
-  ;; I don't know if this works
-  ;; (use-package secretaria
-  ;;   :config
-  ;;   ;; use this for getting a reminder every 30 minutes of those tasks scheduled
-  ;;   ;; for today and which have no time of day defined.
-  ;;   (add-hook 'after-init-hook #'secretaria-today-unknown-time-appt-always-remind-me))
 
   ;; Fix for mariadb
   ;; TODO: eval-after-load "???" or (Spacemacs) Error in dotspacemacs/user-config: Symbol's function definition is void: sql-set-product-feature
@@ -985,48 +673,7 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
                              (sql-password ,lsn/mysql-pwd)
                              (sql-server "localhost")
                              (sql-database "logiweb"))))
-     (sql-set-product-feature 'mysql :prompt-regexp "^\a?MariaDB[^>]+> "))
-  (with-eval-after-load 'w3m
-    (define-key gnus-article-mode-map (kbd "RET") 'my/w3m-open-link-or-image-browser)
-    (define-key w3m-minor-mode-map (kbd "RET") 'my/w3m-open-link-or-image-browser)
-    (define-key w3m-minor-mode-map "F" 'my/w3m-open-link-or-image-browser))
-
-
-  (defun sqli-add-hooks ()
-    "My hooks for sql-interactive-mode"
-    (spacemacs/toggle-truncate-lines-on)
-    )
-  (add-hook 'sql-interactive-mode-hook 'sqli-add-hooks)
-    ;; (sql-set-product-feature 'mysql :prompt-regexp "^\\(MariaDB\\|MySQL\\) \\[[_a-zA-Z]*\\]> ")
-
-;;   ;; End of private config
-;;   (my/init-swiper)
-  (use-package nyan-mode
-    :config (nyan-mode 1))
-  (use-package smsru
-    :commands (smsru/send-sms)
-    :defer t)
-  (use-package all-the-icons
-    :config
-    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-
-  (with-eval-after-load "auto-dictionary"
-    (setq adict-dictionary-list '(("en" "english"
-                                   "ru" "russian")))
-    (setq adict-hash (let* ((hash (make-hash-table :test 'equal)))
-                            (adict-add-word hash 1 "and" "are" "at" "been" "but" "dear" "get" "have"
-                                            "he" "hello" "it" "me" "my" "not" "on" "of" "off" "put"
-                                            "regarding" "set" "she" "some" "that" "than" "the" "there"
-                                            "us" "was" "we" "while" "with" "yes" "you" "your" "yours")
-
-                            (adict-add-word hash 2 "и" "в" "не" "он" "на" "я" "что" "тот" "быть" "с" "а"
-                                            "весь" "это" "как" "она" "по" "но" "они" "к" "у" "ты" "из"
-                                            "мы" "за" "вы" "так" "же" "от" "сказать" "этот" "который"
-                                            "мочь" "человек" "о" "один" "еще" "бы" "такой" "только"
-                                            "себя" "свой" "какой" "когда" "уже" "для" "вот" "кто"
-                                            "да" "говорить" "год")
-                            hash
-                       )))
+     )
 
   ;; (use-package web-mode
   ;;   :defer t
@@ -1036,8 +683,9 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
   ;;           ("php" . (("dowhile" . "<?php do { ?>\n\n<?php } while (|); ?>")
   ;;                     ("debug" . "<?php error_log(__LINE__); ?>")))
   ;;           )))
+
   ;; Integrate system clipboard with emacs kill ring
-  ;; It doesn't work with russian text in clipboard
+  ;; disable reson: It doesn't work with russian text in clipboard
   ;; (use-package clipmon
   ;;   :config (clipmon-mode-start))
   (define-key process-menu-mode-map (kbd "C-k") 'joaot/delete-process-at-point)
@@ -1068,40 +716,16 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
   (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
   (global-set-key (kbd "<f8>") 'quickrun)
   (global-set-key (kbd "C-c t") 'my/org-timer-set-timer)
+
   ;; Make C-j work with evil in *scratch*
   (evil-define-key 'normal lisp-interaction-mode-map (kbd "C-j") 'my/eval-print-sexp-line)
 
-  (use-package dired
-    :bind (:map dired-mode-map
-           ("e" . wdired-change-to-wdired-mode))
-    )
+
   (evil-leader/set-key
-    "aiq" 'erc-quit-server
-    "aid" (defun bb/gitter-debug ()
-            (interactive)
-            (erc :server "localhost"
-                 :port 6667
-                 :nick "lislon"
-                 :password lsn/gitter-pwd
-                 :full-name "lislon"))
-    "aig" (defun bb/gitter ()
-            (interactive)
-            (erc-tls :server "irc.gitter.im"
-                     :port 6667
-                     :nick "lislon"
-                     :password lsn/gitter-pwd
-                     :full-name "lislon"))
-    "aif" (defun bb/freenode ()
-            (interactive)
-            (erc :server "irc.freenode.net"
-                 :port "6667"
-                 :nick "lislon"
-                 :full-name "lislon"))
-    "am" 'my/sql-connect-preset          ; connect to mysql
+    "am" 'my/sql-connect-preset          ; connect to database
     "aR" 'my/rest-client
     "fd" 'my/ediff-buffer-with-file
     "oJ" 'my/java-text
-    "xgi" 'my/google-translate-repl
     ;; "os" 'yas-visit-snippet-file
     "os" (lambda () (interactive) (error "Use SPC i s to list snippets"))
     ;; "oi" (lambda () (interactive) (error "Use SPC i s to insert yasnippet"))
@@ -1134,23 +758,26 @@ for `isearch-forward',\nwhich lists available keys:\n\n%s"
 
 (defun dotspacemacs/hooks ()
   "Here go my keys customization."
-  (add-hook 'palette-mode-hook (lambda ()
-                                 (highlight-)))
-  ;; java multiline comments
-  (add-hook 'java-hook (lambda () (local-set-key "\r" 'my-javadoc-return)))
+
   ;; Beyond eol makes ~SPC m e e~ usable
   (add-hook 'lisp-mode-hook ((lambda () (setq-local evil-move-beyond-eol t))))
   (add-hook 'auto-save-hook 'auto-save-all-files)
-
-  (add-hook 'systemd-mode-hook (lambda () (setq-local comment-start-skip "#")))
   (add-hook 'shell-mode-hook 'my-shell-mode-hook)
-  (add-hook 'nxml-mode-hook 'turn-on-evil-matchit-mode)
-  (add-hook 'ranger-mode-hook (lambda () (face-remap-add-relative 'hl-line '((:background "DimGray")))))
   )
 
 
 ;; TODO implement this
  ; swap 1 and 2
-(setq custom-file (expand-file-name "~/Dropbox/dotfiles/spacemacs/emacs-custom.el"))
-(load custom-file)
+(setq custom-file (expand-file-name "~/.emacs.d/.cache/custom.el")
+      spacemacs-custom-file "~/.emacs.d/.cache/custom-spacemacs.el")
+(if (file-exists-p custom-file)
+    (load custom-file))
 (load "~/Dropbox/dotfiles/spacemacs/funcs.el")
+
+;; no please no custom file
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+)
