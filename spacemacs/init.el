@@ -323,10 +323,15 @@ values."
    ;; maybe this helps from hangs.not testsed https://github.com/syl20bnr/spacemacs/issues/8462
    dotspacemacs-mode-line-unicode-symbols nil
    ediff-window-setup-function 'ediff-setup-windows-default
+   configuration-layer-private-directory "~/.spacemacs.d"
    )
+  (setq custom-file (expand-file-name "~/.emacs.d/.cache/custom.el")
+        spacemacs-custom-file "~/.emacs.d/.cache/custom-spacemacs.el")
   ;; User initialization goes here
   (add-to-load-path "~/dotfiles/spacemacs/thirdparty")
   (add-to-load-path (expand-file-name "~/dotfiles/spacemacs/thirdparty/smsru/"))
+  (when (getenv "https_proxy")
+    (setq dotspacemacs-elpa-https nil))
 )
 
 
@@ -412,6 +417,7 @@ layers configuration."
    auto-completion-complete-with-key-sequence "jk"
    auto-completion-enable-sort-by-usage t
    auto-completion-enable-help-tooltip t
+   evil-ex-substitute-global t
 
    ;; zsh shell
    ;; comint-input-ring-size 100000
@@ -771,11 +777,3 @@ layers configuration."
 (if (file-exists-p custom-file)
     (load custom-file))
 (load "~/Dropbox/dotfiles/spacemacs/funcs.el")
-
-;; no please no custom file
-(defun dotspacemacs/emacs-custom-settings ()
-  "Emacs custom settings.
-This is an auto-generated function, do not modify its content directly, use
-Emacs customize menu instead.
-This function is called at the very end of Spacemacs initialization."
-)

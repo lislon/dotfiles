@@ -1,7 +1,7 @@
 (setq my-org-packages '(noflet
                         calfw
                         org
-                         artist-mode))
+                        artist-mode))
 
 (defun my-org/post-init-org ()
   (setq-default

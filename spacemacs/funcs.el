@@ -629,6 +629,6 @@ PROPERTY listed insert a string immediately after the healine given by
 (defmacro my/set-key-file-link (key file)
   `(evil-leader/set-key ,key
      (defun ,(make-symbol
-              (concat "my/jump-to-" (file-name-base file) "-file"))()
+              (concat "my/jump-to-" (file-name-base (eval file)) "-file"))()
        (interactive)
        (find-file ,file))))
