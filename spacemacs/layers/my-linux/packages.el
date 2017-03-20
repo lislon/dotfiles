@@ -13,8 +13,14 @@
 (defconst my-linux-packages
   '(helm-systemd
     openwith
+    org
+    dired
     bbdb))
 
+
+(defun my-linux/post-init-dired ()
+  ;; Dired - directories first
+  (setq  dired-listing-switches "-alkh  --group-directories-first"))
 
 (defun my-linux/post-init-lua-mode ()
   ;; Automode for awesomewm files like rc.lua.blackburg, rc.lua_test
@@ -65,5 +71,8 @@
     )
   )
 
+(defun my-linux/post-init-org ()
+  (setq tea-time-sound-command "aplay")
+  )
 
 ;;; packages.el ends here

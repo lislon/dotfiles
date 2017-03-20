@@ -122,10 +122,10 @@ Each entry is either:
 (defun my-common/post-init-quickrun ()
     (advice-add 'quickrun :before (lambda (&rest PLIST) (save-buffer))))
 
-(defun my-common/init-undohist ()
-  (use-package undohist
-    :config (undohist-initialize))
-  )
+;; (defun my-common/init-undohist ()
+;;   (use-package undohist
+;;     :config (undohist-initialize))
+;;   )
 
 (defun my-common/init-palette ()
   (use-package palette))

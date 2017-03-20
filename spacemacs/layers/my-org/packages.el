@@ -1,7 +1,9 @@
-(setq my-org-packages '(noflet calfw org
-                               artist-mode))
+(setq my-org-packages '(noflet
+                        calfw
+                        org
+                         artist-mode))
 
-(defun my-work-org/post-init-org ()
+(defun my-org/post-init-org ()
   (setq-default
    ;; ------------------------------------------------------------------------------
    ;; General
@@ -56,9 +58,9 @@
                               ("~/org/dynamic/todo-someday.org" :level . 1)
                               ("~/org/dynamic/notes.org" :level . 0)
                               ("~/org/static/diary.org" :maxlevel . 1)
-                              ("~/Dropbox/org-shared/static/computers.org" :maxlevel . 2)
-                              ("~/Dropbox/org-shared/static/programming.org" :maxlevel . 1)
-                              ("~/Dropbox/org-shared/static/java.org" :maxlevel . 1)))
+                              ("~/Dropbox/shared-org/static/computers.org" :maxlevel . 2)
+                              ("~/Dropbox/shared-org/static/programming.org" :maxlevel . 1)
+                              ("~/Dropbox/shared-org/static/java.org" :maxlevel . 1)))
 
 
    ;; ------------------------------------------------------------------------------
@@ -76,12 +78,12 @@
    ;; ------------------------------------------------------------------------------
    org-capture-templates (my/capture '(("p" "Programming")
 
-                                       ("pj" "java" entry (file+headline "~/org-shared/static/java.org" "Java")
+                                       ("pj" "java" entry (file+headline "~/shared-org/static/java.org" "Java")
                                         "* %^{Java topic}\n%U\n%?")
 
-                                       ("pp" "common" entry (file+headline "~/org-shared/static/programming.org" "Java")
+                                       ("pp" "common" entry (file+headline "~/shared-org/static/programming.org" "Java")
                                         "* %^{Topic}\n%U\n%?")
-                                       ("a" "appointment" entry (file+headline "~/org-shared/dynamic/tasks.org" "Appointments")
+                                       ("a" "appointment" entry (file+headline "~/shared-org/dynamic/tasks.org" "Appointments")
                                         "* APPOINTMENT with %?
 :PROPERTIES:
 :APPT_WARNTIME: 90
@@ -359,27 +361,26 @@ SCHEDULED %^T
 
 
   ;; Commented for optimization tests
-  (with-eval-after-load 'org
-    ;; emacs 24.4 No such file or directory
-    ;; (require 'org-notify)                 ; Support only deadlines
-    ;; (org-notify-start)
-    ;; how deadline worked?
-    (appt-activate 1)
+  ;; emacs 24.4 No such file or directory
+  ;; (require 'org-notify)                 ; Support only deadlines
+  ;; (org-notify-start)
+  ;; how deadline worked?
+  (appt-activate 1)
 
-    ;; update appt each time agenda opened
-    (add-hook 'org-finalize-agenda-hook 'org-agenda-to-appt)
+  ;; update appt each time agenda opened
+  (add-hook 'org-finalize-agenda-hook 'org-agenda-to-appt)
 
-    ;; our little façade-function for djcb-popup
-    (defun djcb-appt-display (min-to-app new-time msg)
-      (djcb-popup (format "Appointment in %s minute(s)" min-to-app) msg
-                  "~/confiles/linux/icons/apppointment-grey-32x32.png"
+  ;; our little façade-function for djcb-popup
+  (defun djcb-appt-display (min-to-app new-time msg)
+    (djcb-popup (format "Appointment in %s minute(s)" min-to-app) msg
+                "~/confiles/linux/icons/apppointment-grey-32x32.png"
 
-                  "~/confiles/linux/sounds/choir-a.wav"))
-    (setq appt-disp-window-function 'djcb-appt-display)
-    (defadvice org-agenda-to-appt (before wickedcool activate)
-      "Clear the appt-time-msg-list."
-      (setq appt-time-msg-list nil))
-    )
+                "~/confiles/linux/sounds/choir-a.wav"))
+  (setq appt-disp-window-function 'djcb-appt-display)
+  (defadvice org-agenda-to-appt (before wickedcool activate)
+    "Clear the appt-time-msg-list."
+    (setq appt-time-msg-list nil))
+
 
 
 
@@ -395,14 +396,14 @@ SCHEDULED %^T
 
   )
 
-(defun my-work-org/init-noflet ())
-(defun my-work-org/init-calfw ())
-(defun my-work-org/post-init-calfw ()
+(defun my-org/init-noflet ())
+(defun my-org/init-calfw ())
+(defun my-org/post-init-calfw ()
   (setq cfw:display-calendar-holidays nil)
   (add-hook 'cfw:calendar-mode 'evil-insert))
 
 
-(defun my-work-org/post-init-artist-mode ()
+(defun my-org/post-init-artist-mode ()
   (add-hook 'artist-mode-hook
             (lambda ()
               (evil-emacs-state)

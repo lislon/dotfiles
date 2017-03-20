@@ -208,11 +208,10 @@ a sound to be played"
 
 (defun my/org-timer-done ()
   "Functions called when timer is done"
-  (if timer-sound
-      (if tea-time-sound-command
+  (if (and (boundp 'timer-sound) (boundp 'tea-time-sound-command))
           (start-process-shell-command "tea-ready" nil (format tea-time-sound-command timer-sound))
         (play-sound-file timer-sound))
-    (progn (beep t) (beep t))))
+    (progn (beep t) (beep t)))
 
 (defun my/capture (templates)
   "merge capture-templates with existing org-capture-templates"
@@ -243,4 +242,4 @@ a sound to be played"
 
 
 
-;;(my/archive-subtree "/home/ele/org-shared/dynamic/tasks.org" "Appointments")
+;;(my/archive-subtree "/home/ele/shared-org/dynamic/tasks.org" "Appointments")

@@ -30,12 +30,12 @@
 ;;; Code:
 
 (defconst my-windows-packages
-  '(gntp
+  '((gntp :toggle (file-exists-p "growlnotify.exe"))
     (alert :location (recipe
                       :fetcher github
                       :repo "jwiegley/alert"))
-    )
-  "")
+    org
+    ))
 
 
 (defun my-windows/init-gntp ()
@@ -62,5 +62,11 @@
   (use-package "alert"
     :config
     (progn
-      (setq alert-default-style 'gntp))))
+      (if (require 'some-library nil 'noerror)
+          (setq alert-default-style 'gntp))))
+  )
+
+(defun my-windows/post-init-org ()
+  (setq org-show-notification-handler (lambda (msg) (alert msg) ))
+  )
 ;;; packages.el ends here

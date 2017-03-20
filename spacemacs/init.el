@@ -1,4 +1,4 @@
-﻿;; -*- mode: emacs-lisp -*-
+;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
@@ -379,14 +379,13 @@ layers configuration."
                                                   ("P" evil-paste-pop-next "paste previous"))
    timer-max-repeats 0                  ; Do not repeat timer on suspen
    delete-by-moving-to-trash nil        ; Do not use trash when deleting files
-   dired-listing-switches "-alk"
    create-lockfiles nil                 ; get rid of .#filename.org (intented to prevent multiuser editing of file, but I always save files)
    evil-shift-round nil                 ; explanation https://youtu.be/HKF41ivkBb0?t=13m35s
 
 
    yas-wrap-around-region nil           ; I set to nil to prevent duplication of region when using surround snip
    ;; Dired - directories first
-   dired-listing-switches "-alkh  --group-directories-first"
+
    ;; dired-listing-switches "-aBhl  --group-directories-first"
 
    ;; Man in same window
@@ -437,7 +436,7 @@ layers configuration."
    git-magit-status-fullscreen t
 
    ;; Tea time sound
-   timer-sound "~/Dropbox/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
+   timer-sound "~/Dropbox/dotfiles/spacemacs/sounds/tea-bell.wav"
 
    ;; Persistent undo
    undo-tree-auto-save-history t
@@ -472,8 +471,7 @@ layers configuration."
   ;; prevent overwire of clipboard when selection
   (fset 'evil-visual-update-x-selection 'ignore)
 
-  (unless (file-exists-p (concat spacemacs-cache-directory "undo"))
-    (make-directory (concat spacemacs-cache-directory "undo")))
+  (make-directory (concat spacemacs-cache-directory "undo") t)
 
   ;; ------------------------------------------------------------------------------
   ;; DEBUG recentf
