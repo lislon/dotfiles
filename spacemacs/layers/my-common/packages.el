@@ -38,6 +38,7 @@
     yasnippet
     all-the-icons
     all-the-icons-dired
+    sql
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -69,6 +70,35 @@ Each entry is either:
 (defun my-common/post-init-nxml ()
   (add-hook 'nxml-mode-hook 'turn-on-evil-matchit-mode))
 
+(defun my-common/post-init-sql ()
+  "docstring"
+
+  ;; (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
+  (use-package sql
+    :config
+    (setq sql-input-ring-file-name (expand-file-name "~/.emacs.d/.cache/sql-ring.sql"))
+    (add-hook 'comint-preoutput-filter-functions (lambda (text)
+                                                   (with-temp-buffer
+                                                     (setq-local tab-width 8)
+                                                     (insert text)
+                                                     (untabify (point-min) (point-max))
+                                                     (buffer-string)
+
+                                                     ;; dirty hack to save kill ring each time string sent to server
+                                                     ;; otherwise history lost when emacs crahsed or i delete buffer by hand
+                                                     (let
+                                                         ((comint-input-ring-separator sql-input-ring-separator)
+                                                          (comint-input-ring-file-name sql-input-ring-file-name))
+                                                       (comint-write-input-ring))
+                                                     )
+
+                                                   ))
+
+    )
+
+  ;; (require 'fakecygpty)
+  ;; (fakecygpty-activate)
+  )
 
 (defun my-common/init-restclient ()
   (use-package restclient))

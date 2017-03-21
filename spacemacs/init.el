@@ -529,7 +529,7 @@ layers configuration."
   ;; startundo
   ;; Custom bookmakrs path
   ;; in emacs 24 system-name is FQDN and in emacs 25 it is a hostname
-  (setq bookmark-default-file (concat "~/Dropbox/emacs-bookmarks/" (replace-regexp-in-string "\.[^\.]+$" "" (system-name)) "-bookmarks.el"))
+  (setq bookmark-default-file "~/.spacemacs.d.local/bookmarks.el")
 
   (put 'set-goal-column 'disabled nil)  ;; Allow C-x C-n goal column for csv
 
