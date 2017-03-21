@@ -454,7 +454,7 @@ unless return was pressed outside the comment"
                      (mapcar 'car sql-connection-alist))))
   (eval `(let ,(cdr (assoc (intern name) sql-connection-alist))
            (flet ((sql-get-login (&rest what)))
-             (sql-product-interactive sql-product)))))
+             (sql-product-interactive sql-product sql-user)))))
 
 (defun my-shell-mode-hook ()
   (comint-read-input-ring t))
