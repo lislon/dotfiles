@@ -19,3 +19,6 @@
                 (unknown . question-mark)))
 
 (evil-leader/set-key "ol" 'lsn/calendar-of-life)
+
+(defvar projectile-sticky-project nil "Projectile last sticky project")
+

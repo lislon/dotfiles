@@ -39,6 +39,7 @@
     all-the-icons
     all-the-icons-dired
     sql
+    projectile
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -161,5 +162,13 @@ Each entry is either:
   (spacemacs/set-leader-keys-for-major-mode
     'snippet-mode "h" (lambda () (interactive)
                         (browse-url "http://joaotavora.github.io/yasnippet/snippet-development.html"))))
+
+(defun my-common/post-init-projectile ()
+  (advice-add #'projectile-project-root :before-until #'my/projectile-use-sticky-project-advice)
+  (advice-add #'helm-projectile-switch-project :around 'my/projectile-helm-advice)
+  (evil-leader/set-key
+    "ps" 'my/projectile-magit-status          ; connect to database
+    )
+  )
 
 ;; Do not overwrite history on buffer close

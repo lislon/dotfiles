@@ -44,3 +44,25 @@
   (eval `(let ,(cdr (assoc (intern name) sql-connection-alist))
            (flet ((sql-get-login (&rest what)))
              (sql-product-interactive sql-product sql-user)))))
+
+(defun my/projectile-use-sticky-project-advice (&rest args)
+  "Skip calling `projectile-project-root' when there is a main project defined."
+  (when projectile-sticky-project
+    projectile-sticky-project))
+
+
+
+(defun my/projectile-helm-advice (orig-fun &rest args)
+  "Temporary clears the `current-project' variable to allow projectile-helm to select new sticky project"
+  (setq projectile-sticky-project nil)
+  (let ((current-project))
+    (let ((projectile-sticky-project nil))
+      (apply orig-fun args)
+      (setq current-project (projectile-project-root)))
+    (setq projectile-sticky-project current-project)))
+
+
+(defun my/projectile-magit-status ()
+  "Opens magit status for currenly selected projectile directory"
+  (interactive)
+  (magit-status projectile-sticky-project))
