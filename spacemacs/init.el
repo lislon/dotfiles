@@ -667,18 +667,6 @@ layers configuration."
   (dotspacemacs/custom-keys)
   (dotspacemacs/hooks)
 
-  ;; Fix for mariadb
-  ;; TODO: eval-after-load "???" or (Spacemacs) Error in dotspacemacs/user-config: Symbol's function definition is void: sql-set-product-feature
-  (with-eval-after-load "sql"
-    (setq
-     sql-connection-alist `((logiweb
-                             (sql-product 'mysql)
-                             (sql-user "root")
-                             (sql-password ,lsn/mysql-pwd)
-                             (sql-server "localhost")
-                             (sql-database "logiweb"))))
-     )
-
   ;; (use-package web-mode
   ;;   :defer t
   ;;   :init
@@ -726,7 +714,6 @@ layers configuration."
 
 
   (evil-leader/set-key
-    "am" 'my/sql-connect-preset          ; connect to database
     "aR" 'my/rest-client
     "fd" 'my/ediff-buffer-with-file
     "oJ" 'my/java-text

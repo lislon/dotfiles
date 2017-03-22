@@ -446,16 +446,6 @@ unless return was pressed outside the comment"
                    (save-buffer)))
     (and buf t))))
 
-(defun my/sql-connect-preset (name)
-  "Connect to a predefined SQL connection listed in `sql-connection-alist'"
-  (interactive
-   (list
-    (completing-read "Choose preset connection: "
-                     (mapcar 'car sql-connection-alist))))
-  (eval `(let ,(cdr (assoc (intern name) sql-connection-alist))
-           (flet ((sql-get-login (&rest what)))
-             (sql-product-interactive sql-product sql-user)))))
-
 (defun my-shell-mode-hook ()
   (comint-read-input-ring t))
 
