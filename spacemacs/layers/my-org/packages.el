@@ -1,7 +1,7 @@
 (setq my-org-packages '(noflet
                         calfw
                         org
-                        artist-mode))
+                        artist))
 
 (defun my-org/post-init-org ()
   (setq-default
@@ -24,7 +24,8 @@
    org-todo-keywords '((sequence "TODO" "|" "DONE" "REJT"))
    org-list-allow-alphabetical t
    org-table-default-size "2x5"           ; Default 2 columns table
-
+   org-link-frame-setup  '((file . find-file))
+   org-ditaa-jar-path "~/Dropbox/dotfiles/spacemacs/scripts/ditaa.jar"
    ;;------------------------------------------------------------------------------
    ;;Clocking
    ;;------------------------------------------------------------------------------
@@ -76,14 +77,20 @@
    ;; ------------------------------------------------------------------------------
    ;; Capture
    ;; ------------------------------------------------------------------------------
-   org-capture-templates (my/capture '(("p" "Programming")
+   org-capture-templates (my/capture '(("f" "shared todo" entry (file "~/Dropbox/shared-org/dynamic/todo.org")
+                                        "* TODO %^{TODO}\n%U\n%?")
+                                       ("p" "Programming")
 
-                                       ("pj" "java" entry (file+headline "~/shared-org/static/java.org" "Java")
+                                       ("pj" "java" entry (file+headline "~/Dropbox/shared-org/static/java.org" "Java")
                                         "* %^{Java topic}\n%U\n%?")
 
-                                       ("pp" "common" entry (file+headline "~/shared-org/static/programming.org" "Java")
+                                       ("pp" "common" entry (file+headline "~/Dropbox/shared-org/static/programming.org" "Java")
                                         "* %^{Topic}\n%U\n%?")
-                                       ("a" "appointment" entry (file+headline "~/shared-org/dynamic/tasks.org" "Appointments")
+                                       ("pe" "emacs" entry (file+headline "~/Dropbox/shared-org/static/computers.org" "Emacs")
+                                        "* %^{Topic}\n%U\n%?")
+                                       ("pc" "computers" entry (file+headline "~/Dropbox/shared-org/static/computers.org" "Unsorted")
+                                        "* %^{Topic}\n%U\n%?")
+                                       ("a" "appointment" entry (file+headline "~/Dropbox/shared-org/dynamic/tasks.org" "Appointments")
                                         "* APPOINTMENT with %?
 :PROPERTIES:
 :APPT_WARNTIME: 90
@@ -233,13 +240,15 @@ SCHEDULED %^T
  ;;;------------------------------------------------------------------------------
  ;;; babel
  ;;; ------------------------------------------------------------------------------
-   org-confirm-babel-evaluate t
-   my-org-babel-languages '(
+   org-confirm-babel-evaluate nil
+   my-org-babel-load-languages '(
                             (sh . t)
                             (lisp . t)
                             (emacs-lisp . t)
                             (java . t)
                             (plantuml . t)
+                            (ditaa . t)
+                            (dot . t) ;;graphviz
                             )
    ;;------------------------------------------------------------------------------
    ;; UML
@@ -285,6 +294,7 @@ SCHEDULED %^T
 
   (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
   (my/set-key-file-link "oj" "~/Dropbox/shared-org/static/java.org")
+  (my/set-key-file-link "oc" "~/Dropbox/shared-org/static/computers.org")
 
 
   ;; Encryption (ACP NullPointerException on android)
@@ -326,7 +336,10 @@ SCHEDULED %^T
   ;; (epa-file-enable)
 
   (with-eval-after-load "org"
-    (org-babel-do-load-languages 'org-babel-load-languages my-org-babel-languages)
+    (require 'ob-ditaa)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     my-org-babel-load-languages)
     ;; Auto insert when ~TAB` in tables
     (advice-add 'org-table-next-field :after 'evil-insert-state))
 
@@ -403,7 +416,7 @@ SCHEDULED %^T
   (add-hook 'cfw:calendar-mode 'evil-insert))
 
 
-(defun my-org/post-init-artist-mode ()
+(defun my-org/post-init-artist ()
   (add-hook 'artist-mode-hook
             (lambda ()
               (evil-emacs-state)

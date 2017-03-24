@@ -1,0 +1,6 @@
+[submodule "org-html-themes"]
+	path = spacemacs/thirdparty/org-html-themes
+	url = https://github.com/fniessen/org-html-themes.git
+[submodule "smsru"]
+	path = spacemacs/thirdparty/smsru
+	url = https://github.com/lislon/smsru.git

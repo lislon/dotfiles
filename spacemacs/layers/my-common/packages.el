@@ -71,7 +71,7 @@ Each entry is either:
 (defun my-common/post-init-nxml ()
   (add-hook 'nxml-mode-hook 'turn-on-evil-matchit-mode))
 
-(defun my-common/init-sql ()
+(defun my-common/post-init-sql ()
 
   (evil-leader/set-key
     "am" 'my/sql-connect-preset          ; connect to database
@@ -80,9 +80,7 @@ Each entry is either:
   (use-package sql
     :config
     (setq sql-input-ring-file-name (expand-file-name "~/.emacs.d/.cache/sql-ring.sql"))
-    (add-hook 'comint-preoutput-filter-functions 'my/sql-filter-result)
-
-    )
+    (add-hook 'comint-preoutput-filter-functions 'my/sql-filter-result))
 
   ;; (require 'fakecygpty)
   ;; (fakecygpty-activate)
