@@ -213,14 +213,20 @@ a sound to be played"
         (play-sound-file timer-sound))
     (progn (beep t) (beep t)))
 
-(defun my/capture (templates)
-  "merge capture-templates with existing org-capture-templates"
-  (let* (already-added)
-    (remove-if-not (lambda (item)
+(defun my/uniq-car (templates)
+  "Merge capture-templates with existing org-capture-templates"
+  (let* (already-added
+         (old-templates (if (boundp 'org-capture-templates) org-capture-templates '()))
+         (merged-templates (append templates old-templates))
+         )
+    (remove-if (lambda (item)
                      (if (member (car item) already-added)
-                         nil
+                         ;; item was not existed before - remove it
+                         t
+                       ;; otherwise add to already-added
                        (push (car item) already-added)
-                       t)) (append templates (if (boundp 'org-capture-templates) org-capture-templates '())))))
+                       nil))
+              merged-templates)))
 
 (defun my/archive-subtree (file heading &optional days)
   "Archives all entries under given `heading' in `file', older then `days' days"
@@ -301,3 +307,20 @@ as the default task."
              (widen)
              (bh/find-project-task))
 	  (error "No running clock that could be used as capture target")))
+
+(defmacro my/override-unique-cars (var-name new-list)
+  "Merges an existing variable `var-name' with new list `new-list'.
+The resulting list is uniqied by car element's
+
+Used to override org-captures values"
+  `(let* (already-added
+          (old-templates (if (boundp ',var-name) ,var-name '()))
+          (merged-templates (append ,new-list old-templates)))
+     (remove-if (lambda (item)
+                  (if (member (car item) already-added)
+                      ;; item was not existed before - remove it
+                      t
+                    ;; otherwise add to already-added
+                    (push (car item) already-added)
+                    nil))
+                merged-templates)))

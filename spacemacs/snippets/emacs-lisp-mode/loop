@@ -2,5 +2,5 @@
 # name: loop
 # key: loop
 # --
-(cl-loop for ${1:buf} in {$2:(buffer-list)}
-$0))
+(cl-loop for ${1:var} in ${3:(a b c)}
+             do ${4:(message "map: %s" $1)})

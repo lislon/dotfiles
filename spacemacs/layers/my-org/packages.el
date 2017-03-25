@@ -77,23 +77,25 @@
    ;; ------------------------------------------------------------------------------
    ;; Capture
    ;; ------------------------------------------------------------------------------
-   org-capture-templates (my/capture '(("f" "shared todo" entry (file "~/Dropbox/shared-org/dynamic/todo.org")
-                                        "* TODO %^{TODO}\n%U\n%?")
-                                       ("x" "test" entry (function my/capture-to-current-project)
-                                        "* TODO %^{TODO}\n%U\n%?")
-                                       ("p" "Programming")
+   org-capture-templates (my/override-unique-cars
+                          org-capture-templates
+                          '(("f" "shared todo" entry (file "~/Dropbox/shared-org/dynamic/todo.org")
+                             "* TODO %^{TODO}\n%U\n%?")
+                            ("x" "test" entry (function my/capture-to-current-project)
+                             "* TODO %^{TODO}\n%U\n%?")
+                            ("p" "Programming")
 
-                                       ("pj" "java" entry (file+headline "~/Dropbox/shared-org/static/java.org" "Java")
-                                        "* %^{Java topic}\n%U\n%?")
+                            ("pj" "java" entry (file+headline "~/Dropbox/shared-org/static/java.org" "Java")
+                             "* %^{Java topic}\n%U\n%?")
 
-                                       ("pp" "common" entry (file+headline "~/Dropbox/shared-org/static/programming.org" "Java")
-                                        "* %^{Topic}\n%U\n%?")
-                                       ("pe" "emacs" entry (file+headline "~/Dropbox/shared-org/static/computers.org" "Emacs")
-                                        "* %^{Topic}\n%U\n%?")
-                                       ("pc" "computers" entry (file+headline "~/Dropbox/shared-org/static/computers.org" "Unsorted")
-                                        "* %^{Topic}\n%U\n%?")
-                                       ("a" "appointment" entry (file+headline "~/Dropbox/shared-org/dynamic/tasks.org" "Appointments")
-                                        "* APPOINTMENT with %?
+                            ("pp" "common" entry (file+headline "~/Dropbox/shared-org/static/programming.org" "Java")
+                             "* %^{Topic}\n%U\n%?")
+                            ("pe" "emacs" entry (file+headline "~/Dropbox/shared-org/static/computers.org" "Emacs")
+                             "* %^{Topic}\n%U\n%?")
+                            ("pc" "computers" entry (file+headline "~/Dropbox/shared-org/static/computers.org" "Unsorted")
+                             "* %^{Topic}\n%U\n%?")
+                            ("a" "appointment" entry (file+headline "~/Dropbox/shared-org/dynamic/tasks.org" "Appointments")
+                             "* APPOINTMENT with %?
 :PROPERTIES:
 :APPT_WARNTIME: 90
 :END:
@@ -108,96 +110,98 @@ SCHEDULED %^T
    org-agenda-skip-deadline-if-done nil
    org-deadline-warning-days 5            ; Warn about deadline
 
-   org-agenda-custom-commands (quote (("r" "Refile" tags "REFILE"
-                                       ((org-agenda-overriding-header "Refile")
-                                        (org-tags-match-list-sublevels nil)))
+   org-agenda-custom-commands (my/override-unique-cars
+                               org-agenda-custom-commands
+                               '(("r" "Refile" tags "REFILE"
+                                                         ((org-agenda-overriding-header "Refile")
+                                                          (org-tags-match-list-sublevels nil)))
 
-                                      ("B" "Books" todo "INPROGR"
-                                       ((org-agenda-overriding-header "Books I am reading")
-                                        (org-agenda-sorting-strategy '(user-defined-down))
-                                        (org-agenda-cmp-user-defined 'my/org-sort-agenda-logbook)
-                                        (org-agenda-files '("~/org/dynamic/todo.org"))))
+                                                        ("B" "Books" todo "INPROGR"
+                                                         ((org-agenda-overriding-header "Books I am reading")
+                                                          (org-agenda-sorting-strategy '(user-defined-down))
+                                                          (org-agenda-cmp-user-defined 'my/org-sort-agenda-logbook)
+                                                          (org-agenda-files '("~/org/dynamic/todo.org"))))
 
-                                      ("y" "Todo things"
-                                       (
-                                        ;; + reading
-                                        (tags-todo "TODO={INPROGR\\|DOWNLD}+book"
-                                                   ((org-agenda-overriding-header "Reading")
-                                                    (org-agenda-prefix-format "Reading ")
-                                                    ))
-                                        ;; - training/practicing
-                                        ;; (tags-todo "+emacs"
-                                        ;;            ((org-agenda-overriding-header "")
-                                        ;;             (org-agenda-prefix-format "Emacs ")))
-                                        ;; shopping
-                                        (tags-todo "+shopping-errands"
-                                                   ((org-agenda-overriding-header "E-shopping")
-                                                    (org-agenda-prefix-format "Shopping ")))
-                                        ;; household
-                                        (tags-todo "+household"
-                                                   ((org-agenda-overriding-header "Housekeeping")
-                                                    (org-agenda-prefix-format "Household ")))
-                                        ;; movie/youtube
-                                        (tags-todo "+movie"
-                                                   ((org-agenda-overriding-header "Watching movies")
-                                                    (org-agenda-prefix-format "Movie ")))
-                                        ;; research/googling
-                                        (tags-todo "+googling"
-                                                   ((org-agenda-overriding-header "Googling")
-                                                    (org-agenda-prefix-format "Google ")))
-                                        ;; emacs tuning
-                                        (tags-todo "emacs"
-                                                   ((org-agenda-overriding-header "Emacs tuning")
-                                                    (org-agenda-prefix-format "Emacs ")
-                                                    (org-agenda-sorting-strategy '(time-up)) ))
-                                        ;; system tuning
-                                        (tags-todo "linux-learning-emacs"
-                                                   ((org-agenda-overriding-header "System tuning")
-                                                    (org-agenda-prefix-format "OS ")))
-                                        ;; learning
-                                        (tags-todo "learning"
-                                                   ((org-agenda-overriding-header "Gain skills")
-                                                    (org-agenda-prefix-format "Lean ")))
-                                        ;; sysadmin chroes
-                                        (tags-todo "linux&chore"
-                                                   ((org-agenda-overriding-header "OS chores")
-                                                    (org-agenda-prefix-format "OS Chore ")))
-                                        ;; organizing
-                                        (tags-todo "+org"
-                                                   ((org-agenda-overriding-header "Organize")
-                                                    (org-agenda-prefix-format "Org ")))
-                                        ;; uncategorized
-                                        (tags-todo "-linux-emacs-learning-org-BOOK-errands"
-                                                   ((org-agenda-overriding-header "Rest")
-                                                    (org-agenda-prefix-format "Rest ")))
-                                        ;; (org-agenda-files '("~/org/todo.org"
-                                        ;;                     "~/org/refile.org"
-                                        ;;                     "~/org/dynamic/tasks.org"))
-                                        ;; - training/practicing
-                                        ) (
-                                           (org-agenda-sorting-strategy '(time-down))
-                                           ))
-                                      ;; + shopping
-                                      ;; household chores
-                                      ;; movie/youtube
-                                      ;; research/googling
-                                      ;; emacs tuning
-                                      ;; system tuning/scripting
-                                      ;; learning
-                                      ;; sysadmin chores
-                                      ;; organizing
+                                                        ("y" "Todo things"
+                                                         (
+                                                          ;; + reading
+                                                          (tags-todo "TODO={INPROGR\\|DOWNLD}+book"
+                                                                     ((org-agenda-overriding-header "Reading")
+                                                                      (org-agenda-prefix-format "Reading ")
+                                                                      ))
+                                                          ;; - training/practicing
+                                                          ;; (tags-todo "+emacs"
+                                                          ;;            ((org-agenda-overriding-header "")
+                                                          ;;             (org-agenda-prefix-format "Emacs ")))
+                                                          ;; shopping
+                                                          (tags-todo "+shopping-errands"
+                                                                     ((org-agenda-overriding-header "E-shopping")
+                                                                      (org-agenda-prefix-format "Shopping ")))
+                                                          ;; household
+                                                          (tags-todo "+household"
+                                                                     ((org-agenda-overriding-header "Housekeeping")
+                                                                      (org-agenda-prefix-format "Household ")))
+                                                          ;; movie/youtube
+                                                          (tags-todo "+movie"
+                                                                     ((org-agenda-overriding-header "Watching movies")
+                                                                      (org-agenda-prefix-format "Movie ")))
+                                                          ;; research/googling
+                                                          (tags-todo "+googling"
+                                                                     ((org-agenda-overriding-header "Googling")
+                                                                      (org-agenda-prefix-format "Google ")))
+                                                          ;; emacs tuning
+                                                          (tags-todo "emacs"
+                                                                     ((org-agenda-overriding-header "Emacs tuning")
+                                                                      (org-agenda-prefix-format "Emacs ")
+                                                                      (org-agenda-sorting-strategy '(time-up)) ))
+                                                          ;; system tuning
+                                                          (tags-todo "linux-learning-emacs"
+                                                                     ((org-agenda-overriding-header "System tuning")
+                                                                      (org-agenda-prefix-format "OS ")))
+                                                          ;; learning
+                                                          (tags-todo "learning"
+                                                                     ((org-agenda-overriding-header "Gain skills")
+                                                                      (org-agenda-prefix-format "Lean ")))
+                                                          ;; sysadmin chroes
+                                                          (tags-todo "linux&chore"
+                                                                     ((org-agenda-overriding-header "OS chores")
+                                                                      (org-agenda-prefix-format "OS Chore ")))
+                                                          ;; organizing
+                                                          (tags-todo "+org"
+                                                                     ((org-agenda-overriding-header "Organize")
+                                                                      (org-agenda-prefix-format "Org ")))
+                                                          ;; uncategorized
+                                                          (tags-todo "-linux-emacs-learning-org-BOOK-errands"
+                                                                     ((org-agenda-overriding-header "Rest")
+                                                                      (org-agenda-prefix-format "Rest ")))
+                                                          ;; (org-agenda-files '("~/org/todo.org"
+                                                          ;;                     "~/org/refile.org"
+                                                          ;;                     "~/org/dynamic/tasks.org"))
+                                                          ;; - training/practicing
+                                                          ) (
+                                                             (org-agenda-sorting-strategy '(time-down))
+                                                             ))
+                                                        ;; + shopping
+                                                        ;; household chores
+                                                        ;; movie/youtube
+                                                        ;; research/googling
+                                                        ;; emacs tuning
+                                                        ;; system tuning/scripting
+                                                        ;; learning
+                                                        ;; sysadmin chores
+                                                        ;; organizing
 
-                                      (" " "Agenda"
-                                       (
-                                        (agenda "" nil)
-                                        (tags "+lord-lislon+TIMESTAMP_IA>=\"<-7d>\""
-                                              ((org-agenda-overriding-header "Lord/Lislon news (7 days)")
-                                               (org-agenda-prefix-format "     ")
-                                               (org-agenda-sorting-strategy '(timestamp-down))
-                                               (org-agenda-files '("~/Dropbox/lord-lislon/lord-lislon.org")))
-                                              )
-                                        )
-                                       nil)))
+                                                        (" " "Agenda"
+                                                         (
+                                                          (agenda "" nil)
+                                                          (tags "+lord-lislon+TIMESTAMP_IA>=\"<-7d>\""
+                                                                ((org-agenda-overriding-header "Lord/Lislon news (7 days)")
+                                                                 (org-agenda-prefix-format "     ")
+                                                                 (org-agenda-sorting-strategy '(timestamp-down))
+                                                                 (org-agenda-files '("~/Dropbox/lord-lislon/lord-lislon.org")))
+                                                                )
+                                                          )
+                                                         nil)))
 
 
    org-tag-alist '(;; ("@trans" . ?t)

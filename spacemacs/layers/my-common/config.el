@@ -22,3 +22,5 @@
 
 (defvar projectile-sticky-project nil "Projectile last sticky project")
 
+(setq magit-repository-directories
+      '("~/src"))

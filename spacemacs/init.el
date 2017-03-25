@@ -714,7 +714,6 @@ layers configuration."
 
 
   (evil-leader/set-key
-    "aR" 'my/rest-client
     "fd" 'my/ediff-buffer-with-file
     "oJ" 'my/java-text
     ;; "os" 'yas-visit-snippet-file

@@ -34,12 +34,14 @@
     restclient
     palette
     vimrc-mode
-    undohist
+    ;; undohist -- removed, because not working well with gpg files
     yasnippet
     all-the-icons
     all-the-icons-dired
     sql
     projectile
+    elisp-format
+    magit
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -69,7 +71,8 @@ Each entry is either:
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
 (defun my-common/post-init-nxml ()
-  (add-hook 'nxml-mode-hook 'turn-on-evil-matchit-mode))
+  (with-eval-after-load 'nxml
+    (add-hook 'nxml-mode-hook 'turn-on-evil-matchit-mode)))
 
 (defun my-common/post-init-sql ()
 
@@ -78,6 +81,7 @@ Each entry is either:
     )
   ;; (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
   (use-package sql
+    :defer t
     :config
     (setq sql-input-ring-file-name (expand-file-name "~/.emacs.d/.cache/sql-ring.sql"))
     (add-hook 'comint-preoutput-filter-functions 'my/sql-filter-result))
@@ -89,17 +93,23 @@ Each entry is either:
 
 
 (defun my-common/init-restclient ()
-  (use-package restclient))
+  (evil-leader/set-key "ar" 'my/rest-client)
+  (use-package restclient
+    :defer t))
 
 (defun my-common/init-pallete ()
-  (use-package pallete))
+  (use-package pallete
+    :defer t
+    ))
 
 (defun my-common/init-vimrc-mode ()
-  (use-package vimrc-mode))
+  (use-package vimrc-mode
+    :defer t))
 
 
 (defun my-common/init-all-the-icons-dired ()
   (use-package all-the-icons-dired
+    :defer t
     :config
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)))
 
@@ -116,9 +126,9 @@ Each entry is either:
   (use-package yasnippet
     :config
     (setq yas-snippet-dirs
-    (cons
-     (expand-file-name "~/.spacemacs.d/snippets")
-     (cdr yas-snippet-dirs)))))
+          (cons
+           (expand-file-name "~/.spacemacs.d/snippets")
+           (cdr yas-snippet-dirs)))))
 
 (defun my-common/post-init-dired ()
   (use-package dired
@@ -146,7 +156,8 @@ Each entry is either:
 ;;   )
 
 (defun my-common/init-palette ()
-  (use-package palette))
+  (use-package palette
+    :defer t))
 
 (defun my-common/post-init-helm ()
   (eval-after-load "helm-files"
@@ -168,5 +179,31 @@ Each entry is either:
     "ps" 'my/projectile-magit-status          ; connect to database
     )
   )
+
+(defun my-common/init-elisp-format ()
+  (use-package elisp-format
+    :defer t)
+  )
+
+(defun my-common/post-init-magit ()
+  (with-eval-after-load 'magit
+
+    ;; same code but complex...
+    ;; (cl-loop for map-name in '(magit-diff-mode-map magit-status-mode-map)
+    ;;          do (cl-loop for x from 1 to 4 do
+    ;;                      (define-key (symbol-value map-name)
+    ;;                        (kbd (format "M-%d" x))
+    ;;                        (make-symbol (format "winum-select-window-%d" x)))))
+
+      (define-key magit-diff-mode-map (kbd "M-1") 'winum-select-window-1)
+      (define-key magit-diff-mode-map (kbd "M-2") 'winum-select-window-2)
+      (define-key magit-diff-mode-map (kbd "M-3") 'winum-select-window-3)
+      (define-key magit-diff-mode-map (kbd "M-4") 'winum-select-window-4)
+
+      (define-key magit-status-mode-map (kbd "M-1") 'winum-select-window-1)
+      (define-key magit-status-mode-map (kbd "M-2") 'winum-select-window-2)
+      (define-key magit-status-mode-map (kbd "M-3") 'winum-select-window-3)
+      (define-key magit-status-mode-map (kbd "M-4") 'winum-select-window-4)
+  ))
 
 ;; Do not overwrite history on buffer close
