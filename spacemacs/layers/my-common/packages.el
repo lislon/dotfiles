@@ -86,6 +86,7 @@ Each entry is either:
     (setq sql-input-ring-file-name (expand-file-name "~/.emacs.d/.cache/sql-ring.sql"))
     (add-hook 'comint-preoutput-filter-functions 'my/sql-filter-result))
 
+  (add-hook 'sql-interactive-mode-hook 'spacemacs/toggle-truncate-lines-on)
   ;; (require 'fakecygpty)
   ;; (fakecygpty-activate)
   )
@@ -115,12 +116,6 @@ Each entry is either:
 
 (defun my-common/init-all-the-icons ()
   (use-package all-the-icons))
-
-;;; packages.el ends here
-(defun my-common/post-init-sql ()
-  ;; no wrap lines
-  (add-hook 'sql-interactive-mode-hook 'spacemacs/toggle-truncate-lines-on)
-  )
 
 (defun my-common/post-init-yasnippet ()
   (use-package yasnippet
