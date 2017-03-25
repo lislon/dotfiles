@@ -278,3 +278,26 @@ as the default task."
 
 (global-set-key (kbd "<f9>") 'bh/punch-in)
 (global-set-key (kbd "<f10>") 'bh/punch-out)
+
+
+(defun bh/find-project-task ()
+  "Move point to the parent (project) task if any"
+  (save-restriction
+    (widen)
+    (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+      (while (org-up-heading-safe)
+        (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+          (setq parent-task (point))))
+      (goto-char parent-task)
+      parent-task)))
+
+
+(defun my/capture-to-current-project ()
+  "Insert a capture to the root of currently clocking project"
+  (if (and (markerp org-clock-hd-marker)
+           (marker-buffer org-clock-hd-marker))
+	    (progn (set-buffer (marker-buffer org-clock-hd-marker))
+             (org-capture-put-target-region-and-position)
+             (widen)
+             (bh/find-project-task))
+	  (error "No running clock that could be used as capture target")))

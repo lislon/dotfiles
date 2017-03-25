@@ -79,6 +79,8 @@
    ;; ------------------------------------------------------------------------------
    org-capture-templates (my/capture '(("f" "shared todo" entry (file "~/Dropbox/shared-org/dynamic/todo.org")
                                         "* TODO %^{TODO}\n%U\n%?")
+                                       ("x" "test" entry (function my/capture-to-current-project)
+                                        "* TODO %^{TODO}\n%U\n%?")
                                        ("p" "Programming")
 
                                        ("pj" "java" entry (file+headline "~/Dropbox/shared-org/static/java.org" "Java")
