@@ -46,7 +46,7 @@
   (define-key w3m-minor-mode-map "F" 'my/w3m-open-link-or-image-browser))
 
 ;; Using chrome as default browser
-(if (eq system-type 'gnu/linux)
+(when (eq system-type 'gnu/linux)
     ;; On minijack opera is default browser
     (with-eval-after-load 'browse-url
       (message "%s default browser changed to chrome. again" (current-time-string))
