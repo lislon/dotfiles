@@ -42,6 +42,7 @@
     projectile
     elisp-format
     magit
+    time
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -69,6 +70,11 @@ Each entry is either:
 
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
+
+(defun my-common/init-time ()
+  (use-package time
+    :commands (display-time-world-display)
+    ))
 
 (defun my-common/post-init-nxml ()
   (with-eval-after-load 'nxml
@@ -122,7 +128,7 @@ Each entry is either:
     :config
     (setq yas-snippet-dirs
           (cons
-           (expand-file-name "~/.spacemacs.d/snippets")
+           (expand-file-name "~/.spacemacs.d/snippets/")
            (cdr yas-snippet-dirs)))))
 
 (defun my-common/post-init-dired ()

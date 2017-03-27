@@ -243,12 +243,12 @@ SCHEDULED %^T
    org-pomodoro-length 20
    org-pomodoro-short-break-length 5
 
- ;;;------------------------------------------------------------------------------
- ;;; babel
- ;;; ------------------------------------------------------------------------------
+  ;;;------------------------------------------------------------------------------
+  ;;; babel - reavaluate code below config to apply changes
+  ;;; ------------------------------------------------------------------------------
    org-confirm-babel-evaluate nil
    my-org-babel-load-languages '(
-                            (sh . t)
+                            (shell . t)
                             (lisp . t)
                             (emacs-lisp . t)
                             (java . t)
@@ -416,10 +416,6 @@ SCHEDULED %^T
   )
 
 (defun my-org/init-noflet ())
-(defun my-org/init-calfw ())
-(defun my-org/post-init-calfw ()
-  (setq cfw:display-calendar-holidays nil)
-  (add-hook 'cfw:calendar-mode 'evil-insert))
 
 
 (defun my-org/post-init-artist ()
