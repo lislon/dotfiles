@@ -469,6 +469,7 @@ layers configuration."
                                      "\\*Dir\\*"
                                      "\\*info\\*"
                                      "\\*sos\\*"
+                                     "\\*-debug\\*"
                                      "\\*REST\\*"
                                      "\\*new snippet\\*"
                                      "\\*Help\\*")
@@ -753,6 +754,10 @@ layers configuration."
   (add-hook 'lisp-mode-hook ((lambda () (setq-local evil-move-beyond-eol t))))
   (add-hook 'auto-save-hook 'auto-save-all-files)
   (add-hook 'shell-mode-hook 'my-shell-mode-hook)
+
+
+  (add-to-list 'auto-mode-alist
+               '("\\.gpg\\'" . (lambda () (undo-tree-mode -1))))
   )
 
 
