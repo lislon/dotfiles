@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : foreach
+#key : foreach
+#contributor :
+# --
+for (let ${1:el} in ${2:array}) {
+    $0
+}

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : defun for package.el layer
+#key : defp
+#contributor : Igor Avdeev
+# --
+
+(defun `(file-name-base (substring (file-name-directory (buffer-file-name)) 0 -1))`/${1:$$(yas-choose-value '("post-init-" "init-" "pre-init-"))}$2 ()
+  $0
+)
