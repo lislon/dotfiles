@@ -286,6 +286,8 @@ SCHEDULED %^T
   (autoload 'org-clock-jump-to-current-clock "org-clock")
   (global-set-key (kbd "C-c j") 'org-clock-jump-to-current-clock)
 
+  ;; (evil-leader/set-key "ga" 'org-agenda)
+
 
 
   ;; Insert mode in capture mode

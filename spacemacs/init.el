@@ -82,11 +82,11 @@ values."
     (add-to-list 'dotspacemacs-configuration-layers 'my-windows t))
 
   (when (file-exists-p "~/.spacemacs.d.local/layers/my-work")
-    (add-to-list 'dotspacemacs-configuration-layers 'my-work t))
+    (add-to-list 'dotspacemacs-configuration-layers 'my-work))
 
   (when (file-exists-p "~/Dropbox/confiles/common/emacs/layers")
     (add-to-list 'dotspacemacs-configuration-layer-path "~/Dropbox/confiles/common/emacs/layers" t)
-    (add-to-list 'dotspacemacs-configuration-layers 'my-org-home t))
+    (add-to-list 'dotspacemacs-configuration-layers 'my-org-home))
 )
 
 
