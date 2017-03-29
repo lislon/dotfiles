@@ -35,14 +35,13 @@
     palette
     vimrc-mode
     ;; undohist -- removed, because not working well with gpg files
-    yasnippet
     all-the-icons
     all-the-icons-dired
     sql
     projectile
     elisp-format
     magit
-    time
+    helm
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -71,9 +70,10 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
-(defun my-common/init-time ()
-  (use-package time
-    :commands (display-time-world-display)
+(defun my-common/post-init-helm ()
+  (when (configuration-layer/package-usedp 'helm)
+    ;; fix Symbol’s value as variable is void: display-time-world-list
+    (advice-add #'helm-world-time :before (lambda () (require 'time)))
     ))
 
 (defun my-common/post-init-nxml ()
@@ -123,14 +123,6 @@ Each entry is either:
 (defun my-common/init-all-the-icons ()
   (use-package all-the-icons))
 
-(defun my-common/post-init-yasnippet ()
-  (use-package yasnippet
-    :config
-    (setq yas-snippet-dirs
-          (cons
-           (expand-file-name "~/.spacemacs.d/snippets/")
-           (cdr yas-snippet-dirs)))))
-
 (defun my-common/post-init-dired ()
   (use-package dired
     :bind (:map dired-mode-map
@@ -148,7 +140,8 @@ Each entry is either:
   (helm-adaptive-mode)
   (evil-leader/set-key "hl" 'helm-locate-library))
 
-(defun my-common/post-init-quickrun ()
+(defun my-common/init-quickrun ()
+  (use-package quickrun)
     (advice-add 'quickrun :before (lambda (&rest PLIST) (save-buffer))))
 
 ;; (defun my-common/init-undohist ()

@@ -323,7 +323,7 @@ values."
    ;; maybe this helps from hangs.not testsed https://github.com/syl20bnr/spacemacs/issues/8462
    dotspacemacs-mode-line-unicode-symbols nil
    ediff-window-setup-function 'ediff-setup-windows-default
-   configuration-layer-private-directory "~/.spacemacs.d"
+   configuration-layer-private-directory "~/.spacemacs.d/"
    )
   (setq custom-file (expand-file-name "~/.emacs.d/.cache/custom.el")
         spacemacs-custom-file "~/.emacs.d/.cache/custom-spacemacs.el")

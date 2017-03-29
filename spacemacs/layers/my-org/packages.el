@@ -402,7 +402,32 @@ SCHEDULED %^T
     "Clear the appt-time-msg-list."
     (setq appt-time-msg-list nil))
 
+  (defhydra my-org-refile-hydra (:color blue :hint nil)
+    "
+^Computers^             ^Show^           ^Move
+^^^^^^------------------------------------------------------
+_ce_: Emacs         _ce_: all         _ce_: up
+_ce_: body          _ce_: entry       _ce_: next visible
+_ce_: other         _ce_: children    _ce_: previous visible
 
+"    ("ce" (lambda () (my/refile "~/Dropbox/shared-org/static/computers.org" "Emacs")))
+    ("G" gnus-group-make-nnir-group "Search server G G")
+    ("g" gnus-group-get-new-news "Refresh g")
+    ("s" gnus-group-enter-server-mode "Servers")
+    ("m" gnus-group-new-mail "Compose m OR C-x m")
+    ("#" gnus-topic-mark-topic "mark #")
+    ("q" nil "cancel"))
+
+
+  (spacemacs/set-leader-keys-for-major-mode 'org-mode
+    "r" 'my-org-refile-hydra/body)
+
+  (defun my/refile (file headline)
+    "Refile current entry to file+ headline"
+    (let ((pos (save-excursion
+                 (find-file file)
+                 (org-find-exact-headline-in-buffer headline))))
+      (org-refile nil nil (list headline file nil pos))))
 
 
   ;; (my/redefine-evilified-key org-agenda-keymap (kbd "v") nil) ;; not works for some reason :(
