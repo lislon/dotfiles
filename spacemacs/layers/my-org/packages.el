@@ -296,6 +296,9 @@ SCHEDULED %^T
   (add-hook 'org-insert-heading-hook 'evil-insert-state)
   ;; (add-hook 'org-insert- 'evil-insert-state)
 
+  ;; auto clock to parent task
+  (add-hook 'org-clock-out-hook 'bh/clock-out-maybe 'append)
+
   ;; Auto fill for org and all text-mode hooks
   (add-hook 'text-mode-hook 'auto-fill-mode)
   (add-hook 'org-timer-done-hook 'my/org-timer-done)

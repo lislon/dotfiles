@@ -275,6 +275,8 @@ as the default task."
           (org-clock-in '(16))
         (bh/clock-in-organization-task-as-default)))))
 
+(defvar bh/keep-clock-running nil "docstring")
+
 (defun bh/punch-out ()
   (interactive)
   (setq bh/keep-clock-running nil)
@@ -297,6 +299,26 @@ as the default task."
       (goto-char parent-task)
       parent-task)))
 
+(defun bh/clock-in-parent-task ()
+  "Move point to the parent (project) task if any and clock in"
+  (let ((parent-task))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (while (and (not parent-task) (org-up-heading-safe))
+          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+            (setq parent-task (point))))
+        (if parent-task
+            (org-with-point-at parent-task
+              (org-clock-in))
+          (when bh/keep-clock-running
+            (bh/clock-in-default-task)))))))
+
+
+(defun bh/clock-out-maybe ()
+  (when (and (not org-clock-clocking-in)
+             (not org-clock-resolving-clocks-due-to-idleness))
+    (bh/clock-in-parent-task)))
 
 (defun my/capture-to-current-project ()
   "Insert a capture to the root of currently clocking project"
