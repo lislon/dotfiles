@@ -204,23 +204,15 @@ SCHEDULED %^T
                                                          nil)))
 
 
-   org-tag-alist '(;; ("@trans" . ?t)
-                   ;; ("@home" . ?h)
-                   ("arch" . ?a)
-                   ("emacs" . ?e)
-                   ("linux" . ?l)
-                   ("learning" . ?L)
-                   ("googling" . ?g)
-                   ("movie" . ?m)
-                   ("book" . ?b)
-                   ("lislon" . ?i)
-                   ("reading" . ?r)
-                   ("household" . ?h)
+   org-tag-alist (my/override-unique-cars
+                  org-tag-alist
+                  '(
+                    ("emacs" . ?e)
                    ;; (:startgroup . nil)
                    ;; ("torwald". nil)
                    ;; ("tatu". nil)
                    ;; (:endgroup . nil)
-                   )
+                   ))
    ;; ------------------------------------------------------------------------------
    ;; appt reminders
    ;; ------------------------------------------------------------------------------
@@ -398,7 +390,6 @@ SCHEDULED %^T
   (defun djcb-appt-display (min-to-app new-time msg)
     (djcb-popup (format "Appointment in %s minute(s)" min-to-app) msg
                 "~/confiles/linux/icons/apppointment-grey-32x32.png"
-
                 "~/confiles/linux/sounds/choir-a.wav"))
   (setq appt-disp-window-function 'djcb-appt-display)
   (defadvice org-agenda-to-appt (before wickedcool activate)
