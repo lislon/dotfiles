@@ -93,6 +93,9 @@ Each entry is either:
     (add-hook 'comint-preoutput-filter-functions 'my/sql-filter-result))
 
   (add-hook 'sql-interactive-mode-hook 'spacemacs/toggle-truncate-lines-on)
+
+  (advice-add #'sql-execute-feature :after 'my/sql-list-tables-advice)
+
   ;; (require 'fakecygpty)
   ;; (fakecygpty-activate)
   )

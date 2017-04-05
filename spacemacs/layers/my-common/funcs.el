@@ -35,6 +35,16 @@
     ;; otherwise history lost when emacs crahsed or i delete buffer by hand
     ))
 
+(defun my/sql-list-tables-advice (sqlbuf name &rest rest)
+  "Untabify buffer, which is is used to show table details"
+  (message "my/sql-list-tables-advice")
+  (message sqlbuf)
+  (message name)
+  (when (string-match "\*List " name)
+    (with-current-buffer
+      (setq-local tab-width 8)
+      (untabify (point-min) (point-max))
+      )))
 (defun my/sql-connect-preset (name)
   "Connect to a predefined SQL connection listed in `sql-connection-alist'"
   (interactive
