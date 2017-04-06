@@ -346,3 +346,17 @@ Used to override org-captures values"
                     (push (car item) already-added)
                     nil))
                 merged-templates)))
+
+(defun my-advice-org-atpoint-jira (func &rest args)
+  "Open a JIRA property link when C-c C-o on TODO project entry"
+  (if (and (org-at-heading-p) (org-entry-get (point) "JIRA"))
+      (browse-url (org-entry-get (point) "JIRA"))
+    (apply func args)))
+
+
+(defun my/org-open-jira-link ()
+  "Open a JIRA property link when C-c C-o on TODO project entry"
+  (when (and (org-at-heading-p) (org-entry-get (point) "JIRA"))
+    (browse-url (org-entry-get (point) "JIRA"))
+    t
+    ))

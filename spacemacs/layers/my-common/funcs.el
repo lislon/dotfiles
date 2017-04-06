@@ -76,3 +76,4 @@
   "Opens magit status for currenly selected projectile directory"
   (interactive)
   (magit-status projectile-sticky-project))
+

@@ -441,7 +441,7 @@ _ce_: other         _ce_: children    _ce_: previous visible
   ;;   (define-key evil-evilified-state-map (kbd "v") nil))
 
   ;; (add-hook 'org-mode-hook 'org-mode-hook-fix-agenda-keys)
-
+  (add-hook 'org-open-at-point-functions 'my/org-open-jira-link)
 
   )
 
