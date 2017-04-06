@@ -1,6 +1,7 @@
 (setq my-org-packages '(noflet
                         calfw
                         org
+                        (helm-yandex-geoapi :location local)
                         artist))
 
 (defun my-org/post-init-org ()
@@ -11,7 +12,7 @@
    org-directory "~/org"
 
    org-agenda-files '("~/org/dynamic/"
-                      "~/org/dynamic/projects/")
+                      "~/Dropbox/shared-org/")
 
    diary-file "~/org/diary.txt"
    calendar-date-style 'iso
@@ -59,6 +60,7 @@
                               ("~/org/dynamic/todo-someday.org" :level . 1)
                               ("~/org/dynamic/notes.org" :level . 0)
                               ("~/org/static/diary.org" :maxlevel . 1)
+                              ("~/Dropbox/shared-org/dynamic/shared-todo.org" :maxlevel . 1)
                               ("~/Dropbox/shared-org/static/computers.org" :maxlevel . 2)
                               ("~/Dropbox/shared-org/static/programming.org" :maxlevel . 1)
                               ("~/Dropbox/shared-org/static/java.org" :maxlevel . 1)))
@@ -88,12 +90,8 @@
                             ("pj" "java" entry (file+headline "~/Dropbox/shared-org/static/java.org" "Java")
                              "* %^{Java topic}\n%U\n%?")
 
-                            ("pp" "common" entry (file+headline "~/Dropbox/shared-org/static/programming.org" "Java")
-                             "* %^{Topic}\n%U\n%?")
-                            ("pe" "emacs" entry (file+headline "~/Dropbox/shared-org/static/computers.org" "Emacs")
-                             "* %^{Topic}\n%U\n%?")
-                            ("pc" "computers" entry (file+headline "~/Dropbox/shared-org/static/computers.org" "Unsorted")
-                             "* %^{Topic}\n%U\n%?")
+                            ("n" "note" entry (file "~/Dropbox/shared-org/dynamic/refile.org")
+                             "* %^{Note}\n%U\n%?")
                             ("a" "appointment" entry (file+headline "~/Dropbox/shared-org/dynamic/tasks.org" "Appointments")
                              "* APPOINTMENT with %?
 :PROPERTIES:
@@ -272,6 +270,7 @@ SCHEDULED %^T
   (global-set-key (kbd "C-c C-x C-o") 'org-clock-out)
   (global-set-key (kbd "C-c C-x C-x") 'org-clock-in-last)
   (global-set-key (kbd "C-c C-o") 'org-open-at-point)
+  (global-set-key (kbd "C-c t") 'my/org-timer-set-timer)
   (global-set-key (kbd "<f12>") (defun my/org-clockin-recent-tasks() (interactive)
                                        (org-clock-in '(4))))
 
@@ -279,7 +278,6 @@ SCHEDULED %^T
   (global-set-key (kbd "C-c j") 'org-clock-jump-to-current-clock)
 
   ;; (evil-leader/set-key "ga" 'org-agenda)
-
 
 
   ;; Insert mode in capture mode
@@ -296,15 +294,16 @@ SCHEDULED %^T
   (add-hook 'org-timer-done-hook 'my/org-timer-done)
 
   (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
-  (my/set-key-file-link "oj" "~/Dropbox/shared-org/static/java.org")
-  (my/set-key-file-link "oc" "~/Dropbox/shared-org/static/computers.org")
+  (my/set-key-file-link "ob" "~/Dropbox/shared-org/static/books.org")
+  (my/set-key-file-link "oj" "~/Dropbox/shared-org/static/programming/java.org")
+  (my/set-key-file-link "oc" "~/Dropbox/shared-org/static/programming/computers.org")
+  (my/set-key-file-link "oC" "~/.spacemacs.d/layers/my-org/packages.el")
 
 
   ;; Encryption (ACP NullPointerException on android)
 
   ;; void-function bind-map error:
   ;;(evil-leader/set-key-for-mode 'org-mode "of" 'helm-org-in-buffer-headings)
-
 
 
   (evil-leader/set-key "bo" (defun my/make-org-buffer() (interactive)
@@ -398,15 +397,18 @@ SCHEDULED %^T
 
   (defhydra my-org-refile-hydra (:color blue :hint nil)
     "
-^Computers^             ^Show^           ^Move
+^Computers^             ^Lists^           ^Move
 ^^^^^^------------------------------------------------------
-_ce_: Emacs         _ce_: all         _ce_: up
-_ce_: body          _ce_: entry       _ce_: next visible
-_ce_: other         _ce_: children    _ce_: previous visible
+_ce_: Emacs          _lB_: book         _ce_: up
+_cj_: Java           _lb_: buy       _ce_: next visible
+_cg_: Git            _ce_: -    _ce_: previous visible
 
-"    ("ce" (lambda () (my/refile "~/Dropbox/shared-org/static/computers.org" "Emacs")))
-    ("G" gnus-group-make-nnir-group "Search server G G")
-    ("g" gnus-group-get-new-news "Refresh g")
+"
+    ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/computers.org")) "Emacs")
+    ("cj" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/java.org")) "Java")
+    ("cg" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming.org" "Git")) "Git")
+    ("lB" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/books.org" "Books")) "Books")
+    ("lb" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/buy.org")) "Buy")
     ("s" gnus-group-enter-server-mode "Servers")
     ("m" gnus-group-new-mail "Compose m OR C-x m")
     ("#" gnus-topic-mark-topic "mark #")
@@ -449,3 +451,7 @@ _ce_: other         _ce_: children    _ce_: previous visible
               (local-set-key (kbd "<f5>") 'artist-select-op-ellipse)  ; f5 = ellipse
               (local-set-key (kbd "C-z") 'undo))
   ))
+
+(defun my-org/init-helm-yandex-geoapi ()
+  (use-package helm-yandex-geoapi)
+  )
