@@ -544,7 +544,6 @@ layers configuration."
 
   ;; auto-save all files on lost focus
   (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
-  (global-set-key (kbd "C-c t") 'org-timer-set-timer)
   (global-unset-key (kbd "C-h h")) ;; Disable hello file, because it hangs
 
   ;; autoscroll messages
@@ -708,7 +707,6 @@ layers configuration."
   (global-set-key (kbd "M-%") 'anzu-query-replace)
   (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
   (global-set-key (kbd "<f8>") 'quickrun)
-  (global-set-key (kbd "C-c t") 'my/org-timer-set-timer)
 
   ;; Make C-j work with evil in *scratch*
   (evil-define-key 'normal lisp-interaction-mode-map (kbd "C-j") 'my/eval-print-sexp-line)
