@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : defmacro
+#key : defmacro
+#contributor :
+# --
+(defmacro $1 ($2)
+  $0
+  )

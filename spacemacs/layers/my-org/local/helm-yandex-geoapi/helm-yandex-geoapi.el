@@ -10,16 +10,20 @@
 (defvar helm-yandex-geoapi-pending-query nil)
 
 (defcustom helm-yandex-geoapi-actions
-  '(("Browse yandex maps" . helm-yandex-geoapi-action-browser-url)
-    ("message" . (lambda (c)  (message c))) )
+  '(("Org insert latlng" . helm-yandex-geoapi-insert-point-property)
+    ("browse yandex maps" . helm-yandex-geoapi-action-browser-url) )
   "List of actions for helm-yandex-geoapi sources."
   :group 'helm-yandex-geoapi
   :type '(alist :key-type string :value-type function))
 
 (defun helm-yandex-geoapi-action-browser-url (candidate)
   (interactive "P")
-  (let* ((latlng (string-join (reverse (split-string candidate " ")) " ")))
-         (browse-url (format "https://yandex.ru/maps/2/saint-petersburg/?mode=search&text=%s" latlng))))
+  (browse-url (format "https://yandex.ru/maps/2/saint-petersburg/?mode=search&text=%s" candidate)))
+
+(defun helm-yandex-geoapi-insert-point-property (candidate)
+  "Inserts point to org-property drawler"
+  (org-entry-add-to-multivalued-property (point) "LATLNG"
+                                         (replace-regexp-in-string " " "," candidate)))
 
 (setq helm-source-yandex-geoapi-data-source
   `((name . "Yandex maps")
@@ -67,13 +71,13 @@
   (let* ((results (helm-yandex-geoapi--search helm-pattern)))
     (mapcar (lambda (result)
               ;; (plist-get result :title)
-              (let ((geo-point (plist-get result :point)))
+              (let* ((geo-point (plist-get result :point))
+                    (geo-point-lat-lng (string-join (reverse (split-string geo-point " ")) " ")))
                 (concat
                  (propertize
                   (plist-get result :title)
-                  'face 'font-lock-variable-name-face
-                  'geo-point geo-point)
-                 (propertize (format " (%s)" geo-point)
+                  'face 'font-lock-variable-name-face)
+                 (propertize (format " (%s)" geo-point-lat-lng)
                              'face 'font-lock-comment-face)
                  ))
               )
