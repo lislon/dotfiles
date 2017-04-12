@@ -77,3 +77,17 @@
   (interactive)
   (magit-status projectile-sticky-project))
 
+(defun my/local-key-interactive (key func)
+  "Sets the key binding for current buffer only"
+  (interactive "KSet key on this buffer: \naCommand: ")
+  (let ((name (format "%s-magic" (buffer-name))))
+    (eval
+     `(define-minor-mode ,(intern name)
+        "Automagically built minor mode to define buffer-local keys."))
+    (let* ((mapname (format "%s-map" name))
+           (map (intern mapname)))
+      (unless (boundp (intern mapname))
+        (set map (make-sparse-keymap)))
+      (eval
+       `(define-key ,map ,key func)))
+    (funcall (intern name) t)))
