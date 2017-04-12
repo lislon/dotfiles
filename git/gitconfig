@@ -18,8 +18,7 @@
 	name = Igor Avdeev
 [core]
 	autocrlf = false
-	excludesfiles = ~/dotfiles/git/gitignore_global
-	excludesfile = /home/ele/.gitignore_global
+  excludesfile = ~/.gitignore_global
 [color]
 	diff = auto
 	status = auto
