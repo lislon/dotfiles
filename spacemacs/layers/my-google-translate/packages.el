@@ -30,7 +30,7 @@
 ;;; Code:
 
 (defconst my-google-translate-packages
-  '()
+  '(google-translate)
   "The list of Lisp packages required by the my-google-translate layer.
 
 Each entry is either:
@@ -59,6 +59,20 @@ Each entry is either:
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
 
+(defun my-google-translate/post-init-google-translate ()
+  (setq
+   ;; Google translate
+   google-translate-default-source-language "en"
+   google-translate-default-target-language "ru"
+   google-translate-input-method-auto-toggling t
+   google-translate-preferable-input-methods-alist
+   '((nil . ("en"))
+     ("cyrillic-jcuken" . ("ru")))
+   google-translate-translation-directions-alist
+   '(("en" . "ru") ("ru" . "en") )
+   google-translate-pop-up-buffer-set-focus t
+   my/english-dictionary-file "~/Dropbox/org/static/dictionary.txt")
+  )
 (defvar my/english-dictionary-file nil "Google translate dictionary file")
 
 ;;; packages.el ends here
