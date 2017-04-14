@@ -81,18 +81,11 @@
    ;; ------------------------------------------------------------------------------
    org-capture-templates (my/override-unique-cars
                           org-capture-templates
-                          '(("f" "shared todo" entry (file "~/Dropbox/shared-org/dynamic/todo.org")
-                             "* TODO %^{TODO}\n%U\n%?")
-                            ("x" "test" entry (function my/capture-to-current-project)
-                             "* TODO %^{TODO}\n%U\n%?")
-                            ("p" "Programming")
-
-                            ("pj" "java" entry (file+headline "~/Dropbox/shared-org/static/java.org" "Java")
-                             "* %^{Java topic}\n%U\n%?")
-
-                            ("n" "note" entry (file "~/Dropbox/shared-org/dynamic/refile.org")
-                             "* %^{Note}\n%U\n%?")
-                            ("a" "appointment" entry (file+headline "~/Dropbox/shared-org/dynamic/tasks.org" "Appointments")
+                          '(("T" "public todo" entry (file "~/Dropbox/shared-org/dynamic/todo.org")
+                             "* TODO %^{Public TODO}\n%U\n%?")
+                            ("N" "public note" entry (file "~/Dropbox/shared-org/dynamic/refile.org")
+                             "* %^{Public note}\n%U\n%?")
+                            ("A" "Public appointment" entry (file+headline "~/Dropbox/shared-org/dynamic/tasks.org" "Appointments")
                              "* APPOINTMENT with %?
 :PROPERTIES:
 :APPT_WARNTIME: 90
@@ -295,8 +288,12 @@ SCHEDULED %^T
 
   (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
   (my/set-key-file-link "ob" "~/Dropbox/shared-org/static/books.org")
-  (my/set-key-file-link "oj" "~/Dropbox/shared-org/static/programming/java.org")
-  (my/set-key-file-link "oc" "~/Dropbox/shared-org/static/programming/computers.org")
+  (my/set-key-file-link "oT" "~/Dropbox/shared-org/dynamic/tasks.org")
+  (my/set-key-file-link "on" "~/Dropbox/shared-org/dynamic/refile.org")
+  (my/set-key-file-link "oN" "~/Dropbox/shared-org/dynamic/refile.org")
+  (my/set-key-file-link "opj" "~/Dropbox/shared-org/static/programming/java.org")
+  (my/set-key-file-link "opc" "~/Dropbox/shared-org/static/programming/computers.org")
+  (my/set-key-file-link "or" "~/Dropbox/shared-org/dynamic/refile.org")
   (my/set-key-file-link "oC" "~/.spacemacs.d/layers/my-org/packages.el")
 
 
@@ -402,11 +399,13 @@ SCHEDULED %^T
 _ce_: Emacs          _lB_: book         _ce_: up
 _cj_: Java           _lb_: buy       _ce_: next visible
 _cg_: Git            _ce_: -    _ce_: previous visible
+_cn_: Nice Prog      _ce_: -    _ce_: previous visible
 
 "
-    ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/computers.org")) "Emacs")
-    ("cj" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/java.org")) "Java")
-    ("cg" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming.org" "Git")) "Git")
+    ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org")) "Emacs")
+    ("cj" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/java.org" "Java")) "Java")
+    ("cg" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/programming.org" "Git")) "Git")
+    ("cn" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Nice Programs")) "Nice Programs")
     ("lB" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/books.org" "Books")) "Books")
     ("lb" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/buy.org")) "Buy")
     ("s" gnus-group-enter-server-mode "Servers")
@@ -414,16 +413,32 @@ _cg_: Git            _ce_: -    _ce_: previous visible
     ("#" gnus-topic-mark-topic "mark #")
     ("q" nil "cancel"))
 
+  (defhydra my-org-navigator-hydra (:color blue :hint nil)
+    "
+^Common^             ^Lists^           ^Move
+^^^^^^------------------------------------------------------
+_eq_: English quotes _ee_: book         _ee_: up
+_ee_: Java           _ee_: buy       _ee_: next visible
+_ee_: Git            _ee_: -    _ee_: previous visible
+_ee_: Nice Prog      _ee_: -    _ee_: previous visible
 
-  (spacemacs/set-leader-keys-for-major-mode 'org-mode
-    "r" 'my-org-refile-hydra/body)
+"
+    ("eq" (lambda () (interactive) (my/jump-to-file-and-header "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
+    ("ee" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/java.org" "Java")) "Java")
+    ("q" nil "cancel"))
 
-  (defun my/refile (file headline)
-    "Refile current entry to file+ headline"
-    (let ((pos (save-excursion
-                 (find-file file)
-                 (org-find-exact-headline-in-buffer headline))))
-      (org-refile nil nil (list headline file nil pos))))
+
+  (spacemacs/set-leader-keys
+    "oo" 'my-org-navigator-hydra/body)
+
+  (spacemacs/set-leader-keys-for-major-mode 'org-mode "r" 'my-org-refile-hydra/body)
+
+
+  (advice-add 'switch-to-buffer :before (lambda (&rest misc)
+                                          (let* ((buffer-save-without-query t))
+                                            (and (buffer-file-name)
+                                                 (string-match "org\\'" (buffer-file-name))
+                                                 (save-buffer)))))
 
 
   ;; (my/redefine-evilified-key org-agenda-keymap (kbd "v") nil) ;; not works for some reason :(

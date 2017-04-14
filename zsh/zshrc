@@ -404,12 +404,6 @@ init-complex-aliases() {
         fi
     }
 
-    # Downlaods a video from youtube to android
-    andr-vid() {
-        mkcd ~/Android/Videos/${2:-/}
-        youtube-dl "$1" -f 'bestvideo[width<=1280]+bestaudio/best[width<=1280]'  --write-sub  --write-description
-        ding "video downloaded"
-    }
 
     fzf-locate() { locate "*" | fzf -e }
     fzf-playonlinux() { playonlinux --run '$(ls ~/.PlayOnLinux/shortcuts | fzf -e)' ;}

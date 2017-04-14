@@ -42,6 +42,7 @@
     elisp-format
     magit
     helm
+    hydra
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -202,5 +203,22 @@ Each entry is either:
       (define-key magit-status-mode-map (kbd "M-3") 'winum-select-window-3)
       (define-key magit-status-mode-map (kbd "M-4") 'winum-select-window-4)
   ))
+
+
+
+(defun my-common/post-init-hydra ()
+  (defhydra my-config-nav-hydra (:color blue :hint nil)
+    "
+               ^Layers^
+^^^^^^------------------------------------
+_c_: Common       _o_: Org       _w_: Work
+
+"
+    ("w" (lambda () (interactive) (find-file "~/.spacemacs.d.local/layers/my-work/packages.el")))
+    ("o" (lambda () (interactive) (find-file "~/.spacemacs.d/layers/my-org/packages.el")))
+    ("c" (lambda () (interactive) (find-file "~/.spacemacs.d/layers/my-common/packages.el")))
+    ("q" nil "cancel"))
+  (spacemacs/set-leader-keys "oc" 'my-config-nav-hydra/body)
+  )
 
 ;; Do not overwrite history on buffer close

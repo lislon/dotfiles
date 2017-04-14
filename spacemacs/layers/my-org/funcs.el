@@ -358,5 +358,23 @@ Used to override org-captures values"
   "Open a JIRA property link when C-c C-o on TODO project entry"
   (when (and (org-at-heading-p) (org-entry-get (point) "JIRA"))
     (browse-url (org-entry-get (point) "JIRA"))
-    t
-    ))
+    t))
+
+(defun my/org-jump-to-file-and-header (file headline)
+  "Opens a file `file' and jumps to headline `headline'"
+  (and (find-file file)
+       (org-find-exact-headline-in-buffer headline)))
+
+(defun my/refile (file headline)
+  "Refile current entry to file+headline"
+  (let* ((pos (save-excursion
+                (my/org-jump-to-file-and-header file headline))))
+    (if pos
+        (org-refile nil nil (list headline file nil pos))
+      (error (format "Headline '%s' not found in file %s" headline file)))))
+
+
+
+(defmacro my/hydra-refile(key file headline)
+    "Returns a list used by hydra to refile headline at cursor to `file' under `headline'"
+  `(list ,key (list 'lambda (list) (list 'interactive) (list 'my-refile ,file ,headline) ) ,headline))
