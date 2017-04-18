@@ -43,6 +43,7 @@
     magit
     helm
     hydra
+    sh-script
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -206,6 +207,7 @@ Each entry is either:
 
 
 
+
 (defun my-common/post-init-hydra ()
   (defhydra my-config-nav-hydra (:color blue :hint nil)
     "
@@ -220,5 +222,11 @@ _c_: Common       _o_: Org       _w_: Work
     ("q" nil "cancel"))
   (spacemacs/set-leader-keys "oc" 'my-config-nav-hydra/body)
   )
+
+
+(defun my-common/post-init-sh-script ()
+  (message "post init sh script")
+  (with-eval-after-load 'sh-script
+    (define-key sh-mode-map (kbd "C-c C-x") nil)))
 
 ;; Do not overwrite history on buffer close
