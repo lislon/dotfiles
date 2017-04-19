@@ -336,12 +336,12 @@ Used to override org-captures values"
 
 (defun my/refile (file headline)
   "Refile current entry to file+headline"
-  (let* ((pos (save-excursion
-                (my/org-jump-to-file-and-header file headline))))
-    (if pos
-        (org-refile nil nil (list headline file nil pos))
-      (error (format "Headline '%s' not found in file %s" headline file)))))
-
+  (save-excursion
+    (let* ((pos (save-excursion
+                  (my/org-jump-to-file-and-header file headline))))
+      (if pos
+          (org-refile nil nil (list headline file nil pos))
+        (error (format "Headline '%s' not found in file %s" headline file))))))
 
 
 (defmacro my/hydra-refile(key file headline)

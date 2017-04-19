@@ -2,8 +2,11 @@
 ;;;###autoload
 (defun org-yamaps/collect ()
   "Collects latlng from all entries in current buffer.
-YAICON properties avaliable
+
+Each entry can contain :YAICON: property to specify icon on map.
+THe list of properties is avaliable here:
 https://tech.yandex.ru/maps/doc/jsapi/2.1/ref/reference/option.presetStorage-docpage/
+
 "
   (interactive)
 

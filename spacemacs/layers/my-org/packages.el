@@ -12,7 +12,7 @@
    org-directory "~/org"
 
    org-agenda-files '("~/org/dynamic/"
-                      "~/Dropbox/shared-org/")
+                      "~/Dropbox/shared-org/dynamic")
 
    diary-file "~/org/diary.txt"
    calendar-date-style 'iso
@@ -71,7 +71,7 @@
    ;; ------------------------------------------------------------------------------
    ;; I do not want splitting while editing header
    org-M-RET-may-split-line '((default . nil) (item . nil))
-   org-catch-invisible-edits 'show-and-error         ; let's test this optio
+   org-catch-invisible-edits 'show-and-error         ; let's test this option
 
    ;; ------------------------------------------------------------------------------
    ;; Export
@@ -91,7 +91,14 @@
 :APPT_WARNTIME: 90
 :END:
 SCHEDULED %^T
-%U")))
+%U")
+                            ("B" "book" entry (file+headline "~/Dropbox/shared-org/dynamic/books.org" "Books")
+
+                             "* PENDING %^{Book}\n%U\n%?")
+                            ("e" "English quote" entry (file+headline "~/Dropbox/shared-org/static/quotes.org" "Just Phrases")
+
+                             "* %^{English quote}")
+                            ))
 
 
    ;; ------------------------------------------------------------------------------
