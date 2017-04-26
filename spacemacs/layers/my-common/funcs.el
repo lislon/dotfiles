@@ -45,6 +45,12 @@
       (setq-local tab-width 8)
       (untabify (point-min) (point-max))
       )))
+
+(defun my/sql-select-connection ()
+  "Used for advice before my/sql-connect-preset"
+  (interactive)
+  (call-interactively 'my/sql-connect-preset))
+
 (defun my/sql-connect-preset (name)
   "Connect to a predefined SQL connection listed in `sql-connection-alist'"
   (interactive

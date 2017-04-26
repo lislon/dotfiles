@@ -205,9 +205,6 @@ Each entry is either:
       (define-key magit-status-mode-map (kbd "M-4") 'winum-select-window-4)
   ))
 
-
-
-
 (defun my-common/post-init-hydra ()
   (defhydra my-config-nav-hydra (:color blue :hint nil)
     "
@@ -228,5 +225,4 @@ _c_: Common       _o_: Org       _w_: Work
   (message "post init sh script")
   (with-eval-after-load 'sh-script
     (define-key sh-mode-map (kbd "C-c C-x") nil)))
-
 ;; Do not overwrite history on buffer close

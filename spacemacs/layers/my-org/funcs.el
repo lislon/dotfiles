@@ -7,8 +7,7 @@
   (forward-line -1)
   (forward-char)
   (org-table-insert-row 1)
-  (evil-insert 1)
-  )
+  (evil-insert 1))
 
 
 (defun org-refile-to-datetree (&optional file)
@@ -349,15 +348,22 @@ Used to override org-captures values"
 
 (defun my-advice-org-atpoint-jira (func &rest args)
   "Open a JIRA property link when C-c C-o on TODO project entry"
-  (if (and (org-at-heading-p) (org-entry-get (point) "JIRA"))
-      (browse-url (org-entry-get (point) "JIRA"))
+  (if (my/org--at-jira-entry-p)
+      (browse-url (my/org--jira-get-url-at-point ))
     (apply func args)))
 
+(defun my/org--at-jira-entry-p ()
+  "Returns true if point is on header with jira property"
+  (and (org-at-heading-p) (my/org--jira-get-url-at-point )))
+
+(defun my/org--jira-get-url-at-point ()
+  "Returns a url to JIRA task under point"
+  (org-entry-get (point) "JIRA"))
 
 (defun my/org-open-jira-link ()
   "Open a JIRA property link when C-c C-o on TODO project entry"
-  (when (and (org-at-heading-p) (org-entry-get (point) "JIRA"))
-    (browse-url (org-entry-get (point) "JIRA"))
+  (when (my/org--at-jira-entry-p)
+    (browse-url (my/org--jira-get-url-at-point ))
     t))
 
 (defun my/org-jump-to-file-and-header (file headline)
@@ -378,3 +384,14 @@ Used to override org-captures values"
 (defmacro my/hydra-refile(key file headline)
     "Returns a list used by hydra to refile headline at cursor to `file' under `headline'"
   `(list ,key (list 'lambda (list) (list 'interactive) (list 'my-refile ,file ,headline) ) ,headline))
+
+(defun my/org-show-and-copy-jira-ticket ()
+  "Show and copy jira ticket under currenly selected task to ring buffer"
+  (interactive)
+  (save-excursion
+    (bh/find-project-task)
+    (when (my/org--at-jira-entry-p)
+      (let* ((url (my/org--jira-get-url-at-point))
+             (ticket (car (last (split-string url "/")))))
+          (kill-new ticket)
+             (message ticket)))))

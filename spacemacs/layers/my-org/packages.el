@@ -451,6 +451,8 @@ _ee_: Nice Prog      _ee_: -    _ee_: previous visible
   ;; (add-hook 'org-mode-hook 'org-mode-hook-fix-agenda-keys)
   (add-hook 'org-open-at-point-functions 'my/org-open-jira-link)
 
+  (with-eval-after-load "org"
+    (define-key org-mode-map (kbd "C-c C-y") 'my/org-show-and-copy-jira-ticket))
   )
 
 (defun my-org/init-noflet ())
