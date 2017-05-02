@@ -1,0 +1,45 @@
+#!/bin/sh
+# v0.1
+
+grep_jira_task() {
+    grep -o -E "C[0-9]+-[0-9]+"
+}
+
+MSGFILE="$1"
+
+check_branch_consistency() {
+    CURRENT_BRANCH_TASK=$(git branch | grep '*' | grep_jira_task)
+    COMMIT_TASK=$(head -n 1 "$MSGFILE" | grep_jira_task)
+
+    if [ -n "$CURRENT_BRANCH_TASK" ]; then
+        if [ "$CURRENT_BRANCH_TASK" != "$COMMIT_TASK" ] ; then
+            echo >&2 "Commit task ($COMMIT_TASK) do not match branch ($CURRENT_BRANCH_TASK)!"
+            exit 1
+        fi
+    fi
+}
+
+
+check_upcase_first_letter() {
+    COMMIT_MSG=$(grep -oP "(?<= ).+" "$MSGFILE")
+
+    if echo "$COMMIT_MSG" | grep "^[a-z\ ]" ; then
+        echo >&2 "Not lowercase (or space) symbol allowded for '$COMMIT_MSG'!"
+        exit 1
+    fi
+}
+
+check_lenght_first_line() {
+    LEN=$(head -n 1 "$MSGFILE" | awk '{ print length($0) }')
+    if [[ $LEN -gt 68 ]] ; then
+        echo >&2 "Too long first line msg ($LEN)"
+        exit 1
+    fi
+}
+
+check_branch_consistency
+check_upcase_first_letter
+check_lenght_first_line
+
+
+# DO not forget sync-all-hooks

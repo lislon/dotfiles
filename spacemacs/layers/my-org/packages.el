@@ -2,7 +2,7 @@
                         calfw
                         org
                         (helm-yandex-geoapi :location local)
-                        artist))
+                        (artist :location built-in))
 
 (defun my-org/post-init-org ()
   (setq-default
@@ -264,6 +264,8 @@ SCHEDULED %^T
   (global-set-key (kbd "C-c C-x C-x") 'org-clock-in-last)
   (global-set-key (kbd "C-c C-o") 'org-open-at-point)
   (global-set-key (kbd "C-c t") 'my/org-timer-set-timer)
+  (global-set-key (kbd "<f9>") 'bh/punch-in)
+  (global-set-key (kbd "<f10>") 'bh/punch-out)
   (global-set-key (kbd "<f12>") (defun my/org-clockin-recent-tasks() (interactive)
                                        (org-clock-in '(4))))
 
