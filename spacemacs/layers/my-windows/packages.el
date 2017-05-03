@@ -30,7 +30,7 @@
 ;;; Code:
 
 (defconst my-windows-packages
-  '((gntp :toggle (file-exists-p "growlnotify.exe"))
+  '((gntp :toggle (executable-find "growlnotify.exe"))
     (alert :location (recipe
                       :fetcher github
                       :repo "jwiegley/alert"))
@@ -62,7 +62,7 @@
   (use-package "alert"
     :config
     (progn
-      (if (require 'some-library nil 'noerror)
+      (if (require 'alert nil 'noerror)
           (setq alert-default-style 'gntp))))
   )
 

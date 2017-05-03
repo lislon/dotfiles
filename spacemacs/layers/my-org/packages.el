@@ -2,7 +2,7 @@
                         calfw
                         org
                         (helm-yandex-geoapi :location local)
-                        (artist :location built-in))
+                        (artist :location built-in)))
 
 (defun my-org/post-init-org ()
   (setq-default
