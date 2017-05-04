@@ -56,14 +56,14 @@
    ;; levels deep
    org-refile-targets (quote ((nil :maxlevel . 9)
                               (org-agenda-files :maxlevel . 9)
-                              ("~/org/dynamic/programming.org" :maxlevel . 1)
+                              ;; ("~/org/dynamic/programming.org" :maxlevel . 1)
                               ("~/org/dynamic/todo-someday.org" :level . 1)
                               ("~/org/dynamic/notes.org" :level . 0)
                               ("~/org/static/diary.org" :maxlevel . 1)
                               ("~/Dropbox/shared-org/dynamic/shared-todo.org" :maxlevel . 1)
-                              ("~/Dropbox/shared-org/static/computers.org" :maxlevel . 2)
-                              ("~/Dropbox/shared-org/static/programming.org" :maxlevel . 1)
-                              ("~/Dropbox/shared-org/static/java.org" :maxlevel . 1)))
+                              ("~/Dropbox/shared-org/static/programming/computers.org" :maxlevel . 2)
+                              ("~/Dropbox/shared-org/static/programming/programming.org" :maxlevel . 2)
+                              ("~/Dropbox/shared-org/static/programming/java.org" :maxlevel . 1)))
 
 
    ;; ------------------------------------------------------------------------------
@@ -249,7 +249,10 @@ SCHEDULED %^T
    ;;------------------------------------------------------------------------------
    ;; UML
    ;; ------------------------------------------------------------------------------
-   org-plantuml-jar-path (if (file-exists-p "/opt/plantuml/plantuml.jar") "/opt/plantuml/plantuml.jar" "")
+   org-plantuml-jar-path (cond ((file-exists-p "C:/opt/plantuml/plantuml.jar")  "C:/opt/plantuml/plantuml.jar")
+                               ((file-exists-p "/opt/plantuml/plantuml.jar")  "/opt/plantuml/plantuml.jar")
+                               (t nil)
+                             )
 
    ;; ------------------------------------------------------------------------------
    ;; TODO faces
@@ -345,6 +348,7 @@ SCHEDULED %^T
 
   (with-eval-after-load "org"
     (require 'ob-ditaa)
+    (require 'ob-plantuml)
     (org-babel-do-load-languages
      'org-babel-load-languages
      my-org-babel-load-languages)
@@ -409,11 +413,12 @@ _ce_: Emacs          _lB_: book         _ce_: up
 _cj_: Java           _lb_: buy       _ce_: next visible
 _cg_: Git            _ce_: -    _ce_: previous visible
 _cn_: Nice Prog      _ce_: -    _ce_: previous visible
-
+_cu_: Unix cmds
 "
     ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org")) "Emacs")
     ("cj" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/java.org" "Java")) "Java")
     ("cg" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/programming.org" "Git")) "Git")
+    ("cu" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "How to linux")) "Unix")
     ("cn" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Nice Programs")) "Nice Programs")
     ("lB" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/books.org" "Books")) "Books")
     ("lb" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/buy.org")) "Buy")
@@ -429,11 +434,10 @@ _cn_: Nice Prog      _ce_: -    _ce_: previous visible
 _eq_: English quotes _ee_: book         _ee_: up
 _ee_: Java           _ee_: buy       _ee_: next visible
 _ee_: Git            _ee_: -    _ee_: previous visible
-_ee_: Nice Prog      _ee_: -    _ee_: previous visible
 
 "
     ("eq" (lambda () (interactive) (my/jump-to-file-and-header "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
-    ("ee" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/java.org" "Java")) "Java")
+    ("ee" (lambda () (interactive) (my/jump-to-file-and-header "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
     ("q" nil "cancel"))
 
 
@@ -462,6 +466,13 @@ _ee_: Nice Prog      _ee_: -    _ee_: previous visible
 
   (with-eval-after-load "org"
     (define-key org-mode-map (kbd "C-c C-y") 'my/org-show-and-copy-jira-ticket))
+  ;; open png externally
+  (add-hook 'org-mode-hook
+            (lambda ()
+               (setq org-file-apps
+                     (append '(
+                               ("\\.png\\'" . default)
+                               ) org-file-apps))))
   )
 
 (defun my-org/init-noflet ())

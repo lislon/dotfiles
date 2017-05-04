@@ -1,0 +1,5 @@
+* Emacs org mode
+* Plantuml
+You will need to download Graphviz
+http://www.graphviz.org/Download_windows.php
+And set ENV =GRAPHVIZ_DOT= to =c:\opt\graphviz\bin\dot.exe=
