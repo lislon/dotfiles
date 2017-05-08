@@ -1,0 +1,11 @@
+#!/bin/sh
+
+
+if ! head -n 1 $1 | grep -E "C[0-9]+-[0-9]+" ; then
+    OLD=$(cat "$1")
+    echo -n "" > "$1"
+    echo -n "[" >> "$1"
+    git branch | grep '*' | grep -oE "C[0-9]+-[0-9]+" >> "$1"
+    echo -n "] " >> "$1"
+    echo "$OLD" >> "$1"
+fi
