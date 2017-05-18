@@ -414,11 +414,13 @@ _cj_: Java           _lb_: buy       _ce_: next visible
 _cg_: Git            _ce_: -    _ce_: previous visible
 _cn_: Nice Prog      _ce_: -    _ce_: previous visible
 _cu_: Unix cmds
+_cw_: Windows cmds
 "
     ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")) "Emacs")
     ("cj" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/java.org" "Java")) "Java")
     ("cg" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/programming.org" "Git")) "Git")
     ("cu" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "How to linux")) "Unix")
+    ("cw" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "How to windows")) "How to windows")
     ("cn" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Nice Programs")) "Nice Programs")
     ("lB" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/books.org" "Books")) "Books")
     ("lb" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/buy.org")) "Buy")
