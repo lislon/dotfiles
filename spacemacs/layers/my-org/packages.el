@@ -415,7 +415,7 @@ _cg_: Git            _ce_: -    _ce_: previous visible
 _cn_: Nice Prog      _ce_: -    _ce_: previous visible
 _cu_: Unix cmds
 "
-    ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org")) "Emacs")
+    ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")) "Emacs")
     ("cj" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/java.org" "Java")) "Java")
     ("cg" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/programming.org" "Git")) "Git")
     ("cu" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "How to linux")) "Unix")
@@ -429,20 +429,22 @@ _cu_: Unix cmds
 
   (defhydra my-org-navigator-hydra (:color blue :hint nil)
     "
-^Common^             ^Lists^           ^Move
+^Common^             ^Home^           ^Move
 ^^^^^^------------------------------------------------------
-_eq_: English quotes _ee_: book         _ee_: up
-_ee_: Java           _ee_: buy       _ee_: next visible
+_q_: English quotes _o_: todo         _ee_: up
+_ee_: Java           _n_: notes       _ee_: next visible
 _ee_: Git            _ee_: -    _ee_: previous visible
 
 "
-    ("eq" (lambda () (interactive) (my/jump-to-file-and-header "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
-    ("ee" (lambda () (interactive) (my/jump-to-file-and-header "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
+    ("q" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
+    ("o" (lambda () (interactive) (find-file "~/org/dynamic/todo.org")))
+    ("n" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))
+    ("r" (lambda () (interactive) (my/org-jump-to-head "~/org/dynamic/todo.org" "Рецепты")))
+    ("ee" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
     ("q" nil "cancel"))
 
 
-  (spacemacs/set-leader-keys
-    "oo" 'my-org-navigator-hydra/body)
+  (spacemacs/set-leader-keys "oo" 'my-org-navigator-hydra/body)
 
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "r" 'my-org-refile-hydra/body)
 
