@@ -478,7 +478,7 @@ _ee_: Git            _ee_: -    _ee_: previous visible
 (defun my-org/init-noflet ())
 
 
-(defun my-org/post-init-artist ()
+(defun my-org/init-artist ()
   (add-hook 'artist-mode-hook
             (lambda ()
               (evil-emacs-state)
