@@ -8,12 +8,27 @@
 remote="$1"
 url="$2"
 
-BRANCH=`git rev-parse --abbrev-ref HEAD`
+function no-push-in-master-or-develop-branch() {
+    BRANCH=`git rev-parse --abbrev-ref HEAD`
 
-if [[ "$BRANCH" == "master" || "$BRANCH" == "develop" ]]; then
-	echo "You are on branch $BRANCH. Are you sure you want to commit to this branch?"
-	echo "If so, commit with -n to bypass this pre-commit hook."
-	exit 1
-fi
+    if [[ "$BRANCH" == "master" || "$BRANCH" == "develop" ]]; then
+	      echo >&2 "You are on branch $BRANCH. Are you sure you want to commit to this branch?"
+	      echo >&2 "If so, commit with -n to bypass this pre-commit hook."
+	      exit 1
+    fi
+
+}
+
+function no-wip-commits() {
+
+    if git log -10 --oneline | grep "\-\-wip\-\-" >/dev/null ; then
+	      echo >&2 "--wip-- in commits! Abort!"
+	      exit 1
+    fi
+
+}
+
+no-push-in-master-or-develop-branch
+no-wip-commits
 
 exit 0

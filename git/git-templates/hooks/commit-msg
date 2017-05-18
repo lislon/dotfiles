@@ -23,16 +23,19 @@ check_branch_consistency() {
 check_upcase_first_letter() {
     COMMIT_MSG=$(grep -oP "(?<= ).+" "$MSGFILE")
 
-    if echo "$COMMIT_MSG" | grep "^[a-z\ ]" ; then
-        echo >&2 "Not lowercase (or space) symbol allowded for '$COMMIT_MSG'!"
+    if echo "$COMMIT_MSG" | head -n 1 | grep "^[a-z\ ]" ; then
+        echo >&2 "----------------------"
+        echo >&2 "No lowercase (or space) symbol allowded for '$COMMIT_MSG'!"
+        echo >&2 "----------------------"
         exit 1
     fi
 }
 
 check_lenght_first_line() {
+    LIMIT=68
     LEN=$(head -n 1 "$MSGFILE" | awk '{ print length($0) }')
-    if [[ $LEN -gt 68 ]] ; then
-        echo >&2 "Too long first line msg ($LEN)"
+    if [[ $LEN -gt $LIMIT ]] ; then
+        echo >&2 "Too long first line msg ($LEN > $LIMIT)"
         exit 1
     fi
 }
