@@ -34,7 +34,7 @@
    org-clock-remove-empty-clock-drawer t   ; Remove empty :LOGBOOK: drawlers due to 0:00 time
    org-clock-persist t                     ; Save last clock item after emacs is closed
    org-clock-in-resume t                   ; Resume clock if clock in task with not closed clock
-   org-clock-idle-time 3
+   org-clock-idle-time 5
    org-clock-x11idle-program-name "xprintidle"
    org-clock-mode-line-total 'today
    org-x11idle-exists-p t                 ; When emacs started as daemon, x11 not initialized
@@ -50,6 +50,7 @@
 
    ;; Archive
    org-archive-location "~/org/archive/%s_archive::"
+   org-src-window-setup 'current-window        ; C-c ' is fullscreen
 
 
    ;; Targets include this file and any file contributing to the agenda - up to 9
