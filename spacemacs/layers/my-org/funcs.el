@@ -365,3 +365,17 @@ Used to override org-captures values"
              (ticket (car (last (split-string url "/")))))
           (kill-new ticket)
              (message ticket)))))
+
+(defun my/org-wait-for-my-master-at-morning ()
+  "Resets the `org-clock-out-time' at morning when I come at work"
+  (setq my/org-wait-for-master-timer
+        (run-with-timer 60 60 'my/org-when-my-master-return-reset-clock)))
+
+(defun my/org-when-my-master-return-reset-clock ()
+  (let* ((org-clock-user-idle-seconds (org-user-idle-seconds)))
+    (message "Morning.Idle time: %s" org-clock-user-idle-seconds)
+    (when (< org-clock-user-idle-seconds 60)
+      (message "Morning! I reset clock time for you")
+      (cancel-timer my/org-wait-for-master-timer)
+      ;; (setq org-clock-out-time (org-current-time org-clock-rounding-minutes))
+    )))
