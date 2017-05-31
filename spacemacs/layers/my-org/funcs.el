@@ -373,9 +373,9 @@ Used to override org-captures values"
 
 (defun my/org-when-my-master-return-reset-clock ()
   (let* ((org-clock-user-idle-seconds (org-user-idle-seconds)))
-    (message "Morning.Idle time: %s" org-clock-user-idle-seconds)
+    (message "Morning Now is %s .Idle time: %s" (current-time-string) org-clock-user-idle-seconds)
     (when (< org-clock-user-idle-seconds 60)
-      (message "Morning! I reset clock time for you")
+      (message "reset clock time for you")
+      (setq org-clock-out-time (org-current-time org-clock-rounding-minutes))
       (cancel-timer my/org-wait-for-master-timer)
-      ;; (setq org-clock-out-time (org-current-time org-clock-rounding-minutes))
     )))
