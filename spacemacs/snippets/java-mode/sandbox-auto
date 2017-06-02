@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: sandbox-auto
+# key: sandbox-auto
+# --
+import java.util.*;
+
+class `class-name` {
+    public `class-name` () {
+        System.out.println("Done");
+    }
+
+    public static void main(String[] args) {
+        new `class-name`();
+        $0
+    }
+}

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+#name : interface
+#key : in
+#contributor : Elephant
+# --
+interface $1
+{
+   $0
+}
