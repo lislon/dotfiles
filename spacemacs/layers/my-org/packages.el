@@ -450,6 +450,7 @@ _ee_: Git            _ee_: -    _ee_: previous visible
   (spacemacs/set-leader-keys "oo" 'my-org-navigator-hydra/body)
 
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "r" 'my-org-refile-hydra/body)
+  (global-set-key (kbd "<f5>") 'org-capture)
 
 
   (advice-add 'switch-to-buffer :before (lambda (&rest misc)
