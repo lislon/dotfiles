@@ -44,6 +44,7 @@
     helm
     hydra
     sh-script
+    sh-mode
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -72,6 +73,12 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
+
+(defun my-common/post-init-sh-mode ()
+  ;; remove execute action if favor og org mode
+  (define-key sh-mode-map (kbd "C-c C-x") nil)
+  )
+
 (defun my-common/post-init-helm ()
   (when (configuration-layer/package-usedp 'helm)
     ;; fix Symbol’s value as variable is void: display-time-world-list
@@ -85,7 +92,7 @@ Each entry is either:
 (defun my-common/post-init-sql ()
 
   (evil-leader/set-key
-    "am" 'my/sql-connect-preset          ; connect to database
+    "am" 'my/sql-select-connection          ; connect to database
     )
   ;; (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
   (use-package sql
@@ -204,6 +211,7 @@ Each entry is either:
       (define-key magit-status-mode-map (kbd "M-3") 'winum-select-window-3)
       (define-key magit-status-mode-map (kbd "M-4") 'winum-select-window-4)
   ))
+
 
 (defun my-common/post-init-hydra ()
   (defhydra my-config-nav-hydra (:color blue :hint nil)
