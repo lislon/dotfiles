@@ -39,7 +39,8 @@ init-base-settings() {
         MAINEDITOR="vim"
         alias se=sudoedit
     else
-        MAINEDITOR="$HOME/bin/shared/emacs-open-in-client"
+        MAINEDITOR="vim"
+        # MAINEDITOR="$HOME/bin/shared/emacs-open-in-client"
         alias se=sudoedit
         # Run emacs with sudo
         # se() {
@@ -73,6 +74,10 @@ init-base-settings() {
     zstyle ':completion:*:(coffee):*' file-patterns '*.coffee'
     zstyle ':completion:*:(node):*' ignored-patterns 'Gruntfile.js'
 
+    # -g = glob pattern, (-.) glob modifier to allow only files or symlinks
+    if [ type compdef 2>/dev/null ] ; then
+        compdef '_files -g "*.jpg(-.)"' gimp
+    fi
     # -g = glob pattern, (-.) glob modifier to allow only files or symlinks
     if [ type compdef 2>/dev/null ] ; then
         compdef '_files -g "*.jpg(-.)"' gimp
@@ -134,6 +139,7 @@ init-simple-aliases() {
     alias microdate="date +\"%T.%N\""
     alias v='f -e vim' # quick opening files with vim
     alias gl='git --no-pager log --oneline --graph -5'
+    alias gbc='git branch --contains'
     alias gpush='git push'
     alias tmux='tmux -2'
     alias mk='mkdir -p'
@@ -248,6 +254,10 @@ init-complex-aliases() {
     ssh() {
         ssh-add -l >/dev/null || ssh-add -t 8h
         /usr/bin/ssh "$@"
+    }
+    # Git cherry pick with dirty folder
+    gitcp() {
+        git stash && git cherry-pick $1 && git stash pop
     }
 
     git-pr() {
@@ -413,7 +423,15 @@ init-complex-aliases() {
     _emacs-clock-out() {
         =emacs-clock-out 2>/dev/null && emacs-clock-out
     }
+
+    # Shows last changes in each remote branch with author
+    function git-list-remote {
+        for b in $(git branch -r | grep -oP '^\s+[^ ]+'); do
+            echo "$b: $(git log -1 --pretty="%C(yellow)%cr %C(bold blue)%an%Creset" $b)";
+        done
+    }
 }
+
 
 init-bindkeys() {
     # Transponse two command arguments before cursor.
@@ -441,14 +459,7 @@ init-bindkeys() {
         for word in $array; do
             result="$word"
             if [[ "$result" =~ ^[a-zA-Z]:\\\\ ]] ; then
-                # slashes
-                result="${result//\\//}"
-                # remove :
-                result="${result/:/}"
-                # disk
-                disk_lowercase="${result:0:1:l}"
-                rest="${result:1}"
-                result="/${disk}${rest}"
+                result=$(cygpath $result)
                 relative=`realpath --relative-to=. $result`
                 if [[ ! "$relative" =~ "\.\." ]] ; then
                     result="$relative"
@@ -459,6 +470,7 @@ init-bindkeys() {
         done
         LBUFFER=$(echo $LBUFFER | xargs)
     }
+    # M-y convert path
     zle -N widget-convert-to-cygwin-path
     bindkey '^[y' widget-convert-to-cygwin-path
 
@@ -530,6 +542,8 @@ init-at-the-end() {
     fi
 
 
+    # zstyle ':vcs_info:*' ignored-patterns "$HOME/src/*"
+    zstyle ':vcs_info:*' ignored-patterns "*"
 
     # I use my own upgrade in ~/bin
     type upgrade | grep alias &>/dev/null && unset -f upgrade
