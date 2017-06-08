@@ -1,8 +1,19 @@
 (setq my-org-packages '(noflet
                         calfw
                         org
+                        plantuml-mode
                         (helm-yandex-geoapi :location local)
                         (artist :location built-in)))
+
+
+(defun my-org/init-plantuml-mode ()
+  (use-package plantuml-mode
+    :init
+    (setq plantuml-java-args "")
+    :config
+    (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+    )
+  )
 
 (defun my-org/post-init-org ()
   (setq-default
