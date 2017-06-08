@@ -48,9 +48,7 @@
 ;; Using chrome as default browser
 (when (eq system-type 'gnu/linux)
     ;; On minijack opera is default browser
-    (with-eval-after-load 'browse-url
-      (message "%s default browser changed to chrome. again" (current-time-string))
-      (defun browse-url-can-use-xdg-open () (and (getenv "DISPLAY") (executable-find "xdg-open") t))) ;
-  (setq browse-url-browser-function 'browse-url-generic
-        browse-url-generic-program "chromium")
-  )
+  ;; lets try browse-url-generic-program, but ensure 'BROWSER' is set
+  (when (not (getenv "BROWSER"))
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "chromium")))
