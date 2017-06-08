@@ -45,6 +45,7 @@
     hydra
     sh-script
     sh-mode
+    dired-mode
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -73,6 +74,10 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
+
+(defun my-common/post-init-dired-mode ()
+  (define-key dired-mode-map "e" 'ora-ediff-files)
+  )
 
 (defun my-common/post-init-sh-mode ()
   ;; remove execute action if favor og org mode
