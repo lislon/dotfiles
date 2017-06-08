@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+#name : clse
+#key : clse
+#contributor : Elephant
+# --
+class ${1:Class} extends $2 {
+    $0
+}
