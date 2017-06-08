@@ -379,3 +379,9 @@ Used to override org-captures values"
       (setq org-clock-out-time (org-current-time org-clock-rounding-minutes))
       (cancel-timer my/org-wait-for-master-timer)
     )))
+
+(defun my/org-search ()
+  "Seachs in org directoy"
+  (interactive)
+  (spacemacs/helm-files-do-rg "~/org")
+  )

@@ -309,6 +309,8 @@ SCHEDULED %^T
   (my/set-key-file-link "or" "~/Dropbox/shared-org/dynamic/refile.org")
   (my/set-key-file-link "oC" "~/.spacemacs.d/layers/my-org/packages.el")
 
+  (evil-leader/set-key "os" 'my/org-search)
+
 
   ;; Encryption (ACP NullPointerException on android)
 
