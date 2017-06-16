@@ -21,9 +21,11 @@ open (FILES,$command . "|") || die "Cannot run '$command': $!\n";
 $CONFIG_CHECK_FILE = "checkstyle.checkfile";
 $CONFIG_JAR = "checkstyle.jar";
 $CONFIG_JAVA = "java.command";
+$CONFIG_ = "java.command";
 
 $check_file = `git config --get $CONFIG_CHECK_FILE`;
 $checkstyle_jar = `git config --get $CONFIG_JAR`;
+$checkstyle_wrapper = `git config --get $CONFIG_JAR`;
 $java_command = `git config --get $CONFIG_JAVA`;
 
 if (!$check_file || !$checkstyle_jar)
@@ -34,6 +36,11 @@ if (!$check_file || !$checkstyle_jar)
    . "\t$CONFIG_JAVA - path to your java executable (optional)\n"
    ;
 }
+my $checkstyle_file=`which checkstyle-parse.sh2 2>/dev/null`;
+if ($checkstyle_file eq "")
+{
+    die "checkstyle-parse.sh is not found in your PATH environment: " . $ENV{PATH};
+}
 
 $java_command = "java" if (!$java_command);
 
@@ -42,6 +49,7 @@ chomp $checkstyle_jar;
 chomp $java_command;
 
 $command = "$java_command -jar $checkstyle_jar -c $check_file";
+$command = "bash checkstyle-parse.sh $java_command -jar $checkstyle_jar -c $check_file";
 
 @java_files = ();
 
