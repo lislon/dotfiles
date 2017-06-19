@@ -209,7 +209,7 @@ a sound to be played"
   "Functions called when timer is done"
   (if (and (boundp 'timer-sound) (boundp 'tea-time-sound-command))
           (start-process-shell-command "tea-ready" nil (format tea-time-sound-command timer-sound))
-        (play-sound-file timer-sound))
+    (play-sound-file (expand-file-name timer-sound)))
     (progn (beep t) (beep t)))
 
 (defun my/uniq-car (templates)

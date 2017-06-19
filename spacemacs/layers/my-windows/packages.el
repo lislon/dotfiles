@@ -35,9 +35,14 @@
                       :fetcher github
                       :repo "jwiegley/alert"))
     org
+    sound-wav
     ))
 
 
+
+(defun my-windows/init-sound-wav ()
+  (use-package "sound-wav")
+  )
 (defun my-windows/init-gntp ()
   "docstring"
 ;;; Growl notifications for IRC
