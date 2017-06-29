@@ -326,8 +326,18 @@ Used to override org-captures values"
 (defun my/org-open-jira-link ()
   "Open a JIRA property link when C-c C-o on TODO project entry"
   (when (my/org--at-jira-entry-p)
-    (browse-url (my/org--jira-get-url-at-point ))
+    (browse-url (my/org--jira-get-url-at-point))
     t))
+
+(defun my/org-open-clocking-jira-link ()
+  "Opens a jira link of currently clocking item"
+  (interactive)
+  (save-window-excursion
+    (save-restriction
+      (org-clock-goto)
+      (bh/find-project-task)
+      (my/org-open-jira-link)
+      )))
 
 (defun my/org-jump-to-head (file headline)
   "Opens a file `file' and jumps to headline `headline', and then expands"
@@ -358,13 +368,15 @@ Used to override org-captures values"
 (defun my/org-show-and-copy-jira-ticket ()
   "Show and copy jira ticket under currenly selected task to ring buffer"
   (interactive)
-  (save-excursion
-    (bh/find-project-task)
-    (when (my/org--at-jira-entry-p)
-      (let* ((url (my/org--jira-get-url-at-point))
-             (ticket (car (last (split-string url "/")))))
+  (save-window-excursion
+    (save-restriction
+      (org-clock-goto)
+      (bh/find-project-task)
+      (when (my/org--at-jira-entry-p)
+        (let* ((url (my/org--jira-get-url-at-point))
+               (ticket (car (last (split-string url "/")))))
           (kill-new ticket)
-             (message ticket)))))
+          (message ticket))))))
 
 (defun my/org-wait-for-my-master-at-morning ()
   "Resets the `org-clock-out-time' at morning when I come at work"

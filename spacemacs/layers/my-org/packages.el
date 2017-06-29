@@ -482,6 +482,8 @@ _ee_: Git            _ee_: -    _ee_: previous visible
 
   ;; (add-hook 'org-mode-hook 'org-mode-hook-fix-agenda-keys)
   (add-hook 'org-open-at-point-functions 'my/org-open-jira-link)
+  (spacemacs/set-leader-keys "oj" 'my/org-open-clocking-jira-link)
+  (spacemacs/set-leader-keys "oJ" 'my/org-show-and-copy-jira-ticket)
 
   (with-eval-after-load "org"
     (define-key org-mode-map (kbd "C-c C-y") 'my/org-show-and-copy-jira-ticket))
