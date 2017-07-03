@@ -495,7 +495,7 @@ _ee_: Git            _ee_: -    _ee_: previous visible
                                ("\\.png\\'" . default)
                                ) org-file-apps))))
 
-  (setq my/global-morning timer (run-at-time "08:00" (* 24 3600 3600) 'my/org-wait-for-my-master-at-morning))
+  (setq my/global-morning-timer (run-at-time "08:00" (* 24 3600 3600) 'my/org-morning-clock-chore))
   )
 
 (defun my-org/init-noflet ())
