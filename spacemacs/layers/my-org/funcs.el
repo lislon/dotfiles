@@ -378,6 +378,11 @@ Used to override org-captures values"
           (kill-new ticket)
           (message ticket))))))
 
+(defun my/org-clean-up-after-my-master ()
+  "Clock out from last task"
+  (when (org-clocking-p)
+    (org-clock-out)))
+
 (defun my/org-morning-clock-chore ()
   "Resets the `org-clock-out-time' at morning when I come at work"
   (my/clean-up-after-my-master-at-morning)
@@ -389,12 +394,7 @@ Used to override org-captures values"
   (setq my/org-wait-for-master-timer
         (run-with-timer 60 60 'my/org-when-my-master-return-reset-clock)))
 
-(defun my/org-clean-up-after-my-master ()
-  "Clock out from last task"
-  (when (org-clocking-p)
-    (org-clock-out)
-    )
-  )
+
 
 (defun my/org-when-my-master-return-reset-clock ()
   (let* ((org-clock-user-idle-seconds (org-user-idle-seconds)))

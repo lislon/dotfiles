@@ -2,9 +2,12 @@
                         calfw
                         org
                         plantuml-mode
+                        (org-protocol-capture-html :location (recipe :fetcher github :repo "alphapapa/org-protocol-capture-html"))
                         (helm-yandex-geoapi :location local)
                         (artist :location built-in)))
 
+(defun my-org/init-org-protocol-capture-html ()
+  (use-package org-protocol-capture-html))
 
 (defun my-org/init-plantuml-mode ()
   (use-package plantuml-mode
@@ -108,6 +111,7 @@ SCHEDULED %^T
 
                              "* PENDING %^{Book}\n%U\n%?")
                             ("e" "English quote" entry (file+headline "~/Dropbox/shared-org/static/quotes.org" "Just Phrases")
+
 
                              "* %^{English quote}")
                             ))
