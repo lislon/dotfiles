@@ -1,4 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/bash
+# Author: Igor Avdeev
+# Checkstyle all modifled *.java file lines and aborts a commit if any violation is found
+
 #
 # Pre-commit hook for running checkstyle on changed Java sources
 #
@@ -15,66 +18,80 @@
 # Now, when you commit, you will be disallowed from doing so
 # until you pass your checkstyle checks.
 
-$command = "git-diff-index --cached HEAD 2>&1 | sed 's/^:.*     //' | uniq";
-open (FILES,$command . "|") || die "Cannot run '$command': $!\n";
 
-$CONFIG_CHECK_FILE = "checkstyle.checkfile";
-$CONFIG_JAR = "checkstyle.jar";
-$CONFIG_JAVA = "java.command";
-$CONFIG_ = "java.command";
+CONFIG_CHECK_FILE="checkstyle.checkfile"
+CONFIG_JAR="checkstyle.jar"
+CONFIG_JAVA="java.command"
+CONFIG_="java.command"
 
-$check_file = `git config --get $CONFIG_CHECK_FILE`;
-$checkstyle_jar = `git config --get $CONFIG_JAR`;
-$checkstyle_wrapper = `git config --get $CONFIG_JAR`;
-$java_command = `git config --get $CONFIG_JAVA`;
+check_file=$(git config --get $CONFIG_CHECK_FILE)
+checkstyle_jar=$(git config --get $CONFIG_JAR)
+checkstyle_wrapper=$(git config --get $CONFIG_JAR)
+java_command=$(git config --get $CONFIG_JAVA)
 
-if (!$check_file || !$checkstyle_jar)
-{
-   die "You must configure checkstyle in your git config:\n"
-   . "\t$CONFIG_CHECK_FILE - path to your checkstyle.xml file\n"
-   . "\t$CONFIG_JAR - path to your checkstyle jar file\n"
-   . "\t$CONFIG_JAVA - path to your java executable (optional)\n"
-   ;
-}
-my $checkstyle_file=`which checkstyle-parse.sh2 2>/dev/null`;
-if ($checkstyle_file eq "")
-{
-    die "checkstyle-parse.sh is not found in your PATH environment: " . $ENV{PATH};
+
+function convert-filename {
+    [[ "$(uname -o)" =~ Cygwin|Msys ]] && cygpath "$1" || echo "$1";
 }
 
-$java_command = "java" if (!$java_command);
-
-chomp $check_file;
-chomp $checkstyle_jar;
-chomp $java_command;
-
-$command = "$java_command -jar $checkstyle_jar -c $check_file";
-$command = "bash checkstyle-parse.sh $java_command -jar $checkstyle_jar -c $check_file";
-
-@java_files = ();
-
-foreach (<FILES>)
-{
-   chomp;
-   next if (!(/\.java$/));
-   push @java_files,$_;
-   $command .= " ";
-   $command .= $_;
-}
-if ($#java_files >= 0)
-{
-   if (&run_and_log_system ($command))
-   {
-       print STDERR "Commit aborted.\n";
-       exit -1;
-   }
+function is-file-to-check {
+    return 0
+    [[ "$1" =~ \\.\(java\|groovy\)$ ]] && return 0 || return 1
 }
 
-exit 0;
 
-sub run_and_log_system
-{
-   ($cmd) = @_;
+function validate-config {
 
-   system $cmd;
+    if [[ -z "$check_file" || -z "$checkstyle_jar" ]] ; then
+        echo -e "You must configure checkstyle in your git config:" 1>&2
+        echo -e "\t$CONFIG_CHECK_FILE - path to your checkstyle.xml file" 1>&2
+        echo -e "\t$CONFIG_JAR - path to your checkstyle jar file" 1>&2
+        echo -e "\t$CONFIG_JAVA - path to your java executable (optional)" 1>&2
+        echo -e "" 1>&2
+        echo -e "\tUse git config [--global] --add $CONFIG_CHECK_FILE <value>" 1>&2
+        echo -e "\tCurrent values: $CONFIG_CHECK_FILE=$check_file" 1>&2
+        echo -e "\tCurrent values: $CONFIG_JAR=$checkstyle_jar" 1>&2
+        exit 1
+    fi
+
+    if ! which checkstyle-parse.sh 2>/dev/null ; then
+        echo -e "checkstyle-parse.sh is not found in your PATH environment: $ENV{PATH}" 1>&2
+    fi
 }
+
+
+function run-check {
+
+    HAS_FILES=no
+
+    FILES=$(git diff-index --cached HEAD 2>&2 | sed 's/^:.*\t//' | uniq)
+
+    while IFS= read -r file; do
+        if is-file-to-check "$file"; then
+            command="$command $file"
+            HAS_FILES=yes
+        fi
+    done <<< "$FILES"
+
+
+    if [[ "$HAS_FILES" == "yes" ]] ; then
+        echo $command
+        if ! $command ; then
+            echo "Commit aborted." 1>&2
+            exit 1
+        fi
+    fi
+}
+
+function pre-process-variables {
+
+    java_command="${java_command:-java}"
+    check_file="$(convert-filename "$check_file")"
+    checkstyle_jar="$(convert-filename "$checkstyle_jar")"
+
+    command="checkstyle-parse.sh $java_command -jar $checkstyle_jar -c $check_file"
+}
+
+validate-config
+pre-process-variables
+run-check
