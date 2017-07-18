@@ -25,7 +25,7 @@ check_upcase_first_letter() {
 
     if echo "$COMMIT_MSG" | head -n 1 | grep "^[a-z\ ]" ; then
         echo >&2 "----------------------"
-        echo >&2 "No lowercase (or space) symbol allowded for '$COMMIT_MSG'!"
+        echo >&2 "No lowercase (or space) symbol allowed for '$COMMIT_MSG'!"
         echo >&2 "----------------------"
         exit 1
     fi
