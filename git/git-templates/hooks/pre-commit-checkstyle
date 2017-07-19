@@ -75,7 +75,6 @@ function run-check {
 
 
     if [[ "$HAS_FILES" == "yes" ]] ; then
-        echo $command
         if ! $command ; then
             echo "Commit aborted." 1>&2
             exit 1
