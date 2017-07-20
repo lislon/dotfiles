@@ -339,18 +339,16 @@ Used to override org-captures values"
       (my/org-open-jira-link)
       )))
 
-(defun my/org-jump-to-head (file headline)
-  "Opens a file `file' and jumps to headline `headline', and then expands"
-  (my/org-jump-to-file-and-header file headline))
-
-(defun my/org-jump-to-file-and-header (file headline)
+(defun my/org-jump-to-file-and-header (file &optional headline)
   "Opens a file `file' and jumps to headline `headline'"
   (and (find-file file)
-       (org-find-exact-headline-in-buffer headline)))
+       (if headline
+           (org-find-exact-headline-in-buffer headline)
+         (move-marker (make-marker) (match-beginning 0))
+         )))
 
-(defun my/refile (file headline)
+(defun my/refile (file &optional headline)
   "Refile current entry to file+headline"
-
   (save-window-excursion
     (save-restriction
       (let* ((pos (save-excursion
@@ -358,7 +356,8 @@ Used to override org-captures values"
         (if pos
             (org-refile nil nil (list headline file nil pos))
           (error (format "Headline '%s' not found in file %s" headline file))
-          )))))
+          )))
+    ))
 
 
 (defmacro my/hydra-refile(key file headline)

@@ -432,6 +432,7 @@ _cj_: Java           _lb_: buy       _ce_: next visible
 _cg_: Git            _ce_: -    _ce_: previous visible
 _cn_: Nice Prog      _ce_: -    _ce_: previous visible
 _cu_: Unix cmds
+_cb_: Bash
 _cw_: Windows cmds
 "
     ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")) "Emacs")
@@ -440,6 +441,7 @@ _cw_: Windows cmds
     ("cu" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "How to linux")) "Unix")
     ("cw" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "How to windows")) "How to windows")
     ("cn" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Nice Programs")) "Nice Programs")
+    ("cb" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/bash.org")) "Bash")
     ("lB" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/books.org" "Books")) "Books")
     ("lb" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/buy.org")) "Buy")
     ("s" gnus-group-enter-server-mode "Servers")
@@ -449,18 +451,21 @@ _cw_: Windows cmds
 
   (defhydra my-org-navigator-hydra (:color blue :hint nil)
     "
-^Common^             ^Home^           ^Move
-^^^^^^------------------------------------------------------
-_q_: English quotes _o_: todo         _ee_: up
-_ee_: Java           _n_: notes       _ee_: next visible
-_ee_: Git            _ee_: -    _ee_: previous visible
-
+^Common^             ^Home^
+^^^^^^-------------------------
+_e_: Emacs          _o_: todo
+_j_: Java           _n_: notes
+_b_: Bash
+_g_: Git
+_c_: Computers
 "
-    ("q" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
+    ("e" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")))
+    ("j" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/programming/java.org" "Java")))
+    ("b" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/bash.org")))
     ("o" (lambda () (interactive) (find-file "~/org/dynamic/todo.org")))
+    ("c" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/computers.org")))
+    ("g" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/programming/programming.org" "Git")))
     ("n" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))
-    ("r" (lambda () (interactive) (my/org-jump-to-head "~/org/dynamic/todo.org" "Рецепты")))
-    ("ee" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/quotes.org" "Just phrases")))
     ("q" nil "cancel"))
 
 
