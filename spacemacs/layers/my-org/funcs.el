@@ -335,7 +335,7 @@ Used to override org-captures values"
   (save-window-excursion
     (save-restriction
       (org-clock-goto)
-      (bh/find-project-task)
+      (goto-char (bh/find-project-task))
       (my/org-open-jira-link)
       )))
 

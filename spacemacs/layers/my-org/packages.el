@@ -459,12 +459,12 @@ _b_: Bash
 _g_: Git
 _c_: Computers
 "
-    ("e" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")))
-    ("j" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/programming/java.org" "Java")))
+    ("e" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")))
+    ("j" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/java.org" "Java")))
     ("b" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/bash.org")))
     ("o" (lambda () (interactive) (find-file "~/org/dynamic/todo.org")))
     ("c" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/computers.org")))
-    ("g" (lambda () (interactive) (my/org-jump-to-head "~/Dropbox/shared-org/static/programming/programming.org" "Git")))
+    ("g" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/programming.org" "Git")))
     ("n" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))
     ("q" nil "cancel"))
 
