@@ -714,7 +714,6 @@ layers configuration."
 
   (evil-leader/set-key
     "fd" 'my/ediff-buffer-with-file
-    "oJ" 'my/java-text
     ;; "os" 'yas-visit-snippet-file
     "os" (lambda () (interactive) (error "Use SPC i s to list snippets"))
     ;; "oi" (lambda () (interactive) (error "Use SPC i s to insert yasnippet"))
