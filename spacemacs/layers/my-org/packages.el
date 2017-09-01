@@ -3,11 +3,34 @@
                         org
                         plantuml-mode
                         (org-protocol-capture-html :location (recipe :fetcher github :repo "alphapapa/org-protocol-capture-html"))
+                        ox-twbs
+                        pamparam
+                        org-drill
                         (helm-yandex-geoapi :location local)
                         (artist :location built-in)))
 
 (defun my-org/init-org-protocol-capture-html ()
   (use-package org-protocol-capture-html))
+
+(defun my-org/init-org-drill ()
+  (use-package org-drill
+    :config
+    (setq org-drill-maximum-items-per-session 5)
+    (setq org-drill-maximum-duration 20)))
+
+(defun my-org/init-pamparam ()
+  (use-package pamparam))
+
+(defun my-org/init-ox-twbs ()
+  (use-package ox-twbs
+    :config
+    (setq org-publish-project-alist
+          '(("org-notes"
+             :base-directory "~/org/"
+             :publishing-directory "~/public_html/"
+             :publishing-function org-twbs-publish-to-html
+             :with-sub-superscript nil
+             )))))
 
 (defun my-org/init-plantuml-mode ()
   (use-package plantuml-mode
@@ -66,6 +89,13 @@
    org-archive-location "~/org/archive/%s_archive::"
    org-src-window-setup 'current-window        ; C-c ' is fullscreen
 
+   org-publish-project-alist
+         '(("org-notes"
+            :base-directory "~/Dropbox/shared-org/"
+            :publishing-directory "~/public_html/"
+            :publishing-function org-twbs-publish-to-html
+            :with-sub-superscript nil
+            ))
 
    ;; Targets include this file and any file contributing to the agenda - up to 9
    ;; levels deep
@@ -496,6 +526,7 @@ _c_: Computers
 
   (with-eval-after-load "org"
     (define-key org-mode-map (kbd "C-c C-y") 'my/org-show-and-copy-jira-ticket))
+
   ;; open png externally
   (add-hook 'org-mode-hook
             (lambda ()
