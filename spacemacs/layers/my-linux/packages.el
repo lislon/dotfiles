@@ -15,8 +15,24 @@
     openwith
     org
     dired
+    browse-url
     bbdb))
 
+
+(defun my-linux/post-init-browse-url ()
+  (message "my-linux/post-init-browse-url")
+  (use-package browse-url
+    :config
+    ;; Using chrome as default browser
+
+    (message "my-linux/post-init-browse-url 2")
+    (when (eq system-type 'gnu/linux)
+      ;; On minijack opera is default browser
+      ;; lets try browse-url-generic-program, but ensure 'BROWSER' is set
+      (if (not (getenv "BROWSER"))
+          (setq browse-url-browser-function 'browse-url-generic
+                browse-url-generic-program "chromium")
+        (setq browse-url-browser-function 'browse-url-xdg-open)))))
 
 (defun my-linux/post-init-dired ()
   ;; Dired - directories first

@@ -45,11 +45,3 @@
   (define-key w3m-minor-mode-map (kbd "RET") 'my/w3m-open-link-or-image-browser)
   (define-key w3m-minor-mode-map "F" 'my/w3m-open-link-or-image-browser))
 
-;; Using chrome as default browser
-(when (eq system-type 'gnu/linux)
-    ;; On minijack opera is default browser
-  ;; lets try browse-url-generic-program, but ensure 'BROWSER' is set
-  (if (not (getenv "BROWSER"))
-    (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "chromium")
-    (setq browse-url-browser-function 'browse-url-xdg-open))

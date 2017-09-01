@@ -9,8 +9,8 @@
                                                 project-name)))
   (let ((dir (make-temp-file (concat "sandbox-java-" project-name "-") t)))
     (find-file (concat (file-name-as-directory dir)  project-name ".java"))
-    (eclim-mode nil)
-    (my/insert-yasnippet "sandbox" (list 'class-name project-name))
+    ;; (eclim-mode nil)
+    (my/insert-yasnippet "sandbox-auto" (list 'class-name project-name))
     ;; (quickrun-autorun-mode)
     ))
 
