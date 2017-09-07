@@ -385,8 +385,8 @@ Used to override org-captures values"
 (defun my/org-morning-clock-chore ()
   "Resets the `org-clock-out-time' at morning when I come at work"
   (message "good morning, master. I clean you clock out time")
-  (my/clean-up-after-my-master-at-morning)
-  (my/org-clean-up-after-my-master)
+  ;; (my/clean-up-after-my-master-at-morning)
+  ;; (my/org-clean-up-after-my-master)
   (setq org-clock-out-time nil)
   )
 
