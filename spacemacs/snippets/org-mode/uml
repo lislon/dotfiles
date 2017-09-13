@@ -3,6 +3,6 @@
 #key : uml
 #contributor :
 # --
-#+BEGIN_SRC plantuml :file $1.png :exports both
+#+BEGIN_SRC plantuml :file img/$1.png :exports results
 $0
 #+END_SRC
