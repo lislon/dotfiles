@@ -99,16 +99,21 @@
 
    ;; Targets include this file and any file contributing to the agenda - up to 9
    ;; levels deep
-   org-refile-targets (quote ((nil :maxlevel . 9)
+   org-refile-targets `((nil :maxlevel . 9)
                               (org-agenda-files :maxlevel . 9)
                               ;; ("~/org/dynamic/programming.org" :maxlevel . 1)
                               ("~/org/dynamic/todo-someday.org" :level . 1)
                               ("~/org/dynamic/notes.org" :level . 0)
                               ("~/org/static/diary.org" :maxlevel . 1)
                               ("~/Dropbox/shared-org/dynamic/shared-todo.org" :maxlevel . 1)
-                              ("~/Dropbox/shared-org/static/programming/computers.org" :maxlevel . 2)
-                              ("~/Dropbox/shared-org/static/programming/programming.org" :maxlevel . 2)
-                              ("~/Dropbox/shared-org/static/programming/java.org" :maxlevel . 1)))
+                              ;; ("~/Dropbox/shared-org/static/programming/org" :maxlevel . 2)
+                              ;; ("~/Dropbox/shared-org/static/programming/programming.org" :maxlevel . 2)
+                              ;; ("~/Dropbox/shared-org/static/programming/java.org" :maxlevel . 1)
+                              ,@(mapcar
+                               (lambda (item) `(,item :maxlevel . 1 ))
+                               (f-files "~/Dropbox/shared-org/static"
+                                              (lambda (file) (string= "org" (file-name-extension file))) t))
+                              )
 
 
    ;; ------------------------------------------------------------------------------
@@ -348,7 +353,6 @@ SCHEDULED %^T
   (add-hook 'org-timer-done-hook 'my/org-timer-done)
 
   (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
-  (my/set-key-file-link "ob" "~/Dropbox/shared-org/static/books.org")
   (my/set-key-file-link "oT" "~/Dropbox/shared-org/dynamic/tasks.org")
   (my/set-key-file-link "on" "~/Dropbox/shared-org/dynamic/refile.org")
   (my/set-key-file-link "oN" "~/Dropbox/shared-org/dynamic/refile.org")
@@ -484,13 +488,13 @@ _cw_: Windows cmds
 
   (defhydra my-org-navigator-hydra (:color blue :hint nil)
     "
-^Common^             ^Home^
+^Work stuff^        ^Shared^
 ^^^^^^-------------------------
 _e_: Emacs          _o_: todo
-_j_: Java           _n_: notes
-_b_: Bash
-_g_: Git
-_c_: Computers
+_j_: Java           _N_: notes pub
+_b_: Bash           _n_: notes priv (refile)
+_g_: Git            _b_: books
+_c_: Computers      _T_: tasks
 "
     ("e" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")))
     ("j" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/java.org" "Java")))
@@ -498,7 +502,11 @@ _c_: Computers
     ("o" (lambda () (interactive) (find-file "~/org/dynamic/todo.org")))
     ("c" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/computers.org")))
     ("g" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/programming.org" "Git")))
-    ("n" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))
+    ("n" (lambda () (interactive) (find-file "~/Dropbox/org/dynamic/notes.org")))
+    ("N" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))
+    ("r" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))
+    ("b" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/shared-notes.org" "Books")))
+    ("T" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/shared-todo.org")))
     ("q" nil "cancel"))
 
 

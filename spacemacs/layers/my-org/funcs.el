@@ -128,7 +128,7 @@ of the message, MSG is the context. Optionally, you can provide an ICON and
 a sound to be played"
 
   (interactive)
-  
+
   (if (eq window-system 'x)
       (shell-command (concat "notify-send "
                              (if icon (concat "-i " icon) "")
@@ -286,11 +286,11 @@ a sound to be played"
   "Insert a capture to the root of currently clocking project"
   (if (and (markerp org-clock-hd-marker)
            (marker-buffer org-clock-hd-marker))
-	    (progn (set-buffer (marker-buffer org-clock-hd-marker))
+      (progn (set-buffer (marker-buffer org-clock-hd-marker))
              (org-capture-put-target-region-and-position)
              (widen)
              (bh/find-project-task))
-	  (error "No running clock that could be used as capture target")))
+    (error "No running clock that could be used as capture target")))
 
 (defmacro my/override-unique-cars (var-name new-list)
   "Merges an existing variable `var-name' with new list `new-list'.
