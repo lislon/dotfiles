@@ -75,10 +75,9 @@ This function should only modify configuration layer settings."
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
    dotspacemacs-delete-orphan-packages nil)
-  (when (eq system-type 'darwin)
-    (add-to-list 'dotspacemacs-configuration-layers 'my-linux t))
-  (when (eq system-type 'windows-nt)
-    (add-to-list 'dotspacemacs-configuration-layers 'my-windows t))
+  (if (eq system-type 'windows-nt)
+      (add-to-list 'dotspacemacs-configuration-layers 'my-windows t)
+    (add-to-list 'dotspacemacs-configuration-layers 'my-linux t) )
 
   (when (file-exists-p "~/.spacemacs.d.local/layers/my-work")
     (add-to-list 'dotspacemacs-configuration-layers 'my-work))
