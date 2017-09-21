@@ -648,7 +648,7 @@ layers configuration."
   (when (file-exists-p "~/confiles/common/emacs/semi-local.el")
     (load "~/confiles/common/emacs/semi-local.el"))
 
-  (spacemacs/set-leader-keys "cC" 'my/compile)
+  (global-set-key (kbd "<f9>") 'my/compile)
 
   ;; Preload org to resume clock in time
   ;; speed up
