@@ -3,8 +3,6 @@
                         org
                         plantuml-mode
                         (org-protocol-capture-html :location (recipe :fetcher github :repo "alphapapa/org-protocol-capture-html"))
-                        ox-twbs
-                        pamparam
                         org-drill
                         (helm-yandex-geoapi :location local)
                         (artist :location built-in)))
@@ -17,20 +15,6 @@
     :config
     (setq org-drill-maximum-items-per-session 5)
     (setq org-drill-maximum-duration 20)))
-
-(defun my-org/init-pamparam ()
-  (use-package pamparam))
-
-(defun my-org/init-ox-twbs ()
-  (use-package ox-twbs
-    :config
-    (setq org-publish-project-alist
-          '(("org-notes"
-             :base-directory "~/org/"
-             :publishing-directory "~/public_html/"
-             :publishing-function org-twbs-publish-to-html
-             :with-sub-superscript nil
-             )))))
 
 (defun my-org/init-plantuml-mode ()
   (use-package plantuml-mode
@@ -307,7 +291,7 @@ SCHEDULED %^T
                                ((file-exists-p "/opt/plantuml/plantuml.jar")  "/opt/plantuml/plantuml.jar")
                                (t nil)
                              )
-
+   plantuml-jar-path org-plantuml-jar-path   ;; this is used for org-pubsih
    ;; ------------------------------------------------------------------------------
    ;; TODO faces
    ;; ------------------------------------------------------------------------------
@@ -353,6 +337,7 @@ SCHEDULED %^T
   (add-hook 'org-timer-done-hook 'my/org-timer-done)
 
   (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
+  (my/set-key-file-link "ob" "~/Dropbox/shared-org/static/books.org")
   (my/set-key-file-link "oT" "~/Dropbox/shared-org/dynamic/tasks.org")
   (my/set-key-file-link "on" "~/Dropbox/shared-org/dynamic/refile.org")
   (my/set-key-file-link "oN" "~/Dropbox/shared-org/dynamic/refile.org")
@@ -532,8 +517,8 @@ _c_: Computers      _T_: tasks
 
   ;; (add-hook 'org-mode-hook 'org-mode-hook-fix-agenda-keys)
   (add-hook 'org-open-at-point-functions 'my/org-open-jira-link)
-  (spacemacs/set-leader-keys "oj" 'my/org-open-clocking-jira-link)
-  (spacemacs/set-leader-keys "oJ" 'my/org-show-and-copy-jira-ticket)
+  (spacemacs/set-leader-keys "oJ" 'my/org-open-clocking-jira-link)
+  (spacemacs/set-leader-keys "oj" 'my/org-show-and-copy-jira-ticket)
 
   (with-eval-after-load "org"
     (define-key org-mode-map (kbd "C-c C-y") 'my/org-show-and-copy-jira-ticket))
@@ -546,7 +531,7 @@ _c_: Computers      _T_: tasks
                                ("\\.png\\'" . default)
                                ) org-file-apps))))
 
-  (setq my/global-morning-timer (run-at-time "08:00" (* 24 3600 3600) 'my/org-morning-clock-chore))
+  (setq my/global-morning-timer (run-at-time "08:00" (* 24 60 60) 'my/org-morning-clock-chore))
   )
 
 (defun my-org/init-noflet ())
