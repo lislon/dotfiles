@@ -7,7 +7,11 @@
                       (replace-regexp-in-string "-\\(.\\)"
                                                 (lambda (f) (upcase-initials (substring f 1)))
                                                 project-name)))
-  (let ((dir (make-temp-file (concat "sandbox-java-" project-name "-") t)))
+  (let ((dir (concat
+              (file-name-as-directory my/java-sandbox-persist-dir)
+              (file-name-as-directory (concat "proj-" project-name))
+              (file-name-as-directory "src"))))
+    (make-directory dir t)
     (find-file (concat (file-name-as-directory dir)  project-name ".java"))
     ;; (eclim-mode nil)
     (my/insert-yasnippet "sandbox-auto" (list 'class-name project-name))
@@ -31,26 +35,7 @@
     (eq major-mode 'latex-mode) (call-interactively 'my/make-temp-latex-sandbox)))
   )
 
-(defun my/export-java-sandbox ()
-  "Exports java sandbox environment to persistent location"
-  (interactive)
-  (when (string-match "sandbox-java-\\(.+\\)-[^\-]+$" buffer-file-name)
-    (let* ((project-name (match-string 1 buffer-file-name))
-           (temp-proj-dir (file-name-directory buffer-file-name))
-          (new-proj-dir (concat (file-name-directory
-                                 my/java-sandbox-persist-dir) project-name))
-          (bufs (cl-loop for buf in (buffer-list)
-                         if (and (buffer-file-name buf)
-                                 (string-prefix-p temp-proj-dir (buffer-file-name buf)))
-                         collect buf)))
-      (mapc 'save-buffer bufs)
-      (copy-directory temp-proj-dir new-proj-dir t t)
-      (delete-directory temp-proj-dir t)
-      (find-file (concat (file-name-directory new-proj-dir) "/" (file-name-nondirectory buffer-file-name)) )
-      (mapc 'kill-buffer bufs)
-      (message "Project was exported to %s" new-proj-dir)
-      )))
-(defcustom my/java-sandbox-persist-dir "~/src/" "Directory used
+(defcustom my/java-sandbox-persist-dir "~/tmp/java-sandbox/" "Directory used
 for export java sandbox projects")
 
 (defun my/insert-yasnippet (name &rest expand-env)
