@@ -85,6 +85,7 @@ This function should only modify configuration layer settings."
   (when (file-exists-p "~/Dropbox/confiles/common/emacs/layers")
     (add-to-list 'dotspacemacs-configuration-layer-path "~/Dropbox/confiles/common/emacs/layers" t)
     (add-to-list 'dotspacemacs-configuration-layers 'my-org-home))
+
 )
 
 
