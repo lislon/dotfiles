@@ -46,7 +46,6 @@
     sh-script
     sh-mode
     dired-mode
-    multiple-cursors
 )
   "The list of Lisp packages required by the my-common layer.
 

@@ -25,6 +25,11 @@
     )
   )
 
+
+(defun my-org/init-calfw ()
+  (use-package calfw)
+  )
+
 (defun my-org/post-init-org ()
   (setq-default
    ;; ------------------------------------------------------------------------------
@@ -123,7 +128,7 @@
                              "* TODO %^{Public TODO}\n%U\n%?")
                             ("N" "public note" entry (file "~/Dropbox/shared-org/dynamic/refile.org")
                              "* %^{Public note}\n%U\n%?")
-                            ("A" "Public appointment" entry (file+headline "~/Dropbox/shared-org/dynamic/tasks.org" "Appointments")
+                            ("A" "Public appointment" entry (file "~/Dropbox/shared-org/dynamic/refile.org")
                              "* APPOINTMENT with %?
 :PROPERTIES:
 :APPT_WARNTIME: 90
