@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: loop
+# key: loop
+# --
+loop ${1:1000 times}
+     $0
+end
