@@ -1,6 +1,8 @@
 #!/usr/bin/bash
-# Author: Igor Avdeev
-# Checkstyle all modifled *.java file lines and aborts a commit if any violation is found
+# project: mcs-git-hooks
+# author: Igor Avdeev
+# description: Checkstyle all modifled *.java file
+#              lines and aborts a commit if any violation is found
 
 #
 # Pre-commit hook for running checkstyle on changed Java sources
@@ -24,45 +26,50 @@ CONFIG_JAR="checkstyle.jar"
 CONFIG_JAVA="java.command"
 CONFIG_="java.command"
 
-check_file=$(git config --get $CONFIG_CHECK_FILE)
+check_file_orig=$(git config --get $CONFIG_CHECK_FILE)
 checkstyle_jar=$(git config --get $CONFIG_JAR)
 checkstyle_wrapper=$(git config --get $CONFIG_JAR)
 java_command=$(git config --get $CONFIG_JAVA)
+checkstyle_parse=".git/hooks/scripts/checkstyle-parse.sh"
 
+check_file_cyg=""
+check_temp_file=""
 
+# convert filename to cygpath
 function convert-filename {
     [[ "$(uname -o)" =~ Cygwin|Msys ]] && cygpath "$1" || echo "$1";
 }
 
 function is-file-to-check {
-    return 0
-    [[ "$1" =~ \\.\(java\|groovy\)$ ]] && return 0 || return 1
+    [[ "$1" =~ \.(java|groovy|xml)$ ]] && return 0 || return 1
 }
 
 
 function validate-config {
 
-    if [[ -z "$check_file" || -z "$checkstyle_jar" ]] ; then
+    if [[ -z "$check_file_orig" || -z "$checkstyle_jar" ]] ; then
         echo -e "You must configure checkstyle in your git config:" 1>&2
         echo -e "\t$CONFIG_CHECK_FILE - path to your checkstyle.xml file" 1>&2
         echo -e "\t$CONFIG_JAR - path to your checkstyle jar file" 1>&2
         echo -e "\t$CONFIG_JAVA - path to your java executable (optional)" 1>&2
         echo -e "" 1>&2
         echo -e "\tUse git config [--global] --add $CONFIG_CHECK_FILE <value>" 1>&2
-        echo -e "\tCurrent values: $CONFIG_CHECK_FILE=$check_file" 1>&2
+        echo -e "\tCurrent values: $CONFIG_CHECK_FILE=$check_file_orig" 1>&2
         echo -e "\tCurrent values: $CONFIG_JAR=$checkstyle_jar" 1>&2
         exit 1
     fi
 
-    if ! which checkstyle-parse.sh 2>/dev/null ; then
-        echo -e "checkstyle-parse.sh is not found in your PATH environment: $ENV{PATH}" 1>&2
+    if ! which "$checkstyle_parse" 1>/dev/null 2>&1; then
+        echo -e "$checkstyle_parse is not found" 1>&2
     fi
 }
 
 
 function run-check {
-
+    command="$checkstyle_parse $java_command -jar $checkstyle_jar -c $check_temp_file"
     HAS_FILES=no
+
+    git rev-parse HEAD 1>/dev/null 2>&1 || return # When no commits in new repo
 
     FILES=$(git diff-index --cached HEAD 2>&2 | sed 's/^:.*\t//' | uniq)
 
@@ -83,14 +90,26 @@ function run-check {
 }
 
 function pre-process-variables {
-
     java_command="${java_command:-java}"
-    check_file="$(convert-filename "$check_file")"
-    checkstyle_jar="$(convert-filename "$checkstyle_jar")"
 
-    command="checkstyle-parse.sh $java_command -jar $checkstyle_jar -c $check_file"
+    # convert files to cygwin style if needed
+    check_file_cyg="$(convert-filename "$check_file_orig")"
+    checkstyle_jar="$(convert-filename "$checkstyle_jar")"
 }
+
+# replace placeholder {$config_loc} in file
+function generate-temp-checkstyle-file {
+    check_temp_file="$(mktemp --suffix .checkstyle)"
+    check_file_dir=$(dirname "$check_file_orig")
+    cat "$check_file_cyg" | sed "s;\${config_loc};$check_file_dir;" > "$check_temp_file"
+}
+function clear-temp-checkstyle-file {
+    rm "$check_temp_file"
+}
+
+trap clear-temp-checkstyle-file EXIT
 
 validate-config
 pre-process-variables
+generate-temp-checkstyle-file
 run-check

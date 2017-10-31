@@ -1,20 +1,20 @@
 (setq my-org-packages '(noflet
-                        calfw
+                        ;; calfw
                         org
                         plantuml-mode
                         (org-protocol-capture-html :location (recipe :fetcher github :repo "alphapapa/org-protocol-capture-html"))
-                        org-drill
+                        ;; org-drill
                         (helm-yandex-geoapi :location local)
                         (artist :location built-in)))
 
 (defun my-org/init-org-protocol-capture-html ()
   (use-package org-protocol-capture-html))
 
-(defun my-org/init-org-drill ()
-  (use-package org-drill
-    :config
-    (setq org-drill-maximum-items-per-session 5)
-    (setq org-drill-maximum-duration 20)))
+;; (defun my-org/init-org-drill ()
+;;   (use-package org-drill
+;;     :config
+;;     (setq org-drill-maximum-items-per-session 5)
+;;     (setq org-drill-maximum-duration 20)))
 
 (defun my-org/init-plantuml-mode ()
   (use-package plantuml-mode
@@ -26,9 +26,9 @@
   )
 
 
-(defun my-org/init-calfw ()
-  (use-package calfw)
-  )
+;; (defun my-org/init-calfw ()
+;;   (use-package calfw)
+;;   )
 
 (defun my-org/post-init-org ()
   (setq-default
