@@ -169,6 +169,7 @@ init-simple-aliases() {
     alias иир='_emacs-clock-out && systemctl suspend'
     alias emacsrestart='systemctl --user restart emacs-daemon'
     alias emacsstop='systemctl --user stop emacs-daemon'
+    alias sc-user='systemctl --user'
     alias svim='SUDO_EDITOR=vim sudoedit'
     alias cx='chmod +x'
     alias -g copy='xclip -selection clipboard -f | xclip -selection p'

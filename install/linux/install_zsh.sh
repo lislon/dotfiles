@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SOURCE=~/dotfiles/zsh/zshrc
+SOURCE=~/Dropbox/dotfiles/zsh/zshrc
 TARGET=~/.zshrc
 
 if ! which curl >/dev/null 2>&1; then
