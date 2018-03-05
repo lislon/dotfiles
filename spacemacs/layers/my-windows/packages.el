@@ -36,9 +36,18 @@
                       :repo "jwiegley/alert"))
     org
     sound-wav
+    quickrun
     ))
 
 
+
+(defun my-windows/post-init-quickrun ()
+  (use-package "quickrun"
+    :config
+    (quickrun-add-command "haskell"
+      '((:command . "stack")
+        (:exec    . ("stack exec real-exec")))
+      :override t)))
 
 (defun my-windows/init-sound-wav ()
   (use-package "sound-wav")
