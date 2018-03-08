@@ -1,11 +1,21 @@
 (setq my-org-packages '(noflet
+<<<<<<< HEAD
                         ;; calfw
+=======
+>>>>>>> Evolution of my config goes by
                         org
+                        f
                         plantuml-mode
                         (org-protocol-capture-html :location (recipe :fetcher github :repo "alphapapa/org-protocol-capture-html"))
+<<<<<<< HEAD
                         ;; org-drill
+=======
+>>>>>>> Evolution of my config goes by
                         (helm-yandex-geoapi :location local)
                         (artist :location built-in)))
+
+(defun my-org/post-init-f ()
+  (use-package f))
 
 (defun my-org/init-org-protocol-capture-html ()
   (use-package org-protocol-capture-html))
@@ -25,11 +35,14 @@
     )
   )
 
+<<<<<<< HEAD
 
 ;; (defun my-org/init-calfw ()
 ;;   (use-package calfw)
 ;;   )
 
+=======
+>>>>>>> Evolution of my config goes by
 (defun my-org/post-init-org ()
   (setq-default
    ;; ------------------------------------------------------------------------------
@@ -138,6 +151,9 @@ SCHEDULED %^T
                             ("B" "book" entry (file+headline "~/Dropbox/shared-org/dynamic/books.org" "Books")
 
                              "* PENDING %^{Book}\n%U\n%?")
+                            ("W" "Wish" entry (file "~/Dropbox/shared-org/static/wishlist.org" )
+
+                             "* %^{Wish}\n%U\n%?")
                             ("e" "English quote" entry (file+headline "~/Dropbox/shared-org/static/quotes.org" "Just Phrases")
 
 
@@ -486,12 +502,14 @@ _j_: Java           _N_: notes pub
 _b_: Bash           _n_: notes priv (refile)
 _g_: Git            _b_: books
 _c_: Computers      _T_: tasks
+_l_: Linux          _T_: tasks
 "
     ("e" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")))
     ("j" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/java.org" "Java")))
     ("b" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/bash.org")))
     ("o" (lambda () (interactive) (find-file "~/org/dynamic/todo.org")))
     ("c" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/computers.org")))
+    ("l" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/linux.org")))
     ("g" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/programming.org" "Git")))
     ("n" (lambda () (interactive) (find-file "~/Dropbox/org/dynamic/notes.org")))
     ("N" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))

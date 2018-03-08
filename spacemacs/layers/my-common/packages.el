@@ -41,11 +41,12 @@
     projectile
     elisp-format
     magit
-    helm
+    ;;helm
     hydra
     sh-script
     sh-mode
     dired-mode
+    ;; vagrant-tramp
 )
   "The list of Lisp packages required by the my-common layer.
 
@@ -75,6 +76,9 @@ Each entry is either:
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
 
+;; (defun my-common/init-vagrant-tramp ()
+;;   (use-package vagrant-tramp)
+;;   )
 
 (defun my-common/post-init-mutiply-cursors ()
   (setq mc/list-file "~/Dropbox/dotfiles/spacemacs/layers/my-common/multiply-allow-commands.el")
@@ -122,7 +126,7 @@ Each entry is either:
 
 
 (defun my-common/init-restclient ()
-  (evil-leader/set-key "ar" 'my/rest-client)
+  (evil-leader/set-key "aR" 'my/rest-client)
   (use-package restclient
     :defer t))
 
