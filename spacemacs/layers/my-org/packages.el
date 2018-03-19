@@ -1,16 +1,8 @@
 (setq my-org-packages '(noflet
-<<<<<<< HEAD
-                        ;; calfw
-=======
->>>>>>> Evolution of my config goes by
                         org
                         f
                         plantuml-mode
                         (org-protocol-capture-html :location (recipe :fetcher github :repo "alphapapa/org-protocol-capture-html"))
-<<<<<<< HEAD
-                        ;; org-drill
-=======
->>>>>>> Evolution of my config goes by
                         (helm-yandex-geoapi :location local)
                         (artist :location built-in)))
 
@@ -35,14 +27,6 @@
     )
   )
 
-<<<<<<< HEAD
-
-;; (defun my-org/init-calfw ()
-;;   (use-package calfw)
-;;   )
-
-=======
->>>>>>> Evolution of my config goes by
 (defun my-org/post-init-org ()
   (setq-default
    ;; ------------------------------------------------------------------------------
