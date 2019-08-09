@@ -1,4 +1,4 @@
-;; -*- mode: emacs-lisp; lexical-binding: t -*-
+; -*- mode: emacs-lisp; lexical-binding: t -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
@@ -45,11 +45,15 @@ This function should only modify configuration layer settings."
      ;; (semantic :disabled-for emacs-lisp) ;; emacs 25 hang bug ;; problem counter: 1
      helm
      ;; ivy
-     (auto-completion :disabled-for org markdown)
+     (auto-completion :disabled-for org markdown
+                      (haskel haskell-completion-backend 'intero))
      better-defaults
      emacs-lisp
-     neotree
+     ;; multiple-cursors  ;;  Unknown
+     ;; neotree  ;; Unknown
      spacemacs-org
+     spell-checking
+     osx
      ;; common-lisp
 
      git
@@ -60,7 +64,6 @@ This function should only modify configuration layer settings."
      yaml
      colors
      typescript
-     haskell
      ;; gnus
      sql
      ;; neotree
@@ -70,10 +73,10 @@ This function should only modify configuration layer settings."
      my-org
      my-keys
      my-russian
+     my-skillbox
      my-google-translate
      version-control
      latex
-     octave
      )
 
    ;; List of additional packages that will be installed without being
@@ -97,14 +100,19 @@ This function should only modify configuration layer settings."
    ;; (default is `used-only')
    dotspacemacs-install-packages 'used-only)
    
-  (if (eq system-type 'windows-nt)
-      (add-to-list 'dotspacemacs-configuration-layers 'my-windows t)
+  (when (eq system-type 'windows-nt)
+      (add-to-list 'dotspacemacs-configuration-layers 'my-windows t))
+  (when (eq system-type 'gnu)
     (add-to-list 'dotspacemacs-configuration-layers 'my-linux t) )
+  (when (spacemacs/system-is-mac)
+    (add-to-list 'dotspacemacs-configuration-layers 'my-macos t) )
 
   (when (not (file-exists-p "~/.spacemacs.d.local/layers"))
     (mkdir "~/.spacemacs.d.local/layers" t))
   (when (file-exists-p "~/.spacemacs.d.local/layers/my-work")
     (add-to-list 'dotspacemacs-configuration-layers 'my-work t))
+  (when (file-exists-p "~/.spacemacs.d.local/layers/my-local")
+    (add-to-list 'dotspacemacs-configuration-layers 'my-local t))
 
   (when (file-exists-p "~/Dropbox/confiles/common/emacs/layers")
     (add-to-list 'dotspacemacs-configuration-layer-path "~/Dropbox/confiles/common/emacs/layers" t)
@@ -161,7 +169,7 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil then Spacelpa repository is the primary source to install
    ;; a locked version of packages. If nil then Spacemacs will install the
    ;; latest version of packages from MELPA. (default nil)
-   dotspacemacs-use-spacelpa t
+   dotspacemacs-use-spacelpa nil
 
    ;; If non-nil then verify the signature for downloaded Spacelpa archives.
    ;; (default nil)
@@ -220,11 +228,11 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-colorize-cursor-according-to-state t
 
    ;; Set the theme for the Spaceline. Supported themes are `spacemacs',
-   ;; `all-the-icons', `custom', `vim-powerline' and `vanilla'. The first three
-   ;; are spaceline themes. `vanilla' is default Emacs mode-line. `custom' is a
-   ;; user defined themes, refer to the DOCUMENTATION.org for more info on how
-   ;; to create your own spaceline theme. Value can be a symbol or list with\
-   ;; additional properties.
+   ;; `all-the-icons', `custom', `doom', `vim-powerline' and `vanilla'. The
+   ;; first three are spaceline themes. `doom' is the doom-emacs mode-line.
+   ;; `vanilla' is default Emacs mode-line. `custom' is a user defined themes,
+   ;; refer to the DOCUMENTATION.org for more info on how to create your own
+   ;; spaceline theme. Value can be a symbol or list with additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
    dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.5)
 
@@ -396,7 +404,15 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-highlight-delimiters 'all
 
    ;; If non-nil, start an Emacs server if one is not already running.
-   dotspacemacs-enable-server t
+   ;; (default nil)
+   dotspacemacs-enable-server nil
+
+   ;; Set the emacs server socket location.
+   ;; If nil, uses whatever the Emacs default is, otherwise a directory path
+   ;; like \"~/.emacs.d/server\". It has no effect if
+   ;; `dotspacemacs-enable-server' is nil.
+   ;; (default nil)
+   dotspacemacs-server-socket-dir nil
 
    ;; If non-nil, advise quit functions to keep server open when quitting.
    ;; (default nil)
@@ -444,10 +460,15 @@ It should only modify the values of Spacemacs settings."
    ;; visiting README.org files of Spacemacs.
    ;; (default nil)
    dotspacemacs-pretty-docs nil)
+
   (setq custom-file (expand-file-name "~/.emacs.d/.cache/custom.el")
         spacemacs-custom-file "~/.emacs.d/.cache/custom-spacemacs.el"
         ediff-window-setup-function 'ediff-setup-windows-default
         configuration-layer-private-directory "~/.spacemacs.d/"
+
+	;; Debugger entered--Lisp error: (bad-signature "archive-contents.sig")
+	;; signal(bad-signature ("archive-contents.sig"))
+	package-check-signature nil
         )
   ;; User initialization goes here
   (add-to-load-path "~/dotfiles/spacemacs/thirdparty")
@@ -456,6 +477,14 @@ It should only modify the values of Spacemacs settings."
     (setq dotspacemacs-elpa-https nil))
 )
 
+(defun dotspacemacs/user-env ()
+  "Environment variables setup.
+This function defines the environment variables for your Emacs session. By
+default it calls `spacemacs/load-spacemacs-env' which loads the environment
+variables declared in `~/.spacemacs.env' or `~/.spacemacs.d/.spacemacs.env'.
+See the header of this file for more information."
+  (spacemacs/load-spacemacs-env)
+  )
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
@@ -465,10 +494,15 @@ executes.
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   ;; Shared undo of org files between computers
-  (setq configuration-layer-elpa-archives '(("melpa" . "melpa.org/packages/")   ("org" . "orgmode.org/elpa/") ("gnu" . "elpa.gnu.org/packages/")))
+  ;; why set this? to disable elpa
+  ;; (setq configuration-layer-elpa-archives '(("melpa" . "melpa.org/packages/")   ("org" . "orgmode.org/elpa/") ("gnu" . "elpa.gnu.org/packages/")))
+
+  ;; This is probably related to Helm using Tramp which tries to figure out some SSH/DNS settings at startup.
+  (setq tramp-ssh-controlmaster-options
+        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+
   (when (eq system-type 'gnu/linux)
-    (setq shared-dir (expand-file-name "~/Dropbox/emacs-bookmarks/cache/undo")
-          )
+    (setq shared-dir (expand-file-name "~/Dropbox/emacs-bookmarks/cache/undo"))
     (setq-default
      undo-tree-history-directory-alist `(
                                          (,(expand-file-name "~/org") . ,shared-dir)
@@ -480,335 +514,24 @@ before packages are loaded. If you are unsure, you should try in setting them in
     ;; repalace process-coding system-alist with from undecided-dos to windows-1251
     ;; this will allow cyrillic characters on windows machines
     (mapc (lambda (val) (setcdr val (cons 'windows-1251 'windows-1251))) process-coding-system-alist)
-  ;;   ;; (setq default-process-coding-system '(windows-1251 . windows-1251))
- 
     (setq custom-theme-directory "~/dotfiles/spacemacs/custom-themes")
    )
   )
 
-(defun dotspacemacs/user-config ()
-  "Configuration function.
- This function is called at the very end of Spacemacs initialization after
-layers configuration."
-  (setq
-
-   ;; basic
-   vc-follow-symlinks t
-   default-directory "~"
-   evil-move-beyond-eol nil
-   evil-escape-unordered-key-sequence t
-   spaceline-org-clock-p t
-   spaceline-always-show-segments t     ; always show clock
-   x-select-enable-primary t            ; copy/paste from emacs to urxvt
-   message-kill-buffer-query nil        ; do not ask confirmation of killing buffer
-   ffap-newfile-prompt t                ; gf can create new files
-   source-directory (concat user-home-directory "src-dormant/emacs/src")
-   avy-case-fold-search nil             ; avy jump respect case
-   spacemacs-paste-transient-state-add-bindings '(("p" evil-paste-pop "paste next")
-                                                  ("P" evil-paste-pop-next "paste previous"))
-   timer-max-repeats 0                  ; Do not repeat timer on suspen
-   delete-by-moving-to-trash nil        ; Do not use trash when deleting files
-   create-lockfiles nil                 ; get rid of .#filename.org (intented to prevent multiuser editing of file, but I always save files)
-   evil-shift-round nil                 ; explanation https://youtu.be/HKF41ivkBb0?t=13m35s
-
-
-   yas-wrap-around-region nil           ; I set to nil to prevent duplication of region when using surround snip
-   ;; Dired - directories first
-
-   ;; dired-listing-switches "-aBhl  --group-directories-first"
-
-   ;; Man in same window
-   Man-notify-method 'pushy
-
-   ;; ftp
-   ange-ftp-try-passive-mode t
-
-   ;; backup
-
-   ;; make-backup-files Switched off because of error backup-extract-version: Args out of range: "!home!ele!Dropbox!emacs-resources!gnus!archive!Отправленные.~1~", 73
-   make-backup-files nil
-   keep-new-versions 10
-   keep-old-versions 2
-   backup-by-copying t
-   delete-old-versions t
-   version-control t       ;; Always use version numbers in filenames
-   backup-directory-alist '(("" . "~/.emacs.d/.cache/backup-per-save"))
-
-   ;; workaround: neotree is painfully slow
-   neo-vc-integration nil
-
-   ;; Autocompletion
-   auto-completion-complete-with-key-sequence "jk"
-   auto-completion-enable-sort-by-usage t
-   auto-completion-enable-help-tooltip t
-   evil-ex-substitute-global t
-
-   ;; zsh shell
-   ;; comint-input-ring-size 100000
-   ;; comint-input-ring-file-name "~/.zsh_history"
-   ;;                                      ; Ignore timestamps in history file.  Assumes that zsh
-   ;;                                      ; EXTENDED_HISTORY option is in use.
-   ;; comint-input-ring-separator "\n: \\([0-9]+\\):\\([0-9]+\\);"
-
-   ;; ispell-personal-dictionary "~/Dropbox/emacs-resources/ispell-dictionary"
-   abbrev-file-name "~/Dropbox/emacs-resources/abbrev_defs.el"
-   ;; spell-checking-enable-auto-dictionary t
-   spell-checking-enable-by-default nil ; Disabled because it freezes emacs 25.1 when commenting XML region with ending line
-
-   ;; big undo
-   undo-limit (* 10 1000 1000)                    ; 10MB per file
-   undo-strong-limit (* 100 1000 1000)            ; 100MB max
-
-   ;; org-mode timestamps in english
-   system-time-locale "C"
-
-   ;; Git fullscreen
-   git-magit-status-fullscreen t
-
-   ;; Tea time sound
-   timer-sound "~/Dropbox/dotfiles/spacemacs/sounds/tea-bell.wav"
-
-   ;; Persistent undo
-   undo-tree-auto-save-history t
-   undo-tree-history-directory-alist
-   `(("." . ,(concat spacemacs-cache-directory "undo")))
-
-   ;; scroll margin 3 lines without jumping
-   scroll-margin 3
-   scroll-conservatively 10000
-   scroll-step 1
-
-   ;; Latex
-   TeX-engine 'luatex
-
-   ;; quickrun
-   quickrun-focus-p nil
-
-   eww-search-prefix "https://www.google.ru/search?q="
-
-   spacemacs-useful-buffers-regexp '("\\*SQL*"
-                                     "\\*Man*"
-                                     "\\*unset mail*"
-                                     "\\*Article*"
-                                     "\\*Dir\\*"
-                                     "\\*info\\*"
-                                     "\\*sos\\*"
-                                     "\\*-debug\\*"
-                                     "\\*REST\\*"
-                                     "\\*new snippet\\*"
-                                     "\\*Help\\*")
-   )
-
-  ;; prevent overwire of clipboard when selection
-  (fset 'evil-visual-update-x-selection 'ignore)
-
-  (make-directory (concat spacemacs-cache-directory "undo") t)
-
-  ;; ------------------------------------------------------------------------------
-  ;; DEBUG recentf
-  ;; ------------------------------------------------------------------------------
-  ;; (setq debug-on-quit t)
-
-  ;; (with-eval-after-load "recent"
-  ;;   (defun recentf-track-opened-file ()
-  ;;     "Insert the name of the file just opened or written into the recent list."
-
-  ;;     (and buffer-file-name (message "recentf track file: %s" buffer-file-name)
-  ;;          (recentf-add-file buffer-file-name))
-  ;;     ;; Must return nil because it is run from `write-file-functions'.
-  ;;     nil))
-
-  ;; (add-hook 'find-file-hook (lambda () (message "find file hook called %s" buffer-file-name)))
-
-  ;; Why do we need this shit?
-  ;; (with-eval-after-load "org"
-  ;;   (mapcar 'funcall org-store-link-functions))
-
-  ;; Emacs yank C-y in insert mode
-
-  ;; (define-key evil-hybrid-state-map "\C-y" 'yank)
-
-  ;; ;; Use tab in help mode for next button
-  ;; (define-key help-mode-map (kbd "<Tab>") 'forward-button)
-  (with-eval-after-load 'helm-mode
-    (define-key helm-find-files-map (kbd "C-h") 'helm-find-files-up-one-level))
-
-
-  ;; (with-eval-after-load 'eww-mode
-  ;;   (define-key eww-mode-map (kbd "<Tab>") 'forward-button))
-  (add-hook 'eww-mode 'evil-insert-state)
-  (add-hook 'yaml-mode 'indent-guide-mode)
-
-  ;; locate shows bad results on archlinux
-  (add-hook 'helm-after-initialize-hook (lambda () (setq helm-locate-fuzzy-match nil)))
-  (add-hook 'doc-view-mode-hook 'auto-revert-mode)
-  (add-hook 'after-save-hook (lambda ()
-                               (when (and
-                                      (string-prefix-p (concat user-home-directory "bin") buffer-file-name)
-                                      (eq major-mode 'sh-mode)
-                                      (not (file-executable-p buffer-file-name)))
-                                 (message "chmod 755 %s" buffer-file-name)
-                                 (set-file-modes buffer-file-name #o755)
-                                 )))
-
-  ;; startundo
-  ;; Custom bookmakrs path
-  ;; in emacs 24 system-name is FQDN and in emacs 25 it is a hostname
-  (setq bookmark-default-file "~/.spacemacs.d.local/bookmarks.el")
-
-  (put 'set-goal-column 'disabled nil)  ;; Allow C-x C-n goal column for csv
-
-
-;;   ;; C-h - updirectory in dired
-;;   (evil-define-key 'normal dired-mode-map (kbd "C-S-h") 'dired-up-directory)
-
-;;   ;; Fix RET key in profiler (not works)
-;;   ;; (evil-define-key 'normal profiler-report-mode-map (kbd "j") 'profiler-report-toggle-entry)
-
-
-  ;; auto-save all files on lost focus
-  (add-hook 'focus-out-hook (lambda () (save-some-buffers t)))
-  (global-unset-key (kbd "C-h h")) ;; Disable hello file, because it hangs
-
-  ;; autoscroll messages
-  ;; commented because i can't copy line with yy
-  ;; TODO: Add check that cursor is not in current window
-  ;; (defadvice message (after message-tail activate)
-  ;;   "goto point max after a message"
-  ;;   (with-current-buffer "*Messages*"
-  ;;     (goto-char (point-max))
-  ;;     (walk-windows (lambda (window)
-  ;;                     (if (string-equal (buffer-name (window-buffer window)) "*Messages*")
-  ;;                         (set-window-point window (point-max))))
-  ;;                   nil
-  ;;                   t)))
-
-
-
-  ; Auto set lisp-interaction-mode in *scratch*
-  ;; @deprec Now it is dotspacemacs-scratch-mode 'lisp-interaction-mode
-  ;; (defun my/scratch-interactive-mode ()
-  ;;   (when (equal "*scratch*" (buffer-name))
-  ;;     (lisp-interaction-mode)
-  ;;     (remove-hook 'window-configuration-change-hook 'my/scratch-interactive-mode))
-  ;;   )
-  ;; (add-hook 'window-configuration-change-hook 'my/scratch-interactive-mode)
-
-  ;; (add-hook 'calc-mode-hook 'calc-algebraic-entry)
-
-
-  ;; Auto github favore mode when editing markdown
-  (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
-  (add-to-list 'auto-mode-alist '("vimrc\\'" . vimrc-mode))
-
-  ;; Shell mode for ~/bin
-  (add-to-list 'auto-mode-alist '("rc\\'" . conf-mode))
-  (add-to-list 'auto-mode-alist `(,(concat user-home-directory "bin/.+") . shell-script-mode))
-  (add-to-list 'auto-mode-alist '("dictionary\\.txt\\'" . google-translate-interactive-mode))
-  (add-to-list 'auto-mode-alist '("\\.desktop\\'" . desktop-entry-mode))
-
-  (define-derived-mode desktop-entry-mode conf-unix-mode "Desktop" "Desktop entry")
-
-
-
-  ;; commented because i tired of missing buffer in recentf list after I close it with SPC b d
-;;   (with-eval-after-load "recentf"
-;;     ;; I want to have  ~/.emacs.d/melpa files in recentf
-;;     (delete (expand-file-name package-user-dir) recentf-exclude)
-
-;;     (defsubst file-was-visible-p (file)
-;;       "Return non-nil if FILE's buffer exists and has been displayed."
-;;       (message "file-was-visible-p %s?" file)
-;;       (let ((buf (find-buffer-visiting file)))
-;;         (if buf
-;;             (let ((display-count (buffer-local-value 'buffer-display-count buf)))
-;;               (if (> display-count 0) display-count nil)))))
-
-;;     (let ((r-list recentf-list))
-;;       (defun keep-default-old-and-visible-recentf-p (file)
-;;         "Decide whether to keep file in recentf-list.
-;; Return non-nil if recentf would, by default, keep FILE, and
-;; either FILE name was loaded from recentf file on disk or FILE
-;; has been displayed in this session."
-;;         (if (recentf-keep-default-predicate file)
-;;             (if (or (member file r-list)
-;;                     (file-was-visible-p file))
-;;                 (progn
-;;                   (message "File good: %s" file)
-;;                   t)
-;;               (message "Recentf delete: %s" file)
-;;               nil))))
-
-;;     ;; And, of course, you now need:
-
-;;     (setf recentf-keep '(keep-default-old-and-visible-recentf-p)))
-
-
-  ;; Private config for this host
-  (when (file-exists-p "~/local.el")
-    (load "~/local.el"))
-
-  ;; Private config for all my hosts
-  (when (file-exists-p "~/confiles/common/emacs/semi-local.el")
-    (load "~/confiles/common/emacs/semi-local.el"))
-
-  (global-set-key (kbd "<f9>") 'my/compile)
-
-  ;; Preload org to resume clock in time
-  ;; speed up
-  (require 'org)
-
-  ;; (with-eval-after-load "Man"
-  ;;   (add-hook 'Man-mode-hook (lambda () (pop-to-buffer (current-buffer))))
-  ;;   ;; (add-hook 'woman-post-format-hook (lambda () (message "Buffer %s" (buffer-name)))))
-
-  ;; Autoinsert variables Not working + on update on save
-  ;; (setq-default auto-insert-directory "~/dotfiles/spacemacs/private/skeletons")
-  ;; (auto-insert-mode)
-  ;; (define-auto-insert "/\\.emacs.d/.+?\\.el\\'" "spacemacs-skel.el")
-
-
-  ;; Extract variable to the line above
-  ;; (evil-define-operator my/sh-extract-variable-operator (beg end)
-  ;;   :keep-visual t
-  ;;   :move-point nil
-  ;;   (interactive "<r>")
-  ;;   (progn
-  ;;     (let ((region (buffer-substring-no-properties beg end))
-  ;;           (varname (read-from-minibuffer "Extract variable name: "))
-  ;;           )
-  ;;       (kill-region beg end)
-  ;;       (insert "$" varname)
-  ;;       (forward-line -1)
-  ;;       (insert varname "=" region)
-  ;;       (end-of-line)
-  ;;       )
-  ;;     ))
-
-
-  ;; make this buffers available for switching via SPC TAB
-
-  (dotspacemacs/custom-keys)
-  (dotspacemacs/hooks)
-
-  ;; (use-package web-mode
-  ;;   :defer t
-  ;;   :init
-  ;;   (setq web-mode-extra-snippets
-  ;;         '(("erb" . (("toto" . "<% toto | %>\n\n<% end %>")))
-  ;;           ("php" . (("dowhile" . "<?php do { ?>\n\n<?php } while (|); ?>")
-  ;;                     ("debug" . "<?php error_log(__LINE__); ?>")))
-  ;;           )))
-
-  ;; Integrate system clipboard with emacs kill ring
-  ;; disable reson: It doesn't work with russian text in clipboard
-  ;; (use-package clipmon
-  ;;   :config (clipmon-mode-start))
-  (define-key process-menu-mode-map (kbd "C-k") 'joaot/delete-process-at-point)
+(defun dotspacemacs/user-load ()
+  "Library to load while dumping.
+This function is called only while dumping Spacemacs configuration. You can
+`require' or `load' the libraries of your choice that will be included in the
+dump."
   )
 
-(defun dotspacemacs/custom-keys ()
-  "Here go my keys customization."
+
+(defun dotspacemacs/user-config ()
+  "Configuration for user code:
+This function is called at the very end of Spacemacs startup, after layer
+configuration.
+Put your configuration code here, except for variables that should be set
+before packages are loaded."
 
   ;; Vim move right or left
   (my/define-key evil-normal-state-map
@@ -835,7 +558,8 @@ layers configuration."
 
 
   (evil-leader/set-key
-    "fd" 'my/ediff-buffer-with-file
+    ;; "fd" 'my/ediff-buffer-with-file
+    "bc" 'ediff-buffers
     ;; "os" 'yas-visit-snippet-file
     "os" (lambda () (interactive) (error "Use SPC i s to list snippets"))
     ;; "oi" (lambda () (interactive) (error "Use SPC i s to insert yasnippet"))
@@ -860,9 +584,11 @@ layers configuration."
   (spacemacs/set-leader-keys-for-major-mode 'desktop-mode
     "i" 'my/install-desktop-file)
 
+  (global-set-key (kbd "<f8>") 'quickrun)
+
   ;; connect to mysql via SPC m c
   ;; (spacemacs/set-leader-keys-for-major-mode 'sql-mode "c" 'my/sql-connect-preset)
-)
+  )
 
 (defun dotspacemacs/hooks ()
   "Here go my keys customization."
@@ -882,7 +608,8 @@ layers configuration."
  ; swap 1 and 2
 (setq custom-file (expand-file-name "~/.emacs.d/.cache/custom.el")
       spacemacs-custom-file "~/.emacs.d/.cache/custom-spacemacs.el"
-      spacemacs-env-vars-file "~/.emacs.d/.cache/spacemacs.env")
+      spacemacs-env-vars-file "~/.emacs.d/.cache/spacemacs.env"
+      )
 (if (file-exists-p custom-file)
     (load custom-file))
 (load "~/Dropbox/dotfiles/spacemacs/funcs.el")

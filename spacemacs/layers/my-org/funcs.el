@@ -411,3 +411,56 @@ Used to override org-captures values"
   (interactive)
   (spacemacs/helm-files-do-rg "~/org")
   )
+
+(defun my/change-window-width (width)
+  "Adjust margins so that window is centered"
+  (interactive "NWindow width: ")
+  (if (= 0 width)
+      (set-window-margins nil 0 0)
+    (let* ((cur-width (window-width))
+           (cur-m (window-margins))
+           (cur-l (if (and cur-m (car cur-m)) (car cur-m) 0))
+           (cur-r (if (and cur-m (cdr cur-m)) (cdr cur-m) 0))
+           (lr (- (+ cur-l cur-r cur-width) width))
+           (left (/ lr 2))
+           (right (if (= 0 (% lr 2)) left (1+ left))))
+      (set-window-margins nil (max left 0) (max right 0)))))
+
+(defun my-org/get-newest-file-from-dir(path)
+  "Get latest file (including directory) in PATH."
+  (car (sort (directory-files path 'full "\\(png\\|jpg\\)$" 'nosort)
+              #'file-newer-than-file-p)))
+
+(defun my/insert-latest-org-image ()
+  "Moves image from Dropbox folder to ./img, inserting org-mode link"
+  (interactive)
+  (let* ((indir (expand-file-name my-org/screenshot-dir))
+         (infile (my-org/get-newest-file-from-dir indir))
+         (outdir (concat (file-name-directory (buffer-file-name)) "/img"))
+         (outfile (expand-file-name (file-name-nondirectory infile) outdir)))
+    (unless (file-directory-p outdir)
+      (make-directory outdir t))
+    (copy-file infile outfile 'ok-if-exists)
+    (insert (concat (concat "[[img:./img/" (file-name-nondirectory outfile)) "]]")))
+  (newline)
+  (newline))
+
+
+(defun my-org/get-newest-file-from-dir  (path)
+  "Get latest file (including directory) in PATH."
+  (car (directory-files path 'full nil #'file-newer-than-file-p)))
+
+
+(defun my-org/org-custom-link-img-follow (path)
+  (org-open-file-with-emacs
+   (format "../img/%s" path)))
+
+(defun my-org/org-custom-link-img-export (path desc format)
+  (cond
+   ((eq format 'html)
+    (let* ((filename (expand-file-name path))
+           (filename2 (replace-regexp-in-string "/" "\\" filename t t))
+           (filename3 (replace-regexp-in-string " " "%20" filename2 t t)))
+      (format "<img src=\"file://%s\" alt=\"%s\"/>" filename3 desc)
+      ))))
+

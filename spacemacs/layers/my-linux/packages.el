@@ -88,7 +88,6 @@
 
 (defun my-linux/post-init-org ()
   (setq tea-time-sound-command "aplay")
-
   )
 
 ;;; packages.el ends here

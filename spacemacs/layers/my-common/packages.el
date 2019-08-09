@@ -32,7 +32,6 @@
 (defconst my-common-packages
   '(quickrun
     restclient
-    palette
     vimrc-mode
     ;; undohist -- removed, because not working well with gpg files
     all-the-icons
@@ -174,10 +173,6 @@ Each entry is either:
 ;;   (use-package undohist
 ;;     :config (undohist-initialize))
 ;;   )
-
-(defun my-common/init-palette ()
-  (use-package palette
-    :defer t))
 
 (defun my-common/post-init-helm ()
   (eval-after-load "helm-files"

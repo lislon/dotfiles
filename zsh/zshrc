@@ -57,7 +57,7 @@ init-base-settings() {
     export EDITOR=$MAINEDITOR
     export SUDO_EDITOR=$MAINEDITOR
     export VISUAL=$MAINEDITOR
-    export MANPAGER="/bin/sh -c \"col -b | vim -u ~/dotfiles/zsh/man.vimrc -c 'set nomodified' -\""
+    # export MANPAGER="/bin/sh -c \"col -b | vim -u ~/dotfiles/zsh/man.vimrc -c 'set nomodified' -\""
 
     zstyle ':completion:::::' completer _expand _complete _approximate _ignored
     zstyle ':completion:*:approximate:*' max-errors \
@@ -188,7 +188,6 @@ init-simple-aliases() {
     alias -s html='chromium'
     alias emax="emacsclient -nw"                      # used to be "emacs -nw"
     alias e="$EDITOR"
-    alias open="xdg-open"
     #alias semac="sudo emacsclient -t"                # used to be "sudo emacs -nw"
     #alias emacs="emacsclient -c -a emacs"           # new - opens the GUI with alternate non-daemon
     alias sc-cat='systemctl cat'
@@ -236,6 +235,9 @@ init-simple-aliases() {
     elif `which apt-get &>/dev/null`; then
         alias i="sudo apt-get install"
         alias is="sudo apt-get search"
+    elif `which brew &>/dev/null`; then
+        alias i="brew install"
+        alias is="brew search"
     elif `which yum &>/dev/null`; then
         alias i="sudo yum install"
         alias is="sudo yum search"
@@ -508,9 +510,10 @@ init-bindkeys() {
     bindkey "^L" clear-screen
 
     # Auto ls on RET
-    my-lsret() { [[ -z $BUFFER ]] && BUFFER=' ls -lth --group-directories-first'; zle accept-line }
-    zle -N my-lsret
-    bindkey "" my-lsret
+    # fixme: emacs lth not recognized
+    # my-lsret() { [[ -z $BUFFER ]] && BUFFER=' ls -lth --group-directories-first'; zle accept-line }
+    # zle -N my-lsret
+    # bindkey "" my-lsret
 
     x-copy-region-as-kill () {
         zle copy-region-as-kill
@@ -551,6 +554,14 @@ init-at-the-end() {
     #type upgrade | grep alias &>/dev/null && unalias upgrade
 }
 
+init-macos-aliases() {
+
+}
+
+init-linux-aliases() {
+    alias open="xdg-open"
+}
+
 init-local-zsh() {
     if [[ -f ~/.zshrc_local ]] ; then
         source ~/.zshrc_local
@@ -580,6 +591,8 @@ init-base-settings
 init-oh-my-zsh
 init-simple-aliases
 init-complex-aliases
+
+[[ $(uname) -eq "Darwin" ]] && init-macos-aliases
 
 if [[ -z "$INSIDE_EMACS" ]] ; then
     init-bindkeys

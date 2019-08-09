@@ -7,6 +7,7 @@
                                     :fetcher github
                                     :repo "alphapapa/org-protocol-capture-html"))
                         (helm-yandex-geoapi :location local)
+                        visual-fill-column
                         (artist :location built-in)))
 
 (defun my-org/init-f ()
@@ -14,6 +15,14 @@
   (use-package f
     :demand t)
   )
+
+(defun my-org/init-visual-fill-column ()
+  ;; (message "my-org/post-init-f")
+  ;; (use-package visual-fill-column
+    ;; :demand t)
+  )
+
+(defvar my-org/screenshot-dir "~/Pictures/Screenshots" "Directory with latest captured images")
 
 (defun my-org/init-org-protocol-capture-html ()
   (use-package org-protocol-capture-html))
@@ -110,13 +119,14 @@
    ;; I do not want splitting while editing header
    org-M-RET-may-split-line '((default . nil) (item . nil))
    org-catch-invisible-edits 'show-and-error         ; let's test this option
-
+   fill-column 120
    ;; ------------------------------------------------------------------------------
    ;; Export
    ;; ------------------------------------------------------------------------------
    org-export-with-toc nil
    org-export-with-sub-superscripts nil
    org-export-with-section-numbers nil
+   org-html-validation-link nil
    org-enable-bootstrap-support t
    ;; ------------------------------------------------------------------------------
    ;; Capture
@@ -341,8 +351,18 @@ SCHEDULED %^T
   (add-hook 'org-clock-out-hook 'bh/clock-out-maybe 'append)
 
   ;; Auto fill for org and all text-mode hooks
-  (add-hook 'text-mode-hook 'auto-fill-mode)
+  ;; (remove-hook 'text-mode-hook 'auto-fill-mode)
+  ;; (add-hook 'org-mode-hook 'spacemacs/toggle-visual-line-navigation-on)
   (add-hook 'org-timer-done-hook 'my/org-timer-done)
+
+  ;; (add-hook 'org-mode-hook 'visual-line-mode)
+  (add-hook 'org-mode-hook 'visual-fill-column-mode)
+  (add-hook 'org-mode-hook '(lambda () (setq
+                                       line-move-visual t
+                                       fill-column 120
+                                       )
+                              (visual-line-mode 1)
+                              ))
 
   (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
   (my/set-key-file-link "ob" "~/Dropbox/shared-org/static/books.org")
@@ -402,6 +422,8 @@ SCHEDULED %^T
      my-org-babel-load-languages)
     ;; Auto insert when ~TAB` in tables
     (advice-add 'org-table-next-field :after 'evil-insert-state))
+
+   (org-add-link-type "img" 'my-org/org-custom-link-img-follow 'my-org/org-custom-link-img-export)
 
   ;; ------------------------------------------------------------------------------
   ;; Update emacs agenda file for awesomewm

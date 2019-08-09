@@ -17,7 +17,7 @@
   email = lislon@mail.ru
 	name = Igor Avdeev
 [core]
-	autocrlf = false
+	autocrlf = input
   excludesfile = ~/.gitignore_global
 [color]
 	diff = auto

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 function install_spacemacs {
     [[ -d ~/.emacs.d ]] && mv ~/.emacs.d{,.bak}
     git clone https://github.com/syl20bnr/spacemacs.git ~/.emacs.d || exit -1

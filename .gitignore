@@ -3,3 +3,7 @@
 .dropbox
 .dropbox.attr
 desktop.ini
+spacemacs/**/*.*~
+spacemacs/**/*.swp
+spacemacs/.spacemacs.env
+*.DS_Store
