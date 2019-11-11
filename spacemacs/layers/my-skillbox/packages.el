@@ -65,6 +65,8 @@ Each entry is either:
     :config
     (evil-leader/set-key "oi" 'my-skillbox//helm-answer-templates)
     (evil-leader/set-key "ot" 'my-skillbox//opentask)
+    (evil-leader/set-key "on" 'my-skillbox/new-check)
+    (evil-leader/set-key "og" 'my-skillbox//git-pull)
     (evil-leader/set-key "ir" 'my-skillbox/copy-string-for-report)
 
     (add-hook 'org-mode-hook 'my-skillbox//org-hook)

@@ -364,17 +364,17 @@ SCHEDULED %^T
                               (visual-line-mode 1)
                               ))
 
-  (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
-  (my/set-key-file-link "ob" "~/Dropbox/shared-org/static/books.org")
-  (my/set-key-file-link "oT" "~/Dropbox/shared-org/dynamic/tasks.org")
-  (my/set-key-file-link "on" "~/Dropbox/shared-org/dynamic/refile.org")
-  (my/set-key-file-link "oN" "~/Dropbox/shared-org/dynamic/refile.org")
-  (my/set-key-file-link "opj" "~/Dropbox/shared-org/static/programming/java.org")
-  (my/set-key-file-link "opc" "~/Dropbox/shared-org/static/programming/computers.org")
-  (my/set-key-file-link "or" "~/Dropbox/shared-org/dynamic/refile.org")
-  (my/set-key-file-link "oC" "~/.spacemacs.d/layers/my-org/packages.el")
+  ;; (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
+  ;; (my/set-key-file-link "ob" "~/Dropbox/shared-org/static/books.org")
+  ;; (my/set-key-file-link "oT" "~/Dropbox/shared-org/dynamic/tasks.org")
+  ;; (my/set-key-file-link "on" "~/Dropbox/shared-org/dynamic/refile.org")
+  ;; (my/set-key-file-link "oN" "~/Dropbox/shared-org/dynamic/refile.org")
+  ;; (my/set-key-file-link "opj" "~/Dropbox/shared-org/static/programming/java.org")
+  ;; (my/set-key-file-link "opc" "~/Dropbox/shared-org/static/programming/computers.org")
+  ;; (my/set-key-file-link "or" "~/Dropbox/shared-org/dynamic/refile.org")
+  ;; (my/set-key-file-link "oC" "~/.spacemacs.d/layers/my-org/packages.el")
 
-  (evil-leader/set-key "os" 'my/org-search)
+  ;; (evil-leader/set-key "os" 'my/org-search)
 
 
   ;; Encryption (ACP NullPointerException on android)

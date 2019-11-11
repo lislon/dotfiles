@@ -3,6 +3,8 @@
 
 (defvar my-skillbox//downloads-dir  "D:\\Downloads")
 (defvar my-skillbox//7z-path "c:\\Program Files\\7-Zip\\7z.exe")
+(defvar my-skillbox//7z-extensions '("zip" "tar" "7z" "rar"))
+
 
 (setq my-skillbox//modules '(
                              "1 pro"
@@ -32,14 +34,31 @@
                              "8.5 pro testing"
                              "9.1 pro folder size"
                              "9.2 pro copy folder"
-                             "9.3 parsing csv"
+                             "9.3 pro parsing csv"
+                             "9.4 pro lenta.ru html"
+                             "9.5 pro wiki parsing"
                              "9.9 sql module"
+                             "10.1 pro jdbc avg orders"
+                             "10.2 pro hibernate course info"
+                             "10.3 pro full tables"
+                             "10.4 pro PurchaseList normalize"
+                             "11.1 pro image resize"
+                             "11.2 pro concurrent money transfer"
+                             "11.3 pro sitemap"
+                             "12.1 pro spring random date"
+                             "12.2 pro spring todolist entities"
+                             "12.3 pro spring db add remove"
+                             "12.4 pro spring thymleaf"
+                             "12.5 pro spring jar"
+                             "13.1 pro redis queries"
+                             "13.2 pro redis first program"
+                             "13.3 pro mongo queries"
                              "5 old blat"
                              "6 old polimorfism"
                              "7 old testing"
                              "8 old gui basics"
                              "11 old database"
-                             "12 old idk"
+                             "12 old multithreading"
                              "13 old optimization"
                              "14 old web"
                              ))
@@ -83,7 +102,10 @@
   (save-excursion
     (let ((name (my-skillbox//get-student-name-from-path (buffer-file-name))))
            (while (re-search-forward "{{name}}" nil t)
-             (replace-match name)))))
+             (replace-match name)))
+    (let ((name (my-skillbox//get-student-id-from-path (buffer-file-name))))
+      (while (re-search-forward "{{id}}" nil t)
+        (replace-match name))) ))
 
 (defun my-skillbox//git-pull ()
   (interactive)
@@ -97,6 +119,9 @@
   (string-match "[0-9]_\\([^\s]+\\)" path)
   (match-string 1 path))
 
+(defun my-skillbox//get-student-id-from-path (path)
+  (string-match "[0-9]+_[^\s]+" path)
+  (match-string 0 path))
 
 (defun my-skillbox//get-git-dir (filename)
     (string-match "^.+[0-9]+_[^/]+" filename)
@@ -105,6 +130,10 @@
       (when (file-exists-p gitdir)
         gitdir)
       ))
+
+(defun my-skillbox//get-current-module-dir ()
+  (string-match "^.+[0-9]+_[^/]+/[^/]+" (buffer-file-name))
+  (match-string 0 (buffer-file-name)))
 
 (defun my-skillbox//new-template (template-name)
   (interactive "sNew template name: ")
@@ -149,7 +178,7 @@
   "1.1 Module name -> 1.1"
   (car (split-string modname " ")))
 
-(setq my-skillbox//module-edits-postfixes '("" "b" "c" "d" "e" "f" "g" "h"))
+(setq my-skillbox//module-edits-postfixes '("" "b" "c" "d" "e" "f" "g" "h" "j" "k" "l" "m" "o" "p" "q" "r" "s"))
 
 (defun my-skillbox//get-prev-answer-file (student module)
   (dolist (postfix (reverse my-skillbox//module-edits-postfixes))
@@ -182,22 +211,33 @@
   (let* ((module-directory (my-skillbox//create-next-check-dir student module))
          (archive-file (my-skillbox//find-student-last-archive student))
          (prev-answer-file (my-skillbox//get-prev-answer-file student module)) )
-         (message "file: %s" (concat module-directory "/Answer" module ".org"))
+         (message "file: %s / archive: %s" (concat module-directory "/Answer" module ".org" ) archive-file)
          (find-file (concat module-directory "/Answer" module ".org" ))
-         (message "prev: %s" prev-answer-file)
          (if prev-answer-file
              (insert-file-contents prev-answer-file)
              (my-skillbox//auto-insert-module-template module))
-          (message "archive file %s" student)
          (when archive-file
-           (my-skillbox//unpack-archive-to-dir archive-file module-directory))
+           (my-skillbox//extract-homework-to-dir archive-file module-directory))
+         (when (file-exists-p (concat module-directory "/../github"))
+           (my-skillbox//git-pull))
   ))
+
+(defun my-skillbox/extract-file-to-current-module ()
+  "Extract archive to current module"
+  (interactive)
+  (let* ((module-directory (my-skillbox//get-current-module-dir))
+         (student (my-skillbox//get-student-id-from-path (buffer-file-name)))
+         (archive-file (my-skillbox//find-student-last-archive student)))
+    (when archive-file
+      (my-skillbox//extract-homework-to-dir archive-file module-directory))
+    ))
 
 (defun my-skillbox//find-student-last-archive (student)
   "Return latest archive (less then 12 h) file of student or nil"
   (let* ((student-id (car (split-string student "_")))
-
-         (files-unsorted (directory-files-and-attributes (expand-file-name my-skillbox//downloads-dir) t (concat student-id ".+\.\\(zip\\|tar\\|7z\\|rar\\)$") t)))
+         (extensions `(,@my-skillbox//7z-extensions "java"))
+         (extensions-regex (mapconcat 'identity extensions "\\|"))
+         (files-unsorted (directory-files-and-attributes (expand-file-name my-skillbox//downloads-dir) t (concat student-id ".+\.\\(" extensions-regex "\\)$") t)))
     (caar
      (last
       (seq-filter (lambda (x)  (< (- (float-time (current-time))
@@ -207,14 +247,15 @@
                 :key #'(lambda (x) (nth 6 x))))))))
 
 
-(defun my-skillbox//unpack-archive-to-dir (filename targetdir)
+(defun my-skillbox//extract-homework-to-dir (filename targetdir)
   "Unpacks archive to directory"
-  (save-excursion
-    (save-current-buffer
-      (async-shell-command
-       (concat (shell-quote-argument my-skillbox//7z-path) " x -o" (shell-quote-argument (expand-file-name targetdir)) " " (shell-quote-argument filename))
-       (get-buffer-create "*skillbox unpack*") (get-buffer-create "*skillbox unpack*"))))
-  )
+  (if (member (file-name-extension filename) my-skillbox//7z-extensions)
+   (save-excursion
+     (save-current-buffer
+       (async-shell-command
+        (concat (shell-quote-argument my-skillbox//7z-path) " x -o" (shell-quote-argument (expand-file-name targetdir)) " " (shell-quote-argument filename))
+        (get-buffer-create "*skillbox unpack*") (get-buffer-create "*skillbox unpack*"))))
+   (copy-file filename (file-name-as-directory (expand-file-name targetdir)))))
 
 (defun my-skillbox//list-students ()
   "Lists of students"
