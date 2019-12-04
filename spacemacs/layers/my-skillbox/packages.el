@@ -109,7 +109,8 @@ Each entry is either:
                 (setq my-skillbox//module (and (string-match "/\\([0-9]+\\)[./]" (buffer-file-name)) (match-string 1 (buffer-file-name))))
 
                 (make-local-variable 'org-html-postamble)
-                (setq org-html-postamble "C Уважением, Игорь")
+                (setq org-html-postamble "С Уважением, Игорь")
+                (add-hook 'org-export-before-processing-hook 'my-skillbox//org-inline-css-hook)
                 ;; keymap precedence
                 ;; (add-to-list 'emulation-mode-map-alists `((skillbox-mode . ,skillbox-mode-map)))
                 )

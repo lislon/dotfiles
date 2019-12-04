@@ -53,10 +53,13 @@
                              "13.1 pro redis queries"
                              "13.2 pro redis first program"
                              "13.3 pro mongo queries"
+                             "13.4 pro mongo magazin"
+                             "14.1 pro optimize cat number"
                              "5 old blat"
                              "6 old polimorfism"
                              "7 old testing"
                              "8 old gui basics"
+                             "10 old files network"
                              "11 old database"
                              "12 old multithreading"
                              "13 old optimization"
@@ -209,7 +212,7 @@
                  (completing-read "Module: " my-skillbox//modules))
                 ))
   (let* ((module-directory (my-skillbox//create-next-check-dir student module))
-         (archive-file (my-skillbox//find-student-last-archive student))
+         (archive-file (my-skillbox//find-last-archive))
          (prev-answer-file (my-skillbox//get-prev-answer-file student module)) )
          (message "file: %s / archive: %s" (concat module-directory "/Answer" module ".org" ) archive-file)
          (find-file (concat module-directory "/Answer" module ".org" ))
@@ -227,21 +230,21 @@
   (interactive)
   (let* ((module-directory (my-skillbox//get-current-module-dir))
          (student (my-skillbox//get-student-id-from-path (buffer-file-name)))
-         (archive-file (my-skillbox//find-student-last-archive student)))
+         (archive-file (my-skillbox//find-last-archive)))
     (when archive-file
       (my-skillbox//extract-homework-to-dir archive-file module-directory))
     ))
 
-(defun my-skillbox//find-student-last-archive (student)
+(defun my-skillbox//find-last-archive ()
   "Return latest archive (less then 12 h) file of student or nil"
   (let* ((student-id (car (split-string student "_")))
          (extensions `(,@my-skillbox//7z-extensions "java"))
          (extensions-regex (mapconcat 'identity extensions "\\|"))
-         (files-unsorted (directory-files-and-attributes (expand-file-name my-skillbox//downloads-dir) t (concat student-id ".+\.\\(" extensions-regex "\\)$") t)))
+         (files-unsorted (directory-files-and-attributes (expand-file-name my-skillbox//downloads-dir) t (concat ".+\.\\(" extensions-regex "\\)$") t)))
     (caar
      (last
       (seq-filter (lambda (x)  (< (- (float-time (current-time))
-                                   (float-time (nth 6 x))) (* 12 3600)))
+                                   (float-time (nth 6 x))) (* 1 3 60)))
        (cl-sort files-unsorted
                 #'time-less-p
                 :key #'(lambda (x) (nth 6 x))))))))
@@ -267,3 +270,15 @@
   (save-excursion
     (goto-char (point-min))
     (search-forward string nil t)))
+
+
+(defun my-skillbox//org-inline-css-hook (exporter)
+  "Highlight source code with dark background"
+  (when (eq exporter 'html)
+    (let ((css-path (expand-file-name "~/Dropbox/dotfiles/spacemacs/layers/my-skillbox/theme/zenburn-code.css")))
+        (setq
+      org-html-head-extra
+      (concat
+       org-html-head-extra
+       (format "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />"
+               css-path))))))
