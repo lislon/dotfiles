@@ -34,7 +34,9 @@
     restclient
     vimrc-mode
     ;; undohist -- removed, because not working well with gpg files
-    all-the-icons
+
+    ;; warn: More than one init function found for package all-the-icons. Previous owner was auto-completion, replacing it with layer my-common.
+    ;; all-the-icons
     all-the-icons-dired
     sql
     projectile
@@ -45,6 +47,7 @@
     sh-script
     sh-mode
     dired-mode
+    midnight
     ;; vagrant-tramp
 )
   "The list of Lisp packages required by the my-common layer.
@@ -79,24 +82,59 @@ Each entry is either:
 ;;   (use-package vagrant-tramp)
 ;;   )
 
+(defun my-common/init-midnight ()
+  "Cleans old emacs buffers"
+  (use-package midnight
+    :config
+    (progn
+      (setq clean-buffer-list-delay-general 2 ;; clean buffers older then 2 days
+            )
+      (midnight-delay-set 'midnight-delay "4:30am")
+      )
+    )
+  )
+
+
 (defun my-common/post-init-mutiply-cursors ()
   (setq mc/list-file "~/Dropbox/dotfiles/spacemacs/layers/my-common/multiply-allow-commands.el")
   )
 
 (defun my-common/post-init-dired-mode ()
+  (message "dired inited")
   (define-key dired-mode-map "e" 'ora-ediff-files)
+
+  ;;(use-package helm
+    ;;:defer 1
+    ;;:config
+    ;;(progn
+      ;;(message "helm")
+      ;;;; Use F5 to quickly open project in IDEA using <F5> key
+      ;;(when (configuration-layer/package-usedp 'helm)
+        ;;;; fix Symbol’s value as variable is void: display-time-world-list
+        ;;(advice-add #'helm-world-time :before (lambda () (require 'time)))
+;;
+        ;; Ctrl+Z or F5 in helm
+        )
+;;
+      ;;))
+  ;; )
+
+(defun my-common/idea ()
+  (interactive)
+  (helm-add-action-to-source-if "IDEA"
+                                'my//helm-open-in-idea
+                                helm-source-find-files
+                                'my//path-to-idea)
+
+  (helm-delete-action-from-source "IDEA" helm-source-find-files)
+  (define-key dired-mode-map (kbd "<f5>") 'my//dired-open-in-idea)
+
   )
 
 (defun my-common/post-init-sh-mode ()
   ;; remove execute action if favor og org mode
   (define-key sh-mode-map (kbd "C-c C-x") nil)
   )
-
-(defun my-common/post-init-helm ()
-  (when (configuration-layer/package-usedp 'helm)
-    ;; fix Symbol’s value as variable is void: display-time-world-list
-    (advice-add #'helm-world-time :before (lambda () (require 'time)))
-    ))
 
 (defun my-common/post-init-nxml ()
   (with-eval-after-load 'nxml
@@ -145,8 +183,8 @@ Each entry is either:
     :config
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)))
 
-(defun my-common/init-all-the-icons ()
-  (use-package all-the-icons))
+;; (defun my-common/init-all-the-icons ()
+;;   (use-package all-the-icons))
 
 (defun my-common/post-init-dired ()
   (use-package dired
@@ -154,16 +192,40 @@ Each entry is either:
                 ("e" . wdired-change-to-wdired-mode)))
   )
 
-(defun my-common/post-init-helm ()
-  (setq
-   helm-locate-command "locate %s -e %s"
-   ;; I enabled this on for better candidate matching like recentf gnus.el
-   ;; helm-ff-auto-update-initial-value t
-   )
-  (global-set-key (kbd "M-a") 'helm-mini)
-  ;; recent-f sort minor mode
-  (helm-adaptive-mode)
-  (evil-leader/set-key "hl" 'helm-locate-library))
+
+;;(defun my-common/post-init-helm ()
+;;   (setq
+;;    helm-locate-command "locate %s -e %s"
+;;    ;; I enabled this on for better candidate matching like recentf gnus.el
+;;    ;; helm-ff-auto-update-initial-value t
+;;    )
+;;   (global-set-key (kbd "M-a") 'helm-mini)
+;;   ;; recent-f sort minor mode
+;;   (helm-adaptive-mode)
+;;   (evil-leader/set-key "hl" 'helm-locate-library)
+;;   (eval-after-load "helm-files"
+;;     '(setq helm-source-recentf
+;;            (helm-make-source "Recentf" 'helm-recentf-source
+;;              :filtered-candidate-transformer nil
+;;              )))
+
+;;   ;; Use F5 to quickly open project in IDEA using <F5> key
+;;   (when (configuration-layer/package-usedp 'helm)
+;;     ;; fix Symbol’s value as variable is void: display-time-world-list
+;;     (advice-add #'helm-world-time :before (lambda () (require 'time)))
+
+;;     ;; Ctrl+Z or F5 in helm
+    ;;(helm-add-action-to-source-if "IDEA"
+                                  ;;'my//helm-open-in-idea
+                                  ;;helm-source-find-files
+                                  ;;'my//path-to-idea)
+
+;;     ;; (helm-delete-action-from-source "IDEA" helm-source-find-files)
+;;     )
+
+;;   (define-key dired-mode-map (kbd "<f5>") 'my//dired-open-in-idea)
+  ;;)
+
 
 (defun my-common/init-quickrun ()
   (use-package quickrun)
@@ -173,13 +235,6 @@ Each entry is either:
 ;;   (use-package undohist
 ;;     :config (undohist-initialize))
 ;;   )
-
-(defun my-common/post-init-helm ()
-  (eval-after-load "helm-files"
-    '(setq helm-source-recentf
-           (helm-make-source "Recentf" 'helm-recentf-source
-             :filtered-candidate-transformer nil
-             ))))
 
 (defun my-common/post-init-yasnippet ()
   ;; documentation for snippet mode
@@ -192,8 +247,7 @@ Each entry is either:
   (advice-add #'helm-projectile-switch-project :around 'my/projectile-helm-advice)
   (evil-leader/set-key
     "ps" 'my/projectile-magit-status          ; connect to database
-    )
-  )
+    ))
 
 (defun my-common/init-elisp-format ()
   (use-package elisp-format
@@ -235,7 +289,7 @@ _c_: Common       _o_: Org       _w_: Work
     ("c" (lambda () (interactive) (find-file "~/.spacemacs.d/layers/my-common/packages.el")))
     ("q" nil "cancel"))
   (spacemacs/set-leader-keys "oc" 'my-config-nav-hydra/body)
-  )
+)
 
 
 (defun my-common/post-init-sh-script ()

@@ -55,6 +55,17 @@
                              "13.3 pro mongo queries"
                              "13.4 pro mongo magazin"
                              "14.1 pro optimize cat number"
+                             "14.2 pro optimize xml memory"
+                             "14.3 pro optimize xml load"
+                             "15.1 pro hdfs implement"
+                             "15.2 pro spark word count"
+                             "16.1 pro swing fio"
+                             "17.1 pro diploma"
+                             "18.1 pro alhgroritms"
+                             "19.1 pro linked lists"
+                             "19.2 pro binary tree"
+                             "19.3 pro suffix tree"
+                             ;; "20.1 pro http"
                              "5 old blat"
                              "6 old polimorfism"
                              "7 old testing"
@@ -64,6 +75,9 @@
                              "12 old multithreading"
                              "13 old optimization"
                              "14 old web"
+                             "react 1"
+                             "react 2"
+                             "react 3"
                              ))
 
 (defun my-skillbox//answer-candidates ()
@@ -113,29 +127,28 @@
 (defun my-skillbox//git-pull ()
   (interactive)
   (let ((default-directory (my-skillbox//get-git-dir (buffer-file-name))))
-    (magit-call-git "stash")
-    (magit-call-git "pull")
+    (when (file-exists-p default-directory)
+      (magit-call-git "stash")
+      (magit-call-git "pull"))
     )
   )
 
 (defun my-skillbox//get-student-name-from-path (path)
-  (string-match "[0-9]_\\([^\s]+\\)" path)
+  (string-match "_\\([^\s]+\\)" path)
   (match-string 1 path))
 
 (defun my-skillbox//get-student-id-from-path (path)
-  (string-match "[0-9]+_[^\s]+" path)
+  (string-match "[a-z0-9]+_[^\s]+" path)
   (match-string 0 path))
 
 (defun my-skillbox//get-git-dir (filename)
-    (string-match "^.+[0-9]+_[^/]+" filename)
+    (string-match "^.+_[^/]+" filename)
     (let* ((module-root (match-string 0 filename))
            (gitdir (concat module-root "/github")))
-      (when (file-exists-p gitdir)
-        gitdir)
-      ))
+      gitdir))
 
 (defun my-skillbox//get-current-module-dir ()
-  (string-match "^.+[0-9]+_[^/]+/[^/]+" (buffer-file-name))
+  (string-match "^.+_[^/]+/[^/]+" (buffer-file-name))
   (match-string 0 (buffer-file-name)))
 
 (defun my-skillbox//new-template (template-name)
@@ -158,61 +171,118 @@
             (if (org-string-nw-p a) (concat " " a) ""))
           (replace-regexp-in-string "<p>" "<p> &gt;" contents)))
 
+(defun my-skillbox//get-current-module()
+  "Get current module, eg. 4.1"
+  (let* ((filename (buffer-file-name)))
+    (string-match "^.+?\\([^/_]+_[^/]+\\)/\\([^/]+\\)" filename)
+      (replace-regexp-in-string "[a-z]" "" (match-string 2 filename))
+  ))
+
+(defun my-skillbox//get-current-student()
+  "Get current student name, eg. Boris Elzin"
+  (let* ((filename (buffer-file-name)))
+    (string-match "^.+?\\([^/_]+_[^/]+\\)" filename)
+    (replace-regexp-in-string "_" ": " (match-string 1 filename))
+    ))
 
 (defun my-skillbox/copy-string-for-report ()
-  "Copy report string to excel"
+  "Copy report string to clipboard to paste it in excel"
   (interactive)
-  (let* ((filename (buffer-file-name)))
-    (string-match "^.+?\\([0-9]+_[^/]+\\)/\\([^/]+\\)" filename)
-
-    (message "%s" (kill-new (let* ((date (format-time-string "%d.%m.%Y"))
-                                   (student (replace-regexp-in-string "_" ": " (match-string 1 filename)))
-                                   (module (replace-regexp-in-string "[a-z]" "" (match-string 2 filename)))
-                                   (module-name (if (string-equal module "9.9") "Основы SQL" "Java 0 до PRO"))
-                                   (success (let* ((ok (my-skillbox//string-exists-p "{{{OK}}}"))
-                                                   (fail (my-skillbox//string-exists-p "{{{FAIL}}}")))
-                                              (cond
-                                               (fail "незачет")
-                                               (ok "зачет")
-                                               (t "")))))
-                              (concat date "\t" student "\t" module "\t" success "\t" module-name))))))
+  (message "%s" (kill-new (let* ((date (format-time-string "%d.%m.%Y %H:%M:%S"))
+                                 (student (my-skillbox//get-current-student))
+                                 (module (my-skillbox//get-current-module))
+                                 (module-name (if (string-equal module "9.9") "Основы SQL" "Java 0 до PRO"))
+                                 (success (let* ((ok (my-skillbox//string-exists-p "{{{OK}}}"))
+                                                 (fail (my-skillbox//string-exists-p "{{{FAIL}}}")))
+                                            (cond
+                                             (fail "незачет")
+                                             (ok "зачет")
+                                             (t "незачет")))))
+                            (concat date "\t" student "\t" module "\t" success "\t" module-name)))))
 
 (defun my-skillbox//parse-module-dir (modname)
-  "1.1 Module name -> 1.1"
-  (car (split-string modname " ")))
+  "1.1 Module name -> (java, 1.1)"
+  (string-match "[0-9]+\\(\.[0-9]+\\)?" modname)
+  `((course . ,(if (string-prefix-p "react" modname) 'java 'java))
+    (module . ,(match-string 0 modname))))
 
-(setq my-skillbox//module-edits-postfixes '("" "b" "c" "d" "e" "f" "g" "h" "j" "k" "l" "m" "o" "p" "q" "r" "s"))
+(setq my-skillbox//module-edits-postfixes
+      (append
+       (list "")
+       (cl-loop for i from 1 below 26 collect (concat "" (list (+ ?a i))))
+       (cl-loop for i from 1 below 100 collect (concat "z" (format "%02d" i)))
+       ))
 
 (defun my-skillbox//get-prev-answer-file (student module)
-  (dolist (postfix (reverse my-skillbox//module-edits-postfixes))
-    (let* ((module-directory (concat my-skillbox//base-dir "/java/" student "/" module postfix))
-           (prev-answer-file (concat module-directory "/Answer" module ".org")))
-      (when (file-exists-p prev-answer-file)
-        (return prev-answer-file)))))
+  (seq-find #'file-exists-p
+            (seq-map (lambda (postfix)
+                       (let* ((module-directory (concat my-skillbox//base-dir "/java/" student "/" module postfix)))
+                         (concat module-directory "/Answer" module ".org")
+                         )
+                       ) (reverse my-skillbox//module-edits-postfixes))))
 
-(defun my-skillbox/open-in-idea ()
-  "Open current project in IDEA"
-  (interactive)
-  )
+;; (defun my-skillbox/open-in-idea ()
+;;   "Open current project in IDEA"
+;;   (interactive)
+;;   )
 
-(defun my-skillbox//create-next-check-dir (student module)
+(defun my-skillbox//create-next-check-dir (student module-info)
   "Creates /student/module{,a,b,c}"
-  (dolist (postfix my-skillbox//module-edits-postfixes)
-    (let* ((module-directory (concat my-skillbox//base-dir "/java/" student "/" module postfix)))
-      (when (not (file-exists-p module-directory))
-        (make-directory module-directory)
-        (message "Directory %s created" module-directory)
-        (return module-directory)))))
+  (catch 'success
+    (dolist (postfix my-skillbox//module-edits-postfixes)
+      (let* ((course (alist-get 'course module-info))
+             (module (alist-get 'module module-info))
+             (module-directory (concat
+                                my-skillbox//base-dir
+                                "/" (symbol-name course)
+                                "/" student
+                                "/" module postfix)))
+       (when (not (file-exists-p module-directory))
+         (make-directory module-directory)
+         (message "Directory %s created" module-directory)
+         (throw 'success module-directory))))))
 
-(defun my-skillbox/new-check (student module)
+
+(defun my-skillbox//open-source-in-window-github (github-dir)
+  (let* ((module (my-skillbox//get-current-module))
+         (module-no-dot (replace-regexp-in-string "[.].+" "" module))
+         (module-dir-cands (file-expand-wildcards (concat github-dir "/*" module-no-dot) ))
+         )
+    (if (eq 1 (length module-dir-cands))
+        (dired-other-window (car module-dir-cands))
+      (dired-other-window github-dir)
+      )
+    ))
+
+(defun my-skillbox//open-source-in-window-archive  (module-dir)
+  (let* ((module-dir-cands (f--files module-dir(equal (f-ext it) "java") t)))
+    (when (= 1 (length module-dir-cands))
+        (find-file-other-window (car module-dir-cands)))
+    (when (> (length module-dir-cands) 1)
+      (dired-other-window (file-name-directory (car module-dir-cands))))
+    ))
+
+(defun my-skillbox/open-source-in-window ()
+  (interactive)
+  (let* ((module-directory (my-skillbox//get-current-module-dir))
+         (github-dir (concat module-directory "/../github")))
+    (if (file-exists-p github-dir)
+      (my-skillbox//open-source-in-window-github github-dir)
+    (my-skillbox//open-source-in-window-archive module-directory))
+    ))
+
+
+(defun my-skillbox/new-check (student module-info)
   "Creates a new check"
   (interactive (list
                 (completing-read "Student: " (my-skillbox//list-students))
                 (my-skillbox//parse-module-dir
                  (completing-read "Module: " my-skillbox//modules))
                 ))
-  (let* ((module-directory (my-skillbox//create-next-check-dir student module))
-         (archive-file (my-skillbox//find-last-archive))
+  (let* ((course (alist-get 'course module-info))
+         (module (alist-get 'module module-info))
+         (module-directory (my-skillbox//create-next-check-dir student module-info))
+         (archive-file (my-skillbox//find-last-archive student))
          (prev-answer-file (my-skillbox//get-prev-answer-file student module)) )
          (message "file: %s / archive: %s" (concat module-directory "/Answer" module ".org" ) archive-file)
          (find-file (concat module-directory "/Answer" module ".org" ))
@@ -223,6 +293,7 @@
            (my-skillbox//extract-homework-to-dir archive-file module-directory))
          (when (file-exists-p (concat module-directory "/../github"))
            (my-skillbox//git-pull))
+         (my-skillbox/open-source-in-window)
   ))
 
 (defun my-skillbox/extract-file-to-current-module ()
@@ -230,12 +301,12 @@
   (interactive)
   (let* ((module-directory (my-skillbox//get-current-module-dir))
          (student (my-skillbox//get-student-id-from-path (buffer-file-name)))
-         (archive-file (my-skillbox//find-last-archive)))
+         (archive-file (my-skillbox//find-last-archive student)))
     (when archive-file
       (my-skillbox//extract-homework-to-dir archive-file module-directory))
     ))
 
-(defun my-skillbox//find-last-archive ()
+(defun my-skillbox//find-last-archive (student)
   "Return latest archive (less then 12 h) file of student or nil"
   (let* ((student-id (car (split-string student "_")))
          (extensions `(,@my-skillbox//7z-extensions "java"))
@@ -253,12 +324,30 @@
 (defun my-skillbox//extract-homework-to-dir (filename targetdir)
   "Unpacks archive to directory"
   (if (member (file-name-extension filename) my-skillbox//7z-extensions)
-   (save-excursion
-     (save-current-buffer
-       (async-shell-command
-        (concat (shell-quote-argument my-skillbox//7z-path) " x -o" (shell-quote-argument (expand-file-name targetdir)) " " (shell-quote-argument filename))
-        (get-buffer-create "*skillbox unpack*") (get-buffer-create "*skillbox unpack*"))))
-   (copy-file filename (file-name-as-directory (expand-file-name targetdir)))))
+      (let* ((shell-cmd (concat
+                         (shell-quote-argument my-skillbox//7z-path)
+                         " x -o"
+                         (shell-quote-argument (expand-file-name targetdir))
+                         " "
+                         (shell-quote-argument filename)))
+             (default-directory (expand-file-name targetdir))
+             (new-name (concat
+                        targetdir
+                        "/skillbox_dz."
+                        (file-name-extension filename) )))
+        (save-excursion
+          (save-current-buffer
+            (copy-file filename new-name t t)
+            ;; (message "unpack: %s -> %s" filename new-name)
+            (start-process "*skillbox unpack*"
+                           (get-buffer-create "*skillbox unpack*")
+                           my-skillbox//7z-path
+                           "x" (file-name-nondirectory new-name))
+
+            (run-at-time "1 seconds" nil 'delete-file new-name)
+            )))
+    ;; (copy-file filename (file-name-as-directory (expand-file-name targetdir)))
+    ))
 
 (defun my-skillbox//list-students ()
   "Lists of students"
@@ -282,3 +371,46 @@
        org-html-head-extra
        (format "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" />"
                css-path))))))
+
+
+(defun my-skillbox//new-student (student-id)
+  (interactive "sName: ")
+  (let* ((student (replace-regexp-in-string "-[^ ]+ " "_" student-id))
+         (full-dir (concat my-skillbox//base-dir "/java/" student "/")))
+    (if (not (file-exists-p full-dir))
+        (progn
+          (make-directory full-dir)
+          (message "Directory %s created" full-dir)
+          )
+      (message "Directory %s already exists" full-dir)
+      )
+    (find-file (concat full-dir "cv.org"))
+    ))
+
+(defun my-skillbox//clone-gitlab (gitlab-url)
+  (interactive "sUrl (https://gitlab.skillbox.): ")
+    (if (string-match "https://gitlab.skillbox.ru/\\([^/]+\\)" gitlab-url)
+        (let ((username (match-string 1 gitlab-url))
+              (git-dir (my-skillbox//get-git-dir (buffer-file-name))))
+          (let ((default-directory (concat git-dir "/..")))
+            (magit-clone-internal (concat "https://gitlab.skillbox.ru/" username "/java_basics.git") "github" nil)
+            )
+          )
+      (message "Can't parse url: " + gitlab-url))
+    )
+
+;; (require 'request)
+
+;; (setq my-skillbox/spreadsheet-id "1ql-dw01Pg3LxJVVnGTW0Xg08fOFBUBNJ2Hjbenj50IA")
+
+;; GET
+
+;; https://docs.google.com/spreadsheets/d//edit?ts=5c51b279#gid=0
+
+;; (request
+;;  (format "https://sheets.googleapis.com/v4/spreadsheets/%s/values/Sheet1!A1:D5" my-skillbox/spreadsheet-id)
+;;  :params '(("key" . "value") ("key2" . "value2"))
+;;  :parser 'json-read
+;;  :success (cl-function
+;;            (lambda (&key data &allow-other-keys)
+;;              (message "I sent: %S" (assoc-default 'args data)))))

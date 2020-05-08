@@ -30,7 +30,9 @@
 ;;; Code:
 
 (defconst my-skillbox-packages
-  '(helm)
+  '(helm
+    request
+    )
   "The list of Lisp packages required by the my-skillbox layer.
 
 Each entry is either:
@@ -58,10 +60,17 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
+(defun my-skillbox/post-init-request ()
+  (use-package request
+    ;;    :demand t
+    :defer t
+  ))
+
 (defun my-skillbox/post-init-helm ()
   (message "my-org/post-init-helm")
   (use-package helm
-    :demand t
+;;    :demand t
+    :defer t
     :config
     (evil-leader/set-key "oi" 'my-skillbox//helm-answer-templates)
     (evil-leader/set-key "ot" 'my-skillbox//opentask)
@@ -70,13 +79,11 @@ Each entry is either:
     (evil-leader/set-key "ir" 'my-skillbox/copy-string-for-report)
 
     (add-hook 'org-mode-hook 'my-skillbox//org-hook)
-
-
-
+    (spacemacs/toggle-visual-line-navigation-on)
+    ;; (setq org-export-global-macros '(("OK". "@@html:<font color='green'>Зачет 🎄</font>@@")
+                                     ;; ("FAIL". "@@html:<font color='blue'>Доработать ☕</font>@@")))
     (setq org-export-global-macros '(("OK". "@@html:<font color='green'>Зачет 👍</font>@@")
-                                     ("FAIL". "@@html:<font color='blue'>Доработать ☕</font>@@")
-
-                                     ))
+                                     ("FAIL". "@@html:<font color='blue'>Доработать ☕</font>@@")))
     )
   )
 
@@ -103,13 +110,35 @@ Each entry is either:
             (define-key map (kbd "<f1>") #'my-skillbox//mark-job-success)
             (define-key map (kbd "<f2>") #'my-skillbox//mark-job-fail)
             map)
-
   :after-hook (progn
                 (make-local-variable 'my-skillbox//module)
                 (setq my-skillbox//module (and (string-match "/\\([0-9]+\\)[./]" (buffer-file-name)) (match-string 1 (buffer-file-name))))
 
                 (make-local-variable 'org-html-postamble)
-                (setq org-html-postamble "С Уважением, Игорь")
+                (let ((feedback-url "https://forms.gle/UQsgozushdPS7hms9")
+                      (good-feedback-url "https://forms.gle/We9mZSCGiN4AtPQK6"))
+                  (setq org-html-postamble
+                        (concat
+                         "Игорь"
+                         )
+                        )
+                  ;; (setq org-html-postamble
+                  ;;       (concat
+                  ;;        "С Уважением, Игорь"
+                  ;;        "<br ><small><a href=\""
+                  ;;        feedback-url
+                  ;;        "\">Мой ответ мог быть лучше?</a>"
+                  ;;        " / "
+                  ;;        "<a href=\""
+                  ;;        good-feedback-url
+                  ;;        "\">Отзывы</a>"
+
+                  ;;        "</small>"
+                  ;;        )
+                  ;;       )
+                  )
+
+                ;; better code snippet coloring
                 (add-hook 'org-export-before-processing-hook 'my-skillbox//org-inline-css-hook)
                 ;; keymap precedence
                 ;; (add-to-list 'emulation-mode-map-alists `((skillbox-mode . ,skillbox-mode-map)))
@@ -119,11 +148,10 @@ Each entry is either:
 (defun my-skillbox//org-hook ()
   "Set local variable"
   (when (string-match-p (regexp-quote "shared/skillbox") (buffer-file-name)))
-  (message "skillbox enable")
+    (add-hook 'skillbox-mode-hook 'flyspell-mode)
     (skillbox-mode)
     (global-set-key (kbd "<f1>") 'my-skillbox//mark-job-success)
     (global-set-key (kbd "<f2>") 'my-skillbox//mark-job-fail)
-
   )
 
 (defun my-skillbox//opentask()

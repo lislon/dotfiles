@@ -118,3 +118,62 @@
       (eval
        `(define-key ,map ,key func)))
     (funcall (intern name) t)))
+
+
+(defun my//helm-can-be-opened-in-idea (cand)
+  "Is helm canddidate can be opened in IDEA"
+
+    (condition-case nil
+        (progn
+          (cond
+           ((string-suffix-p ".iml" cand) t)
+           ((and
+             (directory-name-p cand)
+             (or
+              (file-exists-p (concat cand ".idea"))
+              (file-exists-p (concat cand "src"))
+              )
+             )) t
+           t t
+           )
+          )
+      (error nil))
+  )
+
+(defun my//path-to-idea (path)
+  "Return first found path to .idea project from current directory"
+  (let
+      ((dir (if (directory-name-p path) path (directory-file-name path))))
+    (if (or
+         (file-exists-p (concat dir ".idea"))
+         (file-exists-p (concat dir "pom.xml"))
+         (and (file-exists-p (concat dir "src"))
+              (file-expand-wildcards (concat dir "src/*.java" ) )))
+
+        (progn
+          (message "yes! :%s " (concat dir "src/*.java" ))
+          (directory-file-name dir))
+      (let* ((parent-dir (file-name-directory (directory-file-name dir))))
+        (if (not (string-equal dir parent-dir))
+            (my//path-to-idea parent-dir)
+          nil
+          )))))
+
+
+(defun my//helm-open-in-idea (_candidate)
+  "Opens selected directory/file in IDEA"
+  (let* (
+         (cand (car (helm-marked-candidates :with-wildcard t)))
+         (path (my//path-to-idea cand)))
+    (message "IDEA: %s" path)
+    (my//run-idea path)))
+
+(defun my//run-idea (path)
+  (eshell-command-result (format "idea \"%s\"" path)))
+
+(defun my//dired-open-in-idea ()
+  "Opens selected directory/file in IDEA"
+  (interactive)
+  (let* ((path (my//path-to-idea (dired-file-name-at-point))))
+    (message "IDEA: %s" path)
+    (my//run-idea path)))

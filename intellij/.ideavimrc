@@ -137,7 +137,7 @@ nmap <leader>Ts :action QuickChangeScheme<cr>
 
 nmap <leader>cl :action CommentByLineComment<cr>
 # Workaround https://youtrack.jetbrains.com/issue/VIM-862
-vmap <leader>cl :<bs><bs><bs><bs><bs>action VimVisualSwapSelections<cr>:action CommentByLineComment<cr>
+#vmap <leader>cl :<bs><bs><bs><bs><bs>action VimVisualSwapSelections<cr>:action CommentByLineComment<cr>
 
 
 nmap <leader>wm :action HideAllWindows<cr>
@@ -219,7 +219,7 @@ nmap <leader>qq :action exit<cr>
 nmap <leader>az :action ActivateTerminalToolWindow<cr>
 
 " Git
-nmap <leader>gs  :action ChangesView.Commit<cr>
+nmap <leader>gs  :action Git.Commit.And.Push.Executor<cr>
 
 " Insert unicode
 nmap <leader>iu  :action ActivateUnicodeBrowserToolWindow<cr>
@@ -236,3 +236,8 @@ vmap <a-\> :<c-u>action ReformatCode<cr>
 nmap <C-S-q> :action ParameterInfo<cr>
 imap <C-S-q> <C-o>:action ParameterInfo<cr>
 nmap gs <C-o>:action GotoSuperMethod<cr>
+
+" Unwrap
+nmap <leader>kU  :action Unwrap<cr>
+nmap <leader>kw  :action SurroundWith<cr>
+nmap <leader>ij  :action InsertLiveTemplate<cr>

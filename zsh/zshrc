@@ -121,6 +121,11 @@ init-oh-my-zsh() {
     #plugins=(git composer fasd gitfast)
 
     source $ZSH/oh-my-zsh.sh
+
+    # docker autocomplete
+    autoload -Uz compinit
+    compinit
+  
 }
 
 
@@ -222,7 +227,8 @@ init-simple-aliases() {
     # Start docker with openvpn running
     alias music="urxvt -name urxvt.ncmpcpp -e ncmpcpp"
     alias ipl="sudo iptables -L -n"
-
+    alias docker_clean_images='docker rmi $(docker images -a --filter=dangling=true -q)'
+    alias docker_clean_ps='docker rm $(docker ps --filter=status=exited --filter=status=created -q)'
     # OS-depend aliases
     if `which pacman &>/dev/null`; then
         alias i="sudo pacman -S"
@@ -555,6 +561,16 @@ init-at-the-end() {
 }
 
 init-macos-aliases() {
+
+    vscode() {
+        if [[ $# = 0 ]]
+        then
+            open -a "Visual Studio Code"
+        else
+            [[ $1 = /* ]] && F="$1" || F="$PWD/${1#./}"
+            open -a "Visual Studio Code" --args "$F"
+        fi
+    }
 
 }
 

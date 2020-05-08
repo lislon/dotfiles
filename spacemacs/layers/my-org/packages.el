@@ -39,6 +39,8 @@
 
 (defun my-org/post-init-org ()
   (message "my-org/post-init-org")
+  (package-initialize)
+  (message "my-org/post-init-org2")
   (setq-default
    ;; ------------------------------------------------------------------------------
    ;; General
@@ -423,7 +425,8 @@ SCHEDULED %^T
     ;; Auto insert when ~TAB` in tables
     (advice-add 'org-table-next-field :after 'evil-insert-state))
 
-   (org-add-link-type "img" 'my-org/org-custom-link-img-follow 'my-org/org-custom-link-img-export)
+  ;; void-function on startup
+   ;;2k(org-add-link-type "img" 'my-org/org-custom-link-img-follow 'my-org/org-custom-link-img-export)
 
   ;; ------------------------------------------------------------------------------
   ;; Update emacs agenda file for awesomewm

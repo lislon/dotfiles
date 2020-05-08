@@ -34,6 +34,8 @@ This function should only modify configuration layer settings."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     octave
+     csv
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -52,13 +54,14 @@ This function should only modify configuration layer settings."
      ;; multiple-cursors  ;;  Unknown
      ;; neotree  ;; Unknown
      spacemacs-org
-     spell-checking
+     (spell-checking :variables spell-checking-enable-by-default nil)
      osx
      ;; common-lisp
 
      git
      ;; github
      python
+     kotlin
      html
      javascript
      yaml
@@ -585,6 +588,9 @@ before packages are loaded."
     "i" 'my/install-desktop-file)
 
   (global-set-key (kbd "<f8>") 'quickrun)
+  (setq
+   confirm-kill-processes nil ;; macos can't go to sleep
+   )
 
   ;; connect to mysql via SPC m c
   ;; (spacemacs/set-leader-keys-for-major-mode 'sql-mode "c" 'my/sql-connect-preset)
