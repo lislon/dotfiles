@@ -13,9 +13,10 @@
 	la = !git l --all
 	d = difftool
 	vhr = !git fetch && git reset --hard FETCH_HEAD
+  cleanup = "!git branch --merged | grep  -v '\\*\\|master\\|develop' | xargs -n 1 git branch -d"
 [user]
   email = lislon@mail.ru
-	name = Igor Avdeev
+	name = Igor Golovin
 [core]
 	autocrlf = input
   excludesfile = ~/.gitignore_global
@@ -49,3 +50,8 @@
   path = ~/.gitconfig_local
 [github]
   user = lislon
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

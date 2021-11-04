@@ -213,6 +213,7 @@ init-simple-aliases() {
     alias drm='docker rm'
     alias di='docker inspect'
     alias dps='docker ps'
+    alias dpss="docker stop \$(docker ps -q)"
     # Long task: C-z fg && beep
     alias ding=bell
     alias beep=bell

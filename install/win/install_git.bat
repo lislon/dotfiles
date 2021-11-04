@@ -1,3 +1,3 @@
-mklink /H %USERPROFILE%\.gitconfig %USERPROFILE%\Dropbox\dotfiles\git\gitconfig
-mklink /H %USERPROFILE%\.gitignore_global %USERPROFILE%\Dropbox\dotfiles\git\gitignore_global
-mklink /H %USERPROFILE%\.githelpers %USERPROFILE%\Dropbox\dotfiles\git\githelpers
+New-Item -Path %USERPROFILE%\.gitconfig -ItemType SymbolicLink -Value %USERPROFILE%\Dropbox\dotfiles\git\gitconfig
+New-Item -Path %USERPROFILE%\.gitignore_global -ItemType SymbolicLink -Value %USERPROFILE%\Dropbox\dotfiles\git\gitignore_global
+New-Item -Path %USERPROFILE%\.githelpers -ItemType SymbolicLink -Value %USERPROFILE%\Dropbox\dotfiles\git\githelpers

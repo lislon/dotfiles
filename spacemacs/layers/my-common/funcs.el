@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
+
+
 (defun lsn/calendar-of-life ()
   (interactive)
   "Shows how many weeks left in my life"
@@ -169,7 +171,10 @@
     (my//run-idea path)))
 
 (defun my//run-idea (path)
-  (eshell-command-result (format "idea \"%s\"" path)))
+   (if (eq system-type 'windows-nt)
+    (eshell-command-result (encode-coding-string (format "idea64 \"%s\"" path) 'windows-1251))
+    (eshell-command-result (format "idea \"%s\"" path) ))
+  )
 
 (defun my//dired-open-in-idea ()
   "Opens selected directory/file in IDEA"

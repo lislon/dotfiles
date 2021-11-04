@@ -1,5 +1,6 @@
 #+TITLE: my-skillbox layer
 
+[[./packages.el][package.el]]
 # The maximum height of the logo should be 200 pixels.
 [[img/my-skillbox.png]]
 

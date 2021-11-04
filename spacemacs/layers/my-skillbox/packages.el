@@ -69,7 +69,6 @@ Each entry is either:
 (defun my-skillbox/post-init-helm ()
   (message "my-org/post-init-helm")
   (use-package helm
-;;    :demand t
     :defer t
     :config
     (evil-leader/set-key "oi" 'my-skillbox//helm-answer-templates)
@@ -77,14 +76,21 @@ Each entry is either:
     (evil-leader/set-key "on" 'my-skillbox/new-check)
     (evil-leader/set-key "og" 'my-skillbox//git-pull)
     (evil-leader/set-key "ir" 'my-skillbox/copy-string-for-report)
+    (evil-leader/set-key "oe" 'my-skillbox/extract-file-to-current-module)
+
 
     (add-hook 'org-mode-hook 'my-skillbox//org-hook)
-    (spacemacs/toggle-visual-line-navigation-on)
     ;; (setq org-export-global-macros '(("OK". "@@html:<font color='green'>Зачет 🎄</font>@@")
                                      ;; ("FAIL". "@@html:<font color='blue'>Доработать ☕</font>@@")))
-    (setq org-export-global-macros '(("OK". "@@html:<font color='green'>Зачет 👍</font>@@")
-                                     ("FAIL". "@@html:<font color='blue'>Доработать ☕</font>@@")))
+    ;; (setq org-export-global-macros '(("OK". "@@html:<font color='green'>Зачет 👍</font>@@")
+                                     ;; ("FAIL". "@@html:<font color='blue'>Доработать ☕</font>@@")))
+
+    (setq org-export-global-macros '(("OK". "@@html:<span style=\"color: white; padding: 0.1em 0.3em; border-radius: 3px; background-clip: padding-box; font-size: 14.4px; font-family: &quot;Lucida Console&quot;, monospace; line-height: 1; background-color: #23af11;\">Принято</span>@@")
+                                     ("FAIL". "@@html:<span style=\"background-color: #3d3bff; color: white; padding: 0.1em 0.3em; border-radius: 3px; background-clip: padding-box; font-size: 14.4px; font-family: &quot;Lucida Console&quot;, monospace; line-height: 1;\">В доработке</span>@@")))
+
     )
+  (with-eval-after-load "keybindings.el"
+    (spacemacs/toggle-visual-line-navigation-on))
   )
 
 (define-minor-mode skillbox-mode
@@ -101,18 +107,14 @@ Each entry is either:
                                           (insert "#+BEGIN_QUOTE\n\n#+END_QUOTE")
                                           (forward-line -1)
                                           ))
-            (define-key map (kbd "C-s") (lambda () (interactive)
-                                          (end-of-line)
-                                          (newline)
-                                          (insert "#+BEGIN_SRC java\n\n#+END_SRC")
-                                          (forward-line -1)
-                                          ))
+            (define-key map (kbd "C-s") #'my-skillbox//insert-code-block)
             (define-key map (kbd "<f1>") #'my-skillbox//mark-job-success)
             (define-key map (kbd "<f2>") #'my-skillbox//mark-job-fail)
             map)
   :after-hook (progn
                 (make-local-variable 'my-skillbox//module)
-                (setq my-skillbox//module (and (string-match "/\\([0-9]+\\)[./]" (buffer-file-name)) (match-string 1 (buffer-file-name))))
+                (when (buffer-file-name)
+                  (setq my-skillbox//module (and (string-match "/\\([0-9]+\\)[./]" (buffer-file-name)) (match-string 1 (buffer-file-name)))))
 
                 (make-local-variable 'org-html-postamble)
                 (let ((feedback-url "https://forms.gle/UQsgozushdPS7hms9")
@@ -140,6 +142,9 @@ Each entry is either:
 
                 ;; better code snippet coloring
                 (add-hook 'org-export-before-processing-hook 'my-skillbox//org-inline-css-hook)
+
+                (setq org-export-preserve-breaks t)
+                (setq org-html-wrap-src-lines t); on windows it will help with linebraks in <pre>
                 ;; keymap precedence
                 ;; (add-to-list 'emulation-mode-map-alists `((skillbox-mode . ,skillbox-mode-map)))
                 )
@@ -147,7 +152,7 @@ Each entry is either:
 
 (defun my-skillbox//org-hook ()
   "Set local variable"
-  (when (string-match-p (regexp-quote "shared/skillbox") (buffer-file-name)))
+  (when (and (buffer-file-name) (string-match-p (regexp-quote "shared/skillbox") (buffer-file-name))))
     (add-hook 'skillbox-mode-hook 'flyspell-mode)
     (skillbox-mode)
     (global-set-key (kbd "<f1>") 'my-skillbox//mark-job-success)

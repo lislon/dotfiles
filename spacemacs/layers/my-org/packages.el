@@ -38,19 +38,19 @@
   )
 
 (defun my-org/post-init-org ()
-  (message "my-org/post-init-org")
-  (package-initialize)
-  (message "my-org/post-init-org2")
+  ;; (message "my-org/post-init-org")
+  ;; (package-initialize)
+  ;; (message "my-org/post-init-org2")
   (setq-default
    ;; ------------------------------------------------------------------------------
    ;; General
    ;; ------------------------------------------------------------------------------
-   org-directory "~/org"
+   org-directory "~/Dropbox/org"
 
-   org-agenda-files '("~/org/dynamic/"
+   org-agenda-files '("~/Dropbox/org/dynamic/"
                       "~/Dropbox/shared-org/dynamic")
 
-   diary-file "~/org/diary.txt"
+   diary-file "~/Dropbox/org/diary.txt"
    calendar-date-style 'iso
    org-special-ctrl-a/e t                  ; Ignore tags when editing headline
    auto-save-timeout 5                     ; Autosave for dropbox each 10 sec IDLE
@@ -85,7 +85,7 @@
    org-outline-path-complete-in-steps nil      ; Fuzzy match path when refile
 
    ;; Archive
-   org-archive-location "~/org/archive/%s_archive::"
+   org-archive-location "~/Dropbox/org/archive/%s_archive::"
    org-src-window-setup 'current-window        ; C-c ' is fullscreen
 
    org-publish-project-alist
@@ -94,6 +94,7 @@
             :publishing-directory "~/public_html/"
             :publishing-function org-twbs-publish-to-html
             :with-sub-superscript nil
+
             ))
 
    ;; Targets include this file and any file contributing to the agenda - up to 9
@@ -101,9 +102,9 @@
    org-refile-targets `((nil :maxlevel . 9)
                               (org-agenda-files :maxlevel . 9)
                               ;; ("~/org/dynamic/programming.org" :maxlevel . 1)
-                              ("~/org/dynamic/todo-someday.org" :level . 1)
-                              ("~/org/dynamic/notes.org" :level . 0)
-                              ("~/org/static/diary.org" :maxlevel . 1)
+                              ("~/Dropbox/org/dynamic/todo-someday.org" :level . 1)
+                              ("~/Dropbox/org/dynamic/notes.org" :level . 0)
+                              ("~/Dropbox/org/static/diary.org" :maxlevel . 1)
                               ("~/Dropbox/shared-org/dynamic/shared-todo.org" :maxlevel . 1)
                               ;; ("~/Dropbox/shared-org/static/programming/org" :maxlevel . 2)
                               ;; ("~/Dropbox/shared-org/static/programming/programming.org" :maxlevel . 2)
@@ -176,7 +177,7 @@ SCHEDULED %^T
                                                          ((org-agenda-overriding-header "Books I am reading")
                                                           (org-agenda-sorting-strategy '(user-defined-down))
                                                           (org-agenda-cmp-user-defined 'my/org-sort-agenda-logbook)
-                                                          (org-agenda-files '("~/org/dynamic/todo.org"))))
+                                                          (org-agenda-files '("~/Dropbox/org/dynamic/todo.org"))))
 
                                                         ("y" "Todo things"
                                                          (
@@ -230,10 +231,6 @@ SCHEDULED %^T
                                                           (tags-todo "-linux-emacs-learning-org-BOOK-errands"
                                                                      ((org-agenda-overriding-header "Rest")
                                                                       (org-agenda-prefix-format "Rest ")))
-                                                          ;; (org-agenda-files '("~/org/todo.org"
-                                                          ;;                     "~/org/refile.org"
-                                                          ;;                     "~/org/dynamic/tasks.org"))
-                                                          ;; - training/practicing
                                                           ) (
                                                              (org-agenda-sorting-strategy '(time-down))
                                                              ))
@@ -321,6 +318,8 @@ SCHEDULED %^T
                             ("REJT" . "SlateGray")
                             ("DONE" . "green2")
                             ("APPOINTMENT" . "DarkViolet"))
+   org-clock-sound "~/Dropbox/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
+   org-show-notification-handler "~/Dropbox/confiles/win/notify-emacs/notify.exe"
    )
 
   ;; C-C c capture
@@ -365,18 +364,6 @@ SCHEDULED %^T
                                        )
                               (visual-line-mode 1)
                               ))
-
-  ;; (my/set-key-file-link "ok" "~/Dropbox/shared-org/static/keys.org")
-  ;; (my/set-key-file-link "ob" "~/Dropbox/shared-org/static/books.org")
-  ;; (my/set-key-file-link "oT" "~/Dropbox/shared-org/dynamic/tasks.org")
-  ;; (my/set-key-file-link "on" "~/Dropbox/shared-org/dynamic/refile.org")
-  ;; (my/set-key-file-link "oN" "~/Dropbox/shared-org/dynamic/refile.org")
-  ;; (my/set-key-file-link "opj" "~/Dropbox/shared-org/static/programming/java.org")
-  ;; (my/set-key-file-link "opc" "~/Dropbox/shared-org/static/programming/computers.org")
-  ;; (my/set-key-file-link "or" "~/Dropbox/shared-org/dynamic/refile.org")
-  ;; (my/set-key-file-link "oC" "~/.spacemacs.d/layers/my-org/packages.el")
-
-  ;; (evil-leader/set-key "os" 'my/org-search)
 
 
   ;; Encryption (ACP NullPointerException on android)
@@ -471,8 +458,8 @@ SCHEDULED %^T
   ;; our little façade-function for djcb-popup
   (defun djcb-appt-display (min-to-app new-time msg)
     (djcb-popup (format "Appointment in %s minute(s)" min-to-app) msg
-                "~/confiles/linux/icons/apppointment-grey-32x32.png"
-                "~/confiles/linux/sounds/choir-a.wav"))
+                "~/Dropbox/confiles/linux/icons/apppointment-grey-32x32.png"
+                "~/Dropbox/confiles/linux/sounds/choir-a.wav"))
   (setq appt-disp-window-function 'djcb-appt-display)
   (defadvice org-agenda-to-appt (before wickedcool activate)
     "Clear the appt-time-msg-list."
@@ -509,24 +496,24 @@ _cw_: Windows cmds
 ^Work stuff^        ^Shared^
 ^^^^^^-------------------------
 _e_: Emacs          _o_: todo
-_j_: Java           _N_: notes pub
-_b_: Bash           _n_: notes priv (refile)
+_j_: Java           _e_: edit hydra
+_b_: Bash           _n_: natera
 _g_: Git            _b_: books
-_c_: Computers      _T_: tasks
-_l_: Linux          _T_: tasks
+_c_: Computers      _T_: -
+_l_: Linux          _m_: macos
 "
     ("e" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")))
     ("j" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/java.org" "Java")))
     ("b" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/bash.org")))
-    ("o" (lambda () (interactive) (find-file "~/org/dynamic/todo.org")))
+    ("o" (lambda () (interactive) (find-file "~/Dropbox/org/dynamic/todo.org")))
+    ("e" (lambda () (interactive) (find-file "~/Dropbox/dotfiles/spacemacs/layers/my-org/packages.el")))
+    ("n" (lambda () (interactive) (find-file "~/Dropbox/workorg/natera/natera.org")))
     ("c" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/computers.org")))
     ("l" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/linux.org")))
     ("g" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/programming.org" "Git")))
-    ("n" (lambda () (interactive) (find-file "~/Dropbox/org/dynamic/notes.org")))
-    ("N" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))
-    ("r" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/refile.org")))
     ("b" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/shared-notes.org" "Books")))
     ("T" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/shared-todo.org")))
+    ("m" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/macos.org")))
     ("q" nil "cancel"))
 
 

@@ -33,7 +33,9 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(
+   '(windows-scripts
+     go
+     react
      octave
      csv
      ;; ----------------------------------------------------------------
@@ -51,6 +53,7 @@ This function should only modify configuration layer settings."
                       (haskel haskell-completion-backend 'intero))
      better-defaults
      emacs-lisp
+     docker
      ;; multiple-cursors  ;;  Unknown
      ;; neotree  ;; Unknown
      spacemacs-org
@@ -67,19 +70,18 @@ This function should only modify configuration layer settings."
      yaml
      colors
      typescript
-     ;; gnus
      sql
-     ;; neotree
-     ;; dash
      (markdown :variables markdown-live-preview-engine 'vmd)
      my-common
      my-org
+     ;; my-csv -- (Spacemacs) Warning: package csv-mode not initialized in layer my-csv, you may consider removing this package from the package list or use the :toggle keyword instead of a `when' form.
      my-keys
      my-russian
      my-skillbox
      my-google-translate
      version-control
      latex
+     (multiple-cursors :variables multiple-cursors-backend 'evil-mc)
      )
 
    ;; List of additional packages that will be installed without being
@@ -245,8 +247,8 @@ It should only modify the values of Spacemacs settings."
 
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+   dotspacemacs-default-font `("Source Code Pro"
+                               :size ,(if (eq system-type 'windows-nt) 18 13)
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -474,8 +476,7 @@ It should only modify the values of Spacemacs settings."
 	package-check-signature nil
         )
   ;; User initialization goes here
-  (add-to-load-path "~/dotfiles/spacemacs/thirdparty")
-  (add-to-load-path (expand-file-name "~/dotfiles/spacemacs/thirdparty/smsru/"))
+  ;; (add-to-load-path "~/dotfiles/spacemacs/thirdparty")
   (when (getenv "https_proxy")
     (setq dotspacemacs-elpa-https nil))
 )

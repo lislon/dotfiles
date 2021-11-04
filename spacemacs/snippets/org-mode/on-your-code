@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: on-your-code
+# key: on-your-code
+# --
+
+Как пример что можно исправить в вашем коде:
+Было:
+#+BEGIN_SRC java
+$1
+#+END_SRC
+Стало:
+#+BEGIN_SRC java
+$1
+#+END_SRC

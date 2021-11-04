@@ -1,3 +1,4 @@
+(defvar my-common//idea-path "idea" "executable command to open ida")
 
 (with-eval-after-load 'helm
   ;; Helm is barking on start:

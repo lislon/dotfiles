@@ -227,9 +227,12 @@ Each entry is either:
   ;;)
 
 
-(defun my-common/init-quickrun ()
-  (use-package quickrun)
-    (advice-add 'quickrun :before (lambda (&rest PLIST) (save-buffer))))
+(defun my-common/post-init-quickrun ()
+  ;; (use-package quickrun)
+  (advice-add 'quickrun :before (lambda (&rest PLIST) (save-buffer)))
+  (quickrun-add-command "TypeScript-tsx"
+    (cdr (assoc "typescript"  quickrun--language-alist)))
+  )
 
 ;; (defun my-common/init-undohist ()
 ;;   (use-package undohist

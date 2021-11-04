@@ -3,3 +3,11 @@
 You will need to download Graphviz
 http://www.graphviz.org/Download_windows.php
 And set ENV =GRAPHVIZ_DOT= to =c:\opt\graphviz\bin\dot.exe=
+
+* Download mysys
+https://msys2.github.io/
+* Install emacs
+ : pacman -S mingw-w64-x86_64-emacs
+
+
+sOMETIMES FILE IN C:\Users\ele\AppData\Roaming\.emacs
