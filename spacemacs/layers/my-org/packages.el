@@ -63,6 +63,7 @@
    org-table-default-size "2x5"           ; Default 2 columns table
    org-link-frame-setup  '((file . find-file))
    org-ditaa-jar-path "~/Dropbox/dotfiles/spacemacs/scripts/ditaa.jar"
+   org-return-follows-link t
    ;;------------------------------------------------------------------------------
    ;;Clocking
    ;;------------------------------------------------------------------------------
@@ -136,27 +137,8 @@
    ;; ------------------------------------------------------------------------------
    org-capture-templates (my/override-unique-cars
                           org-capture-templates
-                          '(("T" "public todo" entry (file "~/Dropbox/shared-org/dynamic/todo.org")
-                             "* TODO %^{Public TODO}\n%U\n%?")
-                            ("N" "public note" entry (file "~/Dropbox/shared-org/dynamic/refile.org")
-                             "* %^{Public note}\n%U\n%?")
-                            ("A" "Public appointment" entry (file "~/Dropbox/shared-org/dynamic/refile.org")
-                             "* APPOINTMENT with %?
-:PROPERTIES:
-:APPT_WARNTIME: 90
-:END:
-SCHEDULED %^T
-%U")
-                            ("B" "book" entry (file+headline "~/Dropbox/shared-org/dynamic/books.org" "Books")
-
-                             "* PENDING %^{Book}\n%U\n%?")
-                            ("W" "Wish" entry (file "~/Dropbox/shared-org/static/wishlist.org" )
-
-                             "* %^{Wish}\n%U\n%?")
-                            ("e" "English quote" entry (file+headline "~/Dropbox/shared-org/static/quotes.org" "Just Phrases")
-
-
-                             "* %^{English quote}")
+                          '(("r" "Remont" item (file+headline "~/Dropbox/org/dynamic/todo.org" "Hotelki")
+                             "%?")
                             ))
 
 
@@ -371,7 +353,6 @@ SCHEDULED %^T
   ;; void-function bind-map error:
   ;;(evil-leader/set-key-for-mode 'org-mode "of" 'helm-org-in-buffer-headings)
 
-
   (evil-leader/set-key "bo" (defun my/make-org-buffer() (interactive)
                                    (spacemacs/new-empty-buffer)
                                    (org-mode)
@@ -469,10 +450,10 @@ SCHEDULED %^T
     "
 ^Computers^             ^Lists^           ^Move
 ^^^^^^------------------------------------------------------
-_ce_: Emacs          _lB_: book         _ce_: up
-_cj_: Java           _lb_: buy       _ce_: next visible
-_cg_: Git            _ce_: -    _ce_: previous visible
-_cn_: Nice Prog      _ce_: -    _ce_: previous visible
+_ce_: Emacs          _lB_: book  _ce_: up
+_cj_: Java           _lb_: buy   _ce_: next visible
+_cg_: Git            _ce_: -     _ce_: previous visible
+_cn_: Nice Prog      _ce_: -     _ce_: previous visible
 _cu_: Unix cmds
 _cb_: Bash
 _cw_: Windows cmds
@@ -498,18 +479,23 @@ _cw_: Windows cmds
 _e_: Emacs          _o_: todo
 _j_: Java           _e_: edit hydra
 _b_: Bash           _n_: natera
-_g_: Git            _b_: books
-_c_: Computers      _T_: -
+_k_: HotKeys        _b_: books
+_c_: Computers      _p_: programming
 _l_: Linux          _m_: macos
+_w_: windows        _J_: JS
 "
     ("e" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")))
     ("j" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/java.org" "Java")))
+    ("J" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/javascript.org" "Java Script")))
     ("b" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/bash.org")))
     ("o" (lambda () (interactive) (find-file "~/Dropbox/org/dynamic/todo.org")))
     ("e" (lambda () (interactive) (find-file "~/Dropbox/dotfiles/spacemacs/layers/my-org/packages.el")))
     ("n" (lambda () (interactive) (find-file "~/Dropbox/workorg/natera/natera.org")))
+    ("p" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/programming.org")))
     ("c" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/computers.org")))
+    ("w" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/windows.org")))
     ("l" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/linux.org")))
+    ("k" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/hotkeys.org")))
     ("g" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/programming.org" "Git")))
     ("b" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/shared-notes.org" "Books")))
     ("T" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/shared-todo.org")))

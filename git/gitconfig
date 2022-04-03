@@ -15,7 +15,7 @@
 	vhr = !git fetch && git reset --hard FETCH_HEAD
   cleanup = "!git branch --merged | grep  -v '\\*\\|master\\|develop' | xargs -n 1 git branch -d"
 [user]
-  email = lislon@mail.ru
+	email = igolovin@natera.com
 	name = Igor Golovin
 [core]
 	autocrlf = input

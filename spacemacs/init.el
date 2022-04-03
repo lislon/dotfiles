@@ -77,7 +77,6 @@ This function should only modify configuration layer settings."
      ;; my-csv -- (Spacemacs) Warning: package csv-mode not initialized in layer my-csv, you may consider removing this package from the package list or use the :toggle keyword instead of a `when' form.
      my-keys
      my-russian
-     my-skillbox
      my-google-translate
      version-control
      latex
@@ -520,6 +519,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
     (mapc (lambda (val) (setcdr val (cons 'windows-1251 'windows-1251))) process-coding-system-alist)
     (setq custom-theme-directory "~/dotfiles/spacemacs/custom-themes")
    )
+  (setq eshell-aliases-file (expand-file-name "~/Dropbox/dotfiles/spacemacs/eshell/alias"))
   )
 
 (defun dotspacemacs/user-load ()
@@ -539,9 +539,7 @@ before packages are loaded."
 
   ;; Vim move right or left
   (my/define-key evil-normal-state-map
-    "C-v" 'evil-scroll-down
-    "C-S-v" 'evil-visual-block
-    "C-v" 'evil-scroll-down
+    ;; "C-v" 'evil-visual-block
     "gc" 'org-capture
     "ga" 'org-agenda-list
 
@@ -591,6 +589,7 @@ before packages are loaded."
   (global-set-key (kbd "<f8>") 'quickrun)
   (setq
    confirm-kill-processes nil ;; macos can't go to sleep
+   helm-ff-initial-sort-method "newest"
    )
 
   ;; connect to mysql via SPC m c
@@ -626,3 +625,14 @@ This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
 )
+
+;; temporary
+(defun prelude-copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))

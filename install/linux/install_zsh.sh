@@ -8,6 +8,8 @@ if ! which curl >/dev/null 2>&1; then
     exit 1
 fi
 
+install-zsh-autosuggestions
+
 [[ -d ~/.oh-my-zsh ]] || sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 if [[ -f $TARGET && ! -L $TARGET ]] ; then
@@ -17,3 +19,9 @@ fi
 
 ln -sf $SOURCE $TARGET
 echo "Installation done ($TARGET)"
+
+
+function install-zsh-autosuggestions() {
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+}

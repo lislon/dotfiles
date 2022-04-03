@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SOURCE=~/dotfiles/tmux/tmux.conf
+SOURCE=~/Dropbox/dotfiles/tmux/tmux.conf
 TARGET=~/.tmux.conf
 
 if [[ -f $TARGET && ! -L $TARGET ]] ; then

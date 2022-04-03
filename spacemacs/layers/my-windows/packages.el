@@ -82,5 +82,10 @@
 
 (defun my-windows/post-init-org ()
   (setq org-show-notification-handler (lambda (msg) (alert msg) ))
+  (let ((base-dir (file-name-directory (or load-file-name (buffer-file-name)))))
+    (when base-dir
+      (message (f-join base-dir "bin" "emacs_ctrl_shift.exe"))
+      (start-process "lsn-ctrl+shift" "lsn-ctrl+shift" (f-join base-dir "bin" "emacs_ctrl_shift.exe"))
+      ))
   )
 ;;; packages.el ends here

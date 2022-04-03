@@ -49,7 +49,6 @@ nmap <cr> o<Esc>k
 inoremap fd <Esc>
 inoremap ав <Esc>
 
-nmap <c-w> ci'
 
 "noremap <left> <nop>
 "noremap <right> <nop>
@@ -126,7 +125,7 @@ nmap <leader>bn gt<cr>
 nmap <leader>bp gT<cr>
 nmap <leader>bN :action NewScratchBuffer<cr>
 
-nmap <leader><tab> :action VimFilePrevious<cr>
+nmap <leader><tab> :buffer #<cr>
 
 nmap <leader>tn :action EditorToggleShowLineNumbers<cr>
 nmap <leader>tw :action EditorToggleShowWhitespaces<cr>
@@ -162,9 +161,9 @@ nmap <leader>sf :action FindInPath<cr>
 nmap <leader>sp :action FindInPath<cr>
 nmap <leader>sF :action ShowUsages<cr>
 
-nmap <leader>jj :action AceJumpAction<cr>
-nmap <leader>jw :action emacsIDEAs.AceJumpWord<cr>
-nmap <leader>jW :action emacsIDEAs.AceJumpSelect<cr>
+nmap <leader>jw :action AceAction<cr>
+" nmap <leader>jw :action emacsIDEAs.AceJumpWord<cr>
+" nmap <leader>jW :action emacsIDEAs.AceJumpSelect<cr>
 " nmap <leader>js :action emacsIDEAs.AceJumpAndReplace.String<cr>
 nmap <leader>jcw :action emacsIDEAs.AceJumpCopy.Quote<cr>
 nmap <leader>jrl :action emacsIDEAs.AceJumpAndReplace.Line<cr>
@@ -202,6 +201,7 @@ nmap gR :action Run<cr>
 nmap gf :action GotoDeclaration<cr>
 nmap gi :action GotoImplementation<cr>
 nmap gb :action ToggleLineBreakpoint<cr>
+nmap g; :action JumpToLastChange<cr>
 nmap <localLeader>r :action Run<cr>
 nmap <leader>md :action Debug<cr>
 
@@ -241,3 +241,5 @@ nmap gs <C-o>:action GotoSuperMethod<cr>
 nmap <leader>kU  :action Unwrap<cr>
 nmap <leader>kw  :action SurroundWith<cr>
 nmap <leader>ij  :action InsertLiveTemplate<cr>
+
+nmap <c-w> ci'

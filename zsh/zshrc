@@ -1,6 +1,5 @@
 # -*- mode: sh -*-
 
-
 init-base-settings() {
     setopt extended_glob
     setopt rc_expand_param
@@ -106,6 +105,7 @@ init-oh-my-zsh() {
     # much, much faster.
     # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+    # You need install fasd https://github.com/clvv/fasd#install
     plugins=(git fasd gitfast common-aliases wd safe-paste docker)
     if [ -f "/etc/arch-release" ]; then
         # I do not want to hide pacupg binary with alias
@@ -117,16 +117,29 @@ init-oh-my-zsh() {
     if which systemctl &>/dev/null; then
         plugins+=(systemd)
     fi
-    # Use j <dirspec>
-    #plugins=(git composer fasd gitfast)
+
+
+    if [[ -z "$INSIDE_EMACS" ]] ; then
+        plugins+=(zsh-autosuggestions)
+        # https://github.com/marzocchi/zsh-notify
+        plugins+=(notify)
+        # Ctrl+Space to accept suggested value
+        bindkey '^ ' autosuggest-accept
+        ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#777777,italic"
+        ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+    fi
 
     source $ZSH/oh-my-zsh.sh
 
+    # Prevent popup on every fail command
+    zstyle ':notify:*' always-notify-on-failure "no"
+    zstyle ':notify:8' blacklist-regex ".*less.*"
     # docker autocomplete
     autoload -Uz compinit
     compinit
-  
 }
+
+
 
 
 init-fzf() {
@@ -252,6 +265,7 @@ init-simple-aliases() {
         alias yad="sudo yum remove"
     fi
     alias gl="git --no-pager log --pretty=format:'%C(yellow)%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -7"
+    alias vim="nvim"
 }
 
 init-complex-aliases() {
@@ -442,6 +456,9 @@ init-complex-aliases() {
     }
 }
 
+init-notify() {
+
+}
 
 init-bindkeys() {
     # Transponse two command arguments before cursor.
@@ -614,6 +631,9 @@ init-complex-aliases
 if [[ -z "$INSIDE_EMACS" ]] ; then
     init-bindkeys
     init-fzf
+    init-notify
+
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
 init-at-the-end

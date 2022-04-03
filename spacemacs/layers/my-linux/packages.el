@@ -35,6 +35,7 @@
 
 (defun my-linux/post-init-dired ()
   ;; Dired - directories first
+  (setq insert-directory-program "gls" dired-use-ls-dired t)
   (setq  dired-listing-switches "-alkh  --group-directories-first"))
 
 (defun my-linux/post-init-lua-mode ()
