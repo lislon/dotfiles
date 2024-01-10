@@ -1,5 +1,8 @@
 # -*- mode: sh -*-
 
+ZSH_DISABLE_COMPFIX=true
+
+
 init-base-settings() {
     setopt extended_glob
     setopt rc_expand_param
@@ -9,7 +12,7 @@ init-base-settings() {
     setopt no_beep
     unsetopt case_glob
 
-    fpath=(~/dotfiles/zsh/functions $fpath)
+    fpath=(~/OneDrive/dotfiles/zsh/functions $fpath)
 
     export ENV='development'
     export HISTSIZE=15000
@@ -106,9 +109,23 @@ init-oh-my-zsh() {
     # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
     # You need install fasd https://github.com/clvv/fasd#install
-    plugins=(git fasd gitfast common-aliases wd safe-paste docker)
+    plugins=(git fasd gitfast common-aliases wd safe-paste docker
+	    docker-compose
+	    copyfile copypath # just type to copy to clipboard
+	    copybuffer # C-o copy buff to clipboard
+	    dirhistory # Alt+Left/Right - go to prev/next directory
+	    history    # hs alias
+    )
+    if [[ $(whence -p fasd &> /dev/null ) ]];  then
+	    fasd_cache="$HOME/.fasd-init-bash"
+	    if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
+		    fasd --init posix-alias zsh-hook >| "$fasd_cache"
+	    fi
+	    source "$fasd_cache"
+	    unset fasd_cache
+    fi
     if [ -f "/etc/arch-release" ]; then
-        # I do not want to hide pacupg binary with alias
+	    # I do not want to hide pacupg binary with alias
         # plugins+=(archlinux)
         export SSH_AUTH_SOCK=/run/user/1000/ssh-agent.socket
         # elif `which ssh-agent &>/dev/null`; then
@@ -121,22 +138,29 @@ init-oh-my-zsh() {
 
     if [[ -z "$INSIDE_EMACS" ]] ; then
         plugins+=(zsh-autosuggestions)
-        # https://github.com/marzocchi/zsh-notify
-        plugins+=(notify)
+        # need to install stuff https://github.com/marzocchi/zsh-notify
+        # disabled because on macos i got error:
+        # [oh-my-zsh] plugin 'notify' not found
+
+        # if [[ ! $(grep -i microsoft /proc/version 2>/dev/null) ]]; then
+        #   plugins+=(notify)
+        # fi
+
         # Ctrl+Space to accept suggested value
         bindkey '^ ' autosuggest-accept
         ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#777777,italic"
         ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+
+        # Prevent popup on every fail command
+        zstyle ':notify:*' always-notify-on-failure "no"
+        zstyle ':notify:8' blacklist-regex ".*less.*"
+        # docker autocomplete
+        autoload -Uz compinit
+        compinit
     fi
 
     source $ZSH/oh-my-zsh.sh
 
-    # Prevent popup on every fail command
-    zstyle ':notify:*' always-notify-on-failure "no"
-    zstyle ':notify:8' blacklist-regex ".*less.*"
-    # docker autocomplete
-    autoload -Uz compinit
-    compinit
 }
 
 
@@ -150,7 +174,7 @@ init-fzf() {
 }
 
 init-simple-aliases() {
-    alias myzsh='$EDITOR ~/dotfiles/zsh/zshrc && reload'
+    alias myzsh='$EDITOR ~/OneDrive/dotfiles/zsh/zshrc && reload'
     alias tmux='tmux -u' #support of unicode
     alias view=vim -R
     alias reload=". ~/.zshrc"
@@ -257,6 +281,7 @@ init-simple-aliases() {
         alias is="sudo apt-get search"
     elif `which brew &>/dev/null`; then
         alias i="brew install"
+        alias yad="brew uninstall"
         alias is="brew search"
     elif `which yum &>/dev/null`; then
         alias i="sudo yum install"
@@ -326,7 +351,7 @@ init-complex-aliases() {
     # PLAY bell sound (at the end of long commands)
     bell() {
         (notify-send "${1:-Command complete}"
-         aplay ~/Dropbox/confiles/linux/sounds/ding.wav 2>/dev/null &)
+         aplay ~/OneDrive/confiles/linux/sounds/ding.wav 2>/dev/null &)
     }
 
     backup () {
@@ -631,7 +656,9 @@ init-complex-aliases
 if [[ -z "$INSIDE_EMACS" ]] ; then
     init-bindkeys
     init-fzf
-    init-notify
+    if [[ ! $(grep -i microsoft /proc/version 2>/dev/null) ]]; then
+	    init-notify
+    fi
 
     test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 fi

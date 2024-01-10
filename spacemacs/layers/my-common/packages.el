@@ -96,7 +96,7 @@ Each entry is either:
 
 
 (defun my-common/post-init-mutiply-cursors ()
-  (setq mc/list-file "~/Dropbox/dotfiles/spacemacs/layers/my-common/multiply-allow-commands.el")
+  (setq mc/list-file "~/OneDrive/dotfiles/spacemacs/layers/my-common/multiply-allow-commands.el")
   )
 
 (defun my-common/post-init-dired-mode ()

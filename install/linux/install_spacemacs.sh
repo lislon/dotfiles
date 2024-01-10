@@ -13,6 +13,6 @@ function is_spacemacs_intalled {
 # install spacemacs if needed
 is_spacemacs_intalled || install_spacemacs
 
-ln -sf ~/Dropbox/dotfiles/spacemacs ~/.spacemacs.d
+ln -sf ~/OneDrive/dotfiles/spacemacs ~/.spacemacs.d
 
 echo "done"

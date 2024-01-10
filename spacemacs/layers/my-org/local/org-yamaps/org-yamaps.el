@@ -15,7 +15,7 @@ https://tech.yandex.ru/maps/doc/jsapi/2.1/ref/reference/option.presetStorage-doc
          (json (json-encode entries-flat))
          (jsonp (concat "var data = " json ";")))
 
-    (write-region jsonp nil "~/Dropbox/dotfiles/spacemacs/layers/my-org/local/org-yamaps/data.json")
+    (write-region jsonp nil "~/OneDrive/dotfiles/spacemacs/layers/my-org/local/org-yamaps/data.json")
     ))
 
 (defun org-yamaps--for-each-entry ()

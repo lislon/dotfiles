@@ -183,7 +183,7 @@ a sound to be played"
     (call-interactively 'evil-shift-left))
   )
 
-;; Autosave all org & config file buffers for Dropbox
+;; Autosave all org & config file buffers for OneDrive
 (defun auto-save-all-files ()
   (interactive)
   (save-excursion
@@ -379,8 +379,9 @@ Used to override org-captures values"
 
 (defun my/org-clean-up-after-my-master ()
   "Clock out from last task"
-  (when (org-clocking-p)
-    (org-clock-out)))
+  ;; (when (org-clocking-p)
+    ;; (org-clock-out))
+  )
 
 (defun my/org-morning-clock-chore ()
   "Resets the `org-clock-out-time' at morning when I come at work"
@@ -432,7 +433,7 @@ Used to override org-captures values"
               #'file-newer-than-file-p)))
 
 (defun my/insert-latest-org-image ()
-  "Moves image from Dropbox folder to ./img, inserting org-mode link"
+  "Moves image from OneDrive folder to ./img, inserting org-mode link"
   (interactive)
   (let* ((indir (expand-file-name my-org/screenshot-dir))
          (infile (my-org/get-newest-file-from-dir indir))

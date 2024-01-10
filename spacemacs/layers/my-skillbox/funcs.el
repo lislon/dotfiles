@@ -1,4 +1,4 @@
-(defvar my-skillbox//base-dir "~/Dropbox/shared/skillbox" "Directory with answers")
+(defvar my-skillbox//base-dir "~/OneDrive/shared/skillbox" "Directory with answers")
 (defvar my-skillbox//templates-dir (concat my-skillbox//base-dir "/00000_lislon/tpls") "Directory with templates")
 
 (defvar my-skillbox//downloads-dir  "D:\\Downloads")
@@ -413,7 +413,7 @@
 (defun my-skillbox//org-inline-css-hook (exporter)
   "Highlight source code with dark background"
   (when (eq exporter 'html)
-    (let ((css-path (expand-file-name "~/Dropbox/dotfiles/spacemacs/layers/my-skillbox/theme/zenburn-code.css")))
+    (let ((css-path (expand-file-name "~/OneDrive/dotfiles/spacemacs/layers/my-skillbox/theme/zenburn-code.css")))
         (setq
       org-html-head-extra
       (concat

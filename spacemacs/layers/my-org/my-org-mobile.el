@@ -6,7 +6,7 @@
 (setq-default
  org-agenda-files '("~/org/dynamic/"
                     "~/org/dynamic/projects/"
-                    "~/Dropbox/workorg/home.org")
+                    "~/OneDrive/workorg/home.org")
 
  diary-file "~/org/diary.txt"
  calendar-date-style 'iso
@@ -42,11 +42,11 @@
 
 
 (setq-default
- org-mobile-directory "~/Dropbox/MobileOrg"
+ org-mobile-directory "~/OneDrive/MobileOrg"
  org-mobile-files '("~/org/dynamic/"
                     "~/org/static/books.org"
                     "~/org/archive/books.org_archive"
-                    "~/Dropbox/workorg/home.org"
+                    "~/OneDrive/workorg/home.org"
                     )
  org-mobile-force-id-on-agenda-items nil)
 (defun my/org-mobile-fix-index-bug ()

@@ -1,1 +1,1 @@
-New-Item -Path %USERPROFILE%\.ideavimrc -ItemType SymbolicLink -Value %USERPROFILE%\Dropbox\dotfiles\intellij\.ideavimrc
+New-Item -Path %USERPROFILE%\.ideavimrc -ItemType SymbolicLink -Value %USERPROFILE%\OneDrive\dotfiles\intellij\.ideavimrc

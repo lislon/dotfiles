@@ -12,11 +12,11 @@
                      (insert data)
                      (call-shell-region
                       (point-min) (point-max)
-                      "/Users/ele/Dropbox/confiles/macos/bin/impbcopy")))
+                      "/Users/ele/OneDrive/confiles/macos/bin/impbcopy")))
                   (file
                    (if (file-exists-p file)
                        (start-process
-                        "_" nil "/Users/ele/Dropbox/confiles/macos/bin/impbcopy"  (file-truename file))))
+                        "_" nil "/Users/ele/OneDrive/confiles/macos/bin/impbcopy"  (file-truename file))))
                   (t
                    (message "The image seems to be malformed."))))
         (message "Point is not at an image."))))

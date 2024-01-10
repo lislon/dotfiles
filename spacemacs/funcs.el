@@ -394,7 +394,7 @@ unless return was pressed outside the comment"
   (save-excursion
     (save-restriction
 
-      (spacemacs//helm-do-grep-region-or-symbol (list  "~/Dropbox/emacs-resources/abc-java-perfomance.txt")))))
+      (spacemacs//helm-do-grep-region-or-symbol (list  "~/OneDrive/emacs-resources/abc-java-perfomance.txt")))))
 
 (defun my/eval-print-sexp-line ()
   "Evaluates expression under cursor in evil normal mode and print result"
@@ -413,7 +413,7 @@ unless return was pressed outside the comment"
 (defun my/buffer-is-dropbox-p ()
   "Returns true if current buffer is under dropbox. Needed for suspend check"
   (or (string-prefix-p (expand-file-name "~/org") (buffer-file-name))
-      (string-prefix-p (expand-file-name "~/Dropbox") (buffer-file-name))))
+      (string-prefix-p (expand-file-name "~/OneDrive") (buffer-file-name))))
 
 (defun my/save-dropbox-buffers ()
   (interactive)
@@ -421,7 +421,7 @@ unless return was pressed outside the comment"
   (let ((bufs (cl-loop for buf in (buffer-list)
                        if (and (buffer-file-name buf)
                                (or (string-prefix-p (expand-file-name "~/org") (buffer-file-name buf))
-                                   (string-prefix-p (expand-file-name "~/Dropbox") (buffer-file-name buf))
+                                   (string-prefix-p (expand-file-name "~/OneDrive") (buffer-file-name buf))
                                    (string-prefix-p (expand-file-name "~/dotfiles") (buffer-file-name buf)))
                                (buffer-modified-p buf))
                        collect buf))
@@ -571,7 +571,7 @@ PROPERTY listed insert a string immediately after the healine given by
   ;; (message "tst timer %s" (my-get-last-clock-time))
   (setq second-line "___")
   (if (eq system-type 'windows-nt)
-      (shell-command (concat user-home-directory "Dropbox/confiles/win/growlnotify/growlnotify.com  \/t:\"" second-line "\" \/id:12345 \/s:false \/p:2 \/a:\"" title "\"  \/silent:true \"" text "\" \/r:\"EmacsNotification\" \/n:\"EmacsNotification\""))
+      (shell-command (concat user-home-directory "OneDrive/confiles/win/growlnotify/growlnotify.com  \/t:\"" second-line "\" \/id:12345 \/s:false \/p:2 \/a:\"" title "\"  \/silent:true \"" text "\" \/r:\"EmacsNotification\" \/n:\"EmacsNotification\""))
     ;;else
     (shell-command (concat "notify-send '" title " ' '" text "' --icon=trophy-gold --expire-time=10000"))
     ))

@@ -71,7 +71,7 @@ Each entry is either:
    google-translate-translation-directions-alist
    '(("en" . "ru") ("ru" . "en") )
    google-translate-pop-up-buffer-set-focus t
-   my/english-dictionary-file "~/Dropbox/org/static/dictionary.txt")
+   my/english-dictionary-file "~/OneDrive/org/static/dictionary.txt")
   )
 (defvar my/english-dictionary-file nil "Google translate dictionary file")
 

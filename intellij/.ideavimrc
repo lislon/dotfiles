@@ -138,6 +138,8 @@ nmap <leader>cl :action CommentByLineComment<cr>
 # Workaround https://youtrack.jetbrains.com/issue/VIM-862
 #vmap <leader>cl :<bs><bs><bs><bs><bs>action VimVisualSwapSelections<cr>:action CommentByLineComment<cr>
 
+nmap <leader>se :action SelectAllOccurrences<cr>
+
 
 nmap <leader>wm :action HideAllWindows<cr>
 nmap <leader>wd :action CloseContent<cr>
@@ -196,12 +198,16 @@ nmap <leader>mrv  :action IntroduceVariable<cr>
 vmap <leader>mrv  :action IntroduceVariable<cr>
 nmap <leader>mrg  :action Generate<cr>
 nmap <leader>mri  :action ImplementMethods<cr>
-nmap gr :action Debug<cr>
-nmap gR :action Run<cr>
+" nmap gr :action Debug<cr>
+" nmap gR :action Run<cr>
 nmap gf :action GotoDeclaration<cr>
 nmap gi :action GotoImplementation<cr>
 nmap gb :action ToggleLineBreakpoint<cr>
 nmap g; :action JumpToLastChange<cr>
+
+nmap grh :action SelectNextOccurrence<cr>
+nmap grm :action SelectAllOccurrences<cr>
+
 nmap <localLeader>r :action Run<cr>
 nmap <leader>md :action Debug<cr>
 
@@ -220,6 +226,7 @@ nmap <leader>az :action ActivateTerminalToolWindow<cr>
 
 " Git
 nmap <leader>gs  :action Git.Commit.And.Push.Executor<cr>
+nmap <leader>gb  :action Annotate<cr>
 
 " Insert unicode
 nmap <leader>iu  :action ActivateUnicodeBrowserToolWindow<cr>

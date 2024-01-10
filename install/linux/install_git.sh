@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SOURCE=~/Dropbox/dotfiles/git/gitconfig
+SOURCE=~/OneDrive/dotfiles/git/gitconfig
 TARGET=~/.gitconfig
 
 if [[ -f $TARGET && ! -L $TARGET ]] ; then

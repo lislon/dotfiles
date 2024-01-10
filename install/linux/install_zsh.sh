@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SOURCE=~/Dropbox/dotfiles/zsh/zshrc
+SOURCE=~/OneDrive/dotfiles/zsh/zshrc
 TARGET=~/.zshrc
 
 if ! which curl >/dev/null 2>&1; then
@@ -9,6 +9,8 @@ if ! which curl >/dev/null 2>&1; then
 fi
 
 install-zsh-autosuggestions
+git clone https://github.com/marzocchi/zsh-notify.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/notify
+
 
 [[ -d ~/.oh-my-zsh ]] || sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
@@ -25,3 +27,4 @@ function install-zsh-autosuggestions() {
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
 }
+

@@ -5,8 +5,8 @@
 
 
 cd %USERPROFILE%
-IF NOT EXIST %USERPROFILE%\.emacs.d git clone https://github.com/syl20bnr/spacemacs.git .emacs.d
+IF NOT EXIST $HOME\.emacs.d git clone https://github.com/syl20bnr/spacemacs.git .emacs.d
 cd .emacs.d
 git checkout develop
-IF NOT EXIST %USERPROFILE%\.spacemacs.d New-Item -Path %USERPROFILE%\.spacemacs.d -ItemType SymbolicLink -Value %USERPROFILE%\Dropbox\dotfiles\spacemacs
+IF NOT EXIST $HOME\.spacemacs.d New-Item -Path $HOME\.spacemacs.d -ItemType SymbolicLink -Value $HOME\OneDrive\dotfiles\spacemacs
 

@@ -15,8 +15,9 @@
 	vhr = !git fetch && git reset --hard FETCH_HEAD
   cleanup = "!git branch --merged | grep  -v '\\*\\|master\\|develop' | xargs -n 1 git branch -d"
 [user]
-	email = igolovin@natera.com
+	email = lislon@mail.ru
 	name = Igor Golovin
+
 [core]
 	autocrlf = input
   excludesfile = ~/.gitignore_global
@@ -41,7 +42,8 @@
 [pull]
 	rebase = true
 [push]
-	default = simple
+	default = current
+	autoSetupRemote = true
 [diff]
 	tool = vimdiff
 [mergetool "fugitive"]
@@ -55,3 +57,8 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[safe]
+	directory = C:/Users/ele/src/natera/sra-web-ui
+	directory = C:/Users/ele/src/natera/sra-service
+[includeIf "gitdir:~/src/natera/**"]
+    path = ~/OneDrive/org/work/natera/settings/git/.gitconfig

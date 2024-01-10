@@ -11,8 +11,8 @@
  ;; gnus
  gnus-save-killed-list nil
  gnus-always-read-dribble-file t
- gnus-init-file "~/Dropbox/confiles/common/emacs/gnus.el"
- ;; gnus-dribble-directory "~/Dropbox/emacs-resources/gnus/"
+ gnus-init-file "~/OneDrive/confiles/common/emacs/gnus.el"
+ ;; gnus-dribble-directory "~/OneDrive/emacs-resources/gnus/"
  gnus-dribble-directory "~/.emacs.d/.cache/gnus"
  gnus-home-directory "~/.emacs.d/.cache/gnus"
  ;; we don't use other news readers

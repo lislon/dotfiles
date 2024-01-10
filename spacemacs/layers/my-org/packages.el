@@ -45,12 +45,12 @@
    ;; ------------------------------------------------------------------------------
    ;; General
    ;; ------------------------------------------------------------------------------
-   org-directory "~/Dropbox/org"
+   org-directory "~/OneDrive/org"
 
-   org-agenda-files '("~/Dropbox/org/dynamic/"
-                      "~/Dropbox/shared-org/dynamic")
+   org-agenda-files '("~/OneDrive/org/dynamic/"
+                      "~/OneDrive/org/dynamic")
 
-   diary-file "~/Dropbox/org/diary.txt"
+   diary-file "~/OneDrive/org/diary.txt"
    calendar-date-style 'iso
    org-special-ctrl-a/e t                  ; Ignore tags when editing headline
    auto-save-timeout 5                     ; Autosave for dropbox each 10 sec IDLE
@@ -62,7 +62,7 @@
    org-list-allow-alphabetical t
    org-table-default-size "2x5"           ; Default 2 columns table
    org-link-frame-setup  '((file . find-file))
-   org-ditaa-jar-path "~/Dropbox/dotfiles/spacemacs/scripts/ditaa.jar"
+   org-ditaa-jar-path "~/OneDrive/dotfiles/spacemacs/scripts/ditaa.jar"
    org-return-follows-link t
    ;;------------------------------------------------------------------------------
    ;;Clocking
@@ -86,12 +86,12 @@
    org-outline-path-complete-in-steps nil      ; Fuzzy match path when refile
 
    ;; Archive
-   org-archive-location "~/Dropbox/org/archive/%s_archive::"
+   org-archive-location "~/OneDrive/org/archive/%s_archive::"
    org-src-window-setup 'current-window        ; C-c ' is fullscreen
 
    org-publish-project-alist
          '(("org-notes"
-            :base-directory "~/Dropbox/shared-org/"
+            :base-directory "~/OneDrive/org/"
             :publishing-directory "~/public_html/"
             :publishing-function org-twbs-publish-to-html
             :with-sub-superscript nil
@@ -103,16 +103,16 @@
    org-refile-targets `((nil :maxlevel . 9)
                               (org-agenda-files :maxlevel . 9)
                               ;; ("~/org/dynamic/programming.org" :maxlevel . 1)
-                              ("~/Dropbox/org/dynamic/todo-someday.org" :level . 1)
-                              ("~/Dropbox/org/dynamic/notes.org" :level . 0)
-                              ("~/Dropbox/org/static/diary.org" :maxlevel . 1)
-                              ("~/Dropbox/shared-org/dynamic/shared-todo.org" :maxlevel . 1)
-                              ;; ("~/Dropbox/shared-org/static/programming/org" :maxlevel . 2)
-                              ;; ("~/Dropbox/shared-org/static/programming/programming.org" :maxlevel . 2)
-                              ;; ("~/Dropbox/shared-org/static/programming/java.org" :maxlevel . 1)
+                              ("~/OneDrive/org/dynamic/todo-someday.org" :level . 1)
+                              ("~/OneDrive/org/dynamic/notes.org" :level . 0)
+                              ("~/OneDrive/org/static/diary.org" :maxlevel . 1)
+                              ("~/OneDrive/org/dynamic/shared-todo.org" :maxlevel . 1)
+                              ;; ("~/OneDrive/org/static/programming/org" :maxlevel . 2)
+                              ;; ("~/OneDrive/org/static/programming/programming.org" :maxlevel . 2)
+                              ;; ("~/OneDrive/org/static/programming/java.org" :maxlevel . 1)
                               ,@(mapcar
                                (lambda (item) `(,item :maxlevel . 1 ))
-                               (f-files "~/Dropbox/shared-org/static"
+                               (f-files "~/OneDrive/org/static"
                                               (lambda (file) (string= "org" (file-name-extension file))) t))
                               )
 
@@ -137,7 +137,7 @@
    ;; ------------------------------------------------------------------------------
    org-capture-templates (my/override-unique-cars
                           org-capture-templates
-                          '(("r" "Remont" item (file+headline "~/Dropbox/org/dynamic/todo.org" "Hotelki")
+                          '(("r" "Remont" item (file+headline "~/OneDrive/org/dynamic/todo.org" "Hotelki")
                              "%?")
                             ))
 
@@ -159,7 +159,7 @@
                                                          ((org-agenda-overriding-header "Books I am reading")
                                                           (org-agenda-sorting-strategy '(user-defined-down))
                                                           (org-agenda-cmp-user-defined 'my/org-sort-agenda-logbook)
-                                                          (org-agenda-files '("~/Dropbox/org/dynamic/todo.org"))))
+                                                          (org-agenda-files '("~/OneDrive/org/dynamic/todo.org"))))
 
                                                         ("y" "Todo things"
                                                          (
@@ -233,7 +233,7 @@
                                                                 ((org-agenda-overriding-header "Lord/Lislon news (7 days)")
                                                                  (org-agenda-prefix-format "     ")
                                                                  (org-agenda-sorting-strategy '(timestamp-down))
-                                                                 (org-agenda-files '("~/Dropbox/lord-lislon/lord-lislon.org")))
+                                                                 (org-agenda-files '("~/OneDrive/lord-lislon/lord-lislon.org")))
                                                                 )
                                                           )
                                                          nil)))
@@ -300,8 +300,8 @@
                             ("REJT" . "SlateGray")
                             ("DONE" . "green2")
                             ("APPOINTMENT" . "DarkViolet"))
-   org-clock-sound "~/Dropbox/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
-   org-show-notification-handler "~/Dropbox/confiles/win/notify-emacs/notify.exe"
+   org-clock-sound "~/OneDrive/confiles/linux/sounds/131348__kaonaya__bell-at-daitokuji-temple-kyoto.wav"
+   org-show-notification-handler "~/OneDrive/confiles/win/notify-emacs/notify.exe"
    )
 
   ;; C-C c capture
@@ -323,6 +323,8 @@
 
   ;; (evil-leader/set-key "ga" 'org-agenda)
 
+  ;; auto save after 5 seconds
+  (auto-save-visited-mode)
 
   ;; Insert mode in capture mode
   (add-hook 'org-capture-mode-hook 'evil-insert-state)
@@ -439,8 +441,8 @@
   ;; our little façade-function for djcb-popup
   (defun djcb-appt-display (min-to-app new-time msg)
     (djcb-popup (format "Appointment in %s minute(s)" min-to-app) msg
-                "~/Dropbox/confiles/linux/icons/apppointment-grey-32x32.png"
-                "~/Dropbox/confiles/linux/sounds/choir-a.wav"))
+                "~/OneDrive/confiles/linux/icons/apppointment-grey-32x32.png"
+                "~/OneDrive/confiles/linux/sounds/choir-a.wav"))
   (setq appt-disp-window-function 'djcb-appt-display)
   (defadvice org-agenda-to-appt (before wickedcool activate)
     "Clear the appt-time-msg-list."
@@ -450,23 +452,24 @@
     "
 ^Computers^             ^Lists^           ^Move
 ^^^^^^------------------------------------------------------
-_ce_: Emacs          _lB_: book  _ce_: up
-_cj_: Java           _lb_: buy   _ce_: next visible
+_ce_: English        _lB_: book  _ce_: up
+_ci_: isweareenglish _lb_: buy   _ce_: next visible
 _cg_: Git            _ce_: -     _ce_: previous visible
 _cn_: Nice Prog      _ce_: -     _ce_: previous visible
-_cu_: Unix cmds
+_cu_: Unix cmds      _cj_: Java
 _cb_: Bash
 _cw_: Windows cmds
 "
-    ("ce" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")) "Emacs")
-    ("cj" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/java.org" "Java")) "Java")
-    ("cg" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/programming.org" "Git")) "Git")
-    ("cu" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "How to linux")) "Unix")
-    ("cw" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "How to windows")) "How to windows")
-    ("cn" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/computers.org" "Nice Programs")) "Nice Programs")
-    ("cb" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/programming/bash.org")) "Bash")
-    ("lB" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/books.org" "Books")) "Books")
-    ("lb" (lambda () (interactive) (my/refile "~/Dropbox/shared-org/static/buy.org")) "Buy")
+    ("ce" (lambda () (interactive) (my/refile "~/OneDrive/org/programming/english.org" "nice english phrases I liked")) "English")
+    ("ci" (lambda () (interactive) (my/refile "~/OneDrive/org/programming/english.org" "isweareenglish")) "English (isweareenglish)")
+    ("cj" (lambda () (interactive) (my/refile "~/OneDrive/org/programming/java.org" "Java")) "Java")
+    ("cg" (lambda () (interactive) (my/refile "~/OneDrive/org/programming/programming.org" "Git")) "Git")
+    ("cu" (lambda () (interactive) (my/refile "~/OneDrive/org/programming/computers.org" "How to linux")) "Unix")
+    ("cw" (lambda () (interactive) (my/refile "~/OneDrive/org/programming/computers.org" "How to windows")) "How to windows")
+    ("cn" (lambda () (interactive) (my/refile "~/OneDrive/org/programming/computers.org" "Nice Programs")) "Nice Programs")
+    ("cb" (lambda () (interactive) (my/refile "~/OneDrive/org/programming/bash.org")) "Bash")
+    ("lB" (lambda () (interactive) (my/refile "~/OneDrive/org/books/books.org" "Books")) "Books")
+    ("lb" (lambda () (interactive) (my/refile "~/OneDrive/org/personal/buy.org")) "Buy")
     ("s" gnus-group-enter-server-mode "Servers")
     ("m" gnus-group-new-mail "Compose m OR C-x m")
     ("#" gnus-topic-mark-topic "mark #")
@@ -476,7 +479,7 @@ _cw_: Windows cmds
     "
 ^Work stuff^        ^Shared^
 ^^^^^^-------------------------
-_e_: Emacs          _o_: todo
+_E_: English        _o_: todo
 _j_: Java           _e_: edit hydra
 _b_: Bash           _n_: natera
 _k_: HotKeys        _b_: books
@@ -484,22 +487,22 @@ _c_: Computers      _p_: programming
 _l_: Linux          _m_: macos
 _w_: windows        _J_: JS
 "
-    ("e" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/computers.org" "Emacs")))
-    ("j" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/java.org" "Java")))
-    ("J" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/javascript.org" "Java Script")))
-    ("b" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/bash.org")))
-    ("o" (lambda () (interactive) (find-file "~/Dropbox/org/dynamic/todo.org")))
-    ("e" (lambda () (interactive) (find-file "~/Dropbox/dotfiles/spacemacs/layers/my-org/packages.el")))
-    ("n" (lambda () (interactive) (find-file "~/Dropbox/workorg/natera/natera.org")))
-    ("p" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/programming.org")))
-    ("c" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/computers.org")))
-    ("w" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/windows.org")))
-    ("l" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/linux.org")))
-    ("k" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/hotkeys.org")))
-    ("g" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/programming/programming.org" "Git")))
-    ("b" (lambda () (interactive) (my/org-jump-to-file-and-header "~/Dropbox/shared-org/static/shared-notes.org" "Books")))
-    ("T" (lambda () (interactive) (find-file "~/Dropbox/shared-org/dynamic/shared-todo.org")))
-    ("m" (lambda () (interactive) (find-file "~/Dropbox/shared-org/static/programming/macos.org")))
+    ("o" (lambda () (interactive) (find-file "~/OneDrive/org/personal/todo.org")))
+    ("E" (lambda () (interactive) (my/org-jump-to-file-and-header "~/OneDrive/org/languages/english.org" "nice english phrases I liked")))
+    ("n" (lambda () (interactive) (find-file "~/OneDrive/org/work/natera/natera.org")))
+    ("e" (lambda () (interactive) (my/org-jump-to-file-and-header "~/OneDrive/org/programming/computers.org" "Emacs")))
+    ("j" (lambda () (interactive) (my/org-jump-to-file-and-header "~/OneDrive/org/programming/java.org" "Java")))
+    ("J" (lambda () (interactive) (my/org-jump-to-file-and-header "~/OneDrive/org/programming/javascript.org" "Java Script")))
+    ("b" (lambda () (interactive) (find-file "~/OneDrive/org/programming/bash.org")))
+    ("p" (lambda () (interactive) (find-file "~/OneDrive/org/programming/programming.org")))
+    ("c" (lambda () (interactive) (find-file "~/OneDrive/org/programming/computers.org")))
+    ("w" (lambda () (interactive) (find-file "~/OneDrive/org/programming/windows.org")))
+    ("l" (lambda () (interactive) (find-file "~/OneDrive/org/programming/linux.org")))
+    ("k" (lambda () (interactive) (find-file "~/OneDrive/org/static/keys.org")))
+    ("m" (lambda () (interactive) (find-file "~/OneDrive/org/programming/macos.org")))
+    ("g" (lambda () (interactive) (my/org-jump-to-file-and-header "~/OneDrive/org/static/programming/programming.org" "Git")))
+
+    ("T" (lambda () (interactive) (find-file "~/OneDrive/org/dynamic/shared-todo.org")))
     ("q" nil "cancel"))
 
 

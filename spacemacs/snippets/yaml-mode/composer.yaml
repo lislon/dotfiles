@@ -1,0 +1,27 @@
+# -*- mode: snippet  -*-
+# name: compose3
+# key: compose3
+# expand-env: ((yas-indent-line 'fixed))
+# --
+
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+  localdb:
+    image: postgres
+    environment:
+      POSTGRES_USER: localdb
+      POSTGRES_PASSWORD: localdb
+    ports:
+      - 5401:5432
+    volumes:
+      - ./openvpn_conf:/doc/Dockovpn
+
+  foreigndb:
+    image: postgres
+    environment:
+      POSTGRES_USER: foreigndb
+      POSTGRES_PASSWORD: foreigndb
+    ports:
+      - 5402:5432
